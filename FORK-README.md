@@ -4,9 +4,22 @@ This file documents all changes made to the original [MovixOpenSource](https://g
 
 ---
 
+## 0. First-time setup (per clone)
+
+`src/config/accent.js` and `src/config/branding.ts` are **gitignored** — each clone
+customizes them locally without conflicting with other clones or the upstream repo.
+Create them from the tracked examples before building:
+
+```bash
+cp src/config/accent.example.js src/config/accent.js
+cp src/config/branding.example.ts src/config/branding.ts
+```
+
+Then edit those two local copies as described below.
+
 ## 1. Accent Color
 
-**Single file to edit:** `src/config/accent.js`
+**Single file to edit:** `src/config/accent.js` (create it first — see §0)
 
 ```js
 export const ACCENT = 'orange'; // red | blue | green | purple | orange | teal | indigo…
@@ -128,8 +141,10 @@ npm run build
 
 ```
 src/config/
-├── accent.js          ← ACCENT color (single source of truth)
-├── branding.ts        ← Name, logo, favicon, adBanner
+├── accent.example.js  ← tracked template — cp to accent.js (gitignored) per clone
+├── accent.js          ← ACCENT color (single source of truth, per-clone, gitignored)
+├── branding.example.ts ← tracked template — cp to branding.ts (gitignored) per clone
+├── branding.ts        ← Name, logo, favicon, adBanner (per-clone, gitignored)
 └── runtime.ts         ← SITE_URL (from .env)
 
 src/components/

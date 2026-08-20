@@ -78,3 +78,7 @@ API/BOT/
 *.pyo
 API/proxiesembed/venv/
 API/miscs/venv/
+
+# Branding per clone — xem *.example.* để tạo bản riêng
+src/config/branding.ts
+src/config/accent.js
