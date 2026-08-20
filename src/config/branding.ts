@@ -18,7 +18,7 @@ export const BRANDING = {
    * Si renseigné, affiche l'image à la place du texte.
    * Laisser vide ('') pour utiliser le texte.
    */
-  logoUrl: '',
+  logoUrl: '/logo.png',
 
   /** URL favicon (dans /public) */
   favicon: '/favicon.png',
