@@ -76,3 +76,5 @@ API/BOT/
 **/__pycache__/
 *.pyc
 *.pyo
+API/proxiesembed/venv/
+API/miscs/venv/
