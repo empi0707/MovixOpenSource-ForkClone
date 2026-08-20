@@ -13,9 +13,12 @@ Create them from the tracked examples before building:
 ```bash
 cp src/config/accent.example.js src/config/accent.js
 cp src/config/branding.example.ts src/config/branding.ts
+cp ecosystem.config.example.cjs ecosystem.config.cjs
 ```
 
-Then edit those two local copies as described below.
+Edit `ecosystem.config.cjs` to replace `/www/wwwroot/example.com` with the real
+deploy path (backend only — not needed for the frontend build itself). Then edit
+the two branding local copies as described below.
 
 ## 1. Accent Color
 
@@ -140,6 +143,9 @@ npm run build
 ## 8. Key Files
 
 ```
+ecosystem.config.example.cjs ← tracked template — cp to ecosystem.config.cjs (gitignored) per clone
+ecosystem.config.cjs  ← PM2 apps, deploy paths (per-clone, gitignored)
+
 src/config/
 ├── accent.example.js  ← tracked template — cp to accent.js (gitignored) per clone
 ├── accent.js          ← ACCENT color (single source of truth, per-clone, gitignored)

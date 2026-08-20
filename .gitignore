@@ -82,3 +82,6 @@ API/miscs/venv/
 # Branding per clone — xem *.example.* để tạo bản riêng
 src/config/branding.ts
 src/config/accent.js
+
+# PM2 config per clone — path deploy khác nhau, xem ecosystem.config.example.cjs
+ecosystem.config.cjs
