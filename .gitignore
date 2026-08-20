@@ -85,3 +85,6 @@ src/config/accent.js
 
 # PM2 config per clone — path deploy khác nhau, xem ecosystem.config.example.cjs
 ecosystem.config.cjs
+
+# index.html per clone — title/meta/JSON-LD/favicon/analytics, xem index.example.html
+index.html

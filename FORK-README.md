@@ -6,19 +6,33 @@ This file documents all changes made to the original [MovixOpenSource](https://g
 
 ## 0. First-time setup (per clone)
 
-`src/config/accent.js` and `src/config/branding.ts` are **gitignored** — each clone
-customizes them locally without conflicting with other clones or the upstream repo.
-Create them from the tracked examples before building:
+`src/config/accent.js`, `src/config/branding.ts`, `ecosystem.config.cjs` and
+`index.html` are **gitignored** — each clone customizes them locally without
+conflicting with other clones or the upstream repo. Create them from the tracked
+examples before building (the build fails without `index.html` — Vite's entry
+point):
 
 ```bash
 cp src/config/accent.example.js src/config/accent.js
 cp src/config/branding.example.ts src/config/branding.ts
 cp ecosystem.config.example.cjs ecosystem.config.cjs
+cp index.example.html index.html
 ```
 
 Edit `ecosystem.config.cjs` to replace `/www/wwwroot/example.com` with the real
-deploy path (backend only — not needed for the frontend build itself). Then edit
-the two branding local copies as described below.
+deploy path (backend only — not needed for the frontend build itself). Edit
+`index.html` to replace `MySite` (title/meta/JSON-LD), `/favicon.png` icon refs,
+`contact@example.com` and the placeholder `G-XXXXXXXXXX` Google Analytics ID if
+you want analytics (the example ships with no gtag script — add your own).
+`index.html`'s `DEFAULT`/regex in the branding-override inline script (near the
+bottom of `<head>`) must match the same name you put in the `<title>`/meta tags,
+or the runtime `/admin` branding override will silently fail to swap the
+description meta tag. Then edit the two branding local copies as described below.
+
+⚠️ **If a future commit removes one of these 4 files from git tracking again**
+(`git rm --cached`), back up your local copy on every deployed server BEFORE
+running `git pull` there — a clean fast-forward pull deletes the working-tree
+file too when it's dropped from the tree, it does not just "stop tracking" it.
 
 ## 1. Accent Color
 
@@ -145,6 +159,9 @@ npm run build
 ```
 ecosystem.config.example.cjs ← tracked template — cp to ecosystem.config.cjs (gitignored) per clone
 ecosystem.config.cjs  ← PM2 apps, deploy paths (per-clone, gitignored)
+
+index.example.html    ← tracked template — cp to index.html (gitignored) per clone
+index.html            ← Vite entry point: title, meta, favicon, JSON-LD, analytics (per-clone, gitignored)
 
 src/config/
 ├── accent.example.js  ← tracked template — cp to accent.js (gitignored) per clone

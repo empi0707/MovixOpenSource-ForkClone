@@ -9,13 +9,13 @@
             content="index, follow, noarchive, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
         />
         <meta name="google" content="notranslate" />
-        <meta name="apple-mobile-web-app-title" content="Movix" id="meta-app-title" />
-        <meta name="application-name" content="Movix" id="meta-app-name" />
+        <meta name="apple-mobile-web-app-title" content="MySite" id="meta-app-title" />
+        <meta name="application-name" content="MySite" id="meta-app-name" />
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="theme-color" content="#000000" />
         <meta
             name="description"
-            content="Regardez des milliers de films et séries en streaming HD sur Movix. Catalogue complet en VF et VOSTFR, live TV, collections et watch parties synchronisées entre amis."
+            content="Regardez des milliers de films et séries en streaming HD sur MySite. Catalogue complet en VF et VOSTFR, live TV, collections et watch parties synchronisées entre amis."
         />
 
         <!-- Prefetch -->
@@ -24,8 +24,6 @@
         <link rel="dns-prefetch" href="//www.gstatic.com" />
         <link rel="dns-prefetch" href="//www.google.com" />
         <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
-        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
@@ -36,15 +34,15 @@
         />
 
         <!-- Icons -->
-        <link rel="icon" href="/movix.png" id="favicon-main" />
-        <link rel="icon" type="image/png" href="/movix.png" sizes="96x96" id="favicon-png" />
-        <link rel="icon" type="image/svg+xml" href="/movix.png" id="favicon-svg" />
-        <link rel="shortcut icon" href="/movix.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/movix.png" />
+        <link rel="icon" href="/favicon.png" id="favicon-main" />
+        <link rel="icon" type="image/png" href="/favicon.png" sizes="96x96" id="favicon-png" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.png" id="favicon-svg" />
+        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
         <link rel="manifest" href="/manifest.json" />
 
         <title data-rh="true">
-            Movix — Films et séries en streaming gratuit | VF, VOSTFR, HD
+            MySite — Films et séries en streaming gratuit | VF, VOSTFR, HD
         </title>
 
         <!-- JSON-LD -->
@@ -53,28 +51,28 @@
                 {
                     "@context": "https://schema.org",
                     "@type": "Organization",
-                    "name": "Movix",
-                    "alternateName": "Movix Streaming",
+                    "name": "MySite",
+                    "alternateName": "MySite Streaming",
                     "url": "__MOVIX_SITE_URL__",
-                    "description": "Movix est une plateforme française open-source (CC BY-NC 4.0) de streaming multimédia : films, séries, anime, TV en direct et Watch Parties synchronisées.",
+                    "description": "MySite est une plateforme française de streaming multimédia : films, séries, anime, TV en direct et Watch Parties synchronisées.",
                     "logo": {
                         "@type": "ImageObject",
-                        "url": "__MOVIX_SITE_URL__/movix.png",
+                        "url": "__MOVIX_SITE_URL__/favicon.png",
                         "width": 512,
                         "height": 512
                     },
-                    "sameAs": ["https://t.me/movix_site"],
+                    "sameAs": [],
                     "contactPoint": {
                         "@type": "ContactPoint",
                         "contactType": "customer support",
-                        "email": "movixstreaming@gmail.com",
+                        "email": "contact@example.com",
                         "availableLanguage": ["French", "English"]
                     }
                 },
                 {
                     "@context": "https://schema.org",
                     "@type": "WebSite",
-                    "name": "Movix",
+                    "name": "MySite",
                     "url": "__MOVIX_SITE_URL__",
                     "inLanguage": "fr",
                     "potentialAction": {
@@ -220,20 +218,6 @@
             defer
         ></script>
         <script type="module" src="/src/main.tsx"></script>
-        <!-- Google tag (gtag.js) -->
-        <script
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-6Q3B4D5KQL"
-        ></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
-
-            gtag("config", "G-6Q3B4D5KQL");
-        </script>
         <!-- Branding override: applique le nom/favicon depuis localStorage avant le premier rendu React -->
         <script>
           (function() {
@@ -241,7 +225,7 @@
               var raw = localStorage.getItem('branding_override');
               if (!raw) return;
               var b = JSON.parse(raw);
-              var DEFAULT = 'MOVIX';
+              var DEFAULT = 'MYSITE';
               var name = (b.siteName || '').trim() || DEFAULT;
               var favicon = (b.faviconUrl || '').trim();
 
@@ -252,7 +236,7 @@
                 var a = document.getElementById('meta-app-name');
                 if (a) a.setAttribute('content', name);
                 var d = document.querySelector('meta[name="description"]');
-                if (d) d.setAttribute('content', d.getAttribute('content').replace(/Movix|MOVIX/g, name));
+                if (d) d.setAttribute('content', d.getAttribute('content').replace(/MySite|MYSITE/gi, name));
               }
 
               // Favicon
