@@ -46,8 +46,8 @@ interface SearchResult {
 // ─── Channel badge colors ───────────────────────────────────────────────────────
 
 const CHANNEL_COLORS: Record<string, string> = {
-  'france-2': 'bg-red-600',
-  'france_2': 'bg-red-600',
+  'france-2': 'bg-accent-600',
+  'france_2': 'bg-accent-600',
   'france-3': 'bg-blue-500',
   'france_3': 'bg-blue-500',
   'france-4': 'bg-purple-600',
@@ -65,8 +65,8 @@ const CSA_BADGES: Record<string, { label: string; color: string }> = {
   'TP': { label: 'TP', color: 'bg-green-600' },
   '10': { label: '-10', color: 'bg-yellow-500' },
   '12': { label: '-12', color: 'bg-orange-500' },
-  '16': { label: '-16', color: 'bg-red-500' },
-  '18': { label: '-18', color: 'bg-red-700' },
+  '16': { label: '-16', color: 'bg-accent-500' },
+  '18': { label: '-18', color: 'bg-accent-700' },
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────────
@@ -230,7 +230,7 @@ const FranceTVBrowse: React.FC = () => {
             animate={{ opacity: 1 }}
             className="text-center py-10"
           >
-            <p className="text-red-400 text-lg">{error}</p>
+            <p className="text-accent-400 text-lg">{error}</p>
           </motion.div>
         )}
 

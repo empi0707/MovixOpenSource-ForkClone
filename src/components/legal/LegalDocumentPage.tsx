@@ -50,7 +50,7 @@ interface LegalDocumentPageProps {
 const cardClass = 'rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md';
 
 const actionClassMap: Record<LegalActionVariant, string> = {
-  primary: 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20',
+  primary: 'bg-accent-600 text-white hover:bg-accent-700 shadow-lg shadow-accent-600/20',
   secondary: 'border border-white/15 bg-white/5 text-white hover:bg-white/10',
   ghost: 'text-white/70 hover:bg-white/5 hover:text-white',
 };
@@ -106,7 +106,7 @@ const LegalDocumentPage: React.FC<LegalDocumentPageProps> = ({
   return (
     <SquareBackground
       squareSize={48}
-      borderColor="rgba(220, 38, 38, 0.12)"
+      borderColor="color-mix(in srgb, var(--accent-600) 12%, transparent)"
       className="min-h-screen bg-black text-white"
     >
       <SEO
@@ -129,8 +129,8 @@ const LegalDocumentPage: React.FC<LegalDocumentPageProps> = ({
               animate={{ opacity: 1, y: 0 }}
               className={`${cardClass} p-6 sm:p-8`}
             >
-              <div className="inline-flex items-center gap-3 rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm text-red-200">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/15 text-red-400">
+              <div className="inline-flex items-center gap-3 rounded-full border border-accent-500/20 bg-accent-500/10 px-4 py-2 text-sm text-accent-200">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-500/15 text-accent-400">
                   <HeroIcon className="h-5 w-5" />
                 </span>
                 <span className="font-medium">{eyebrow}</span>
@@ -159,7 +159,7 @@ const LegalDocumentPage: React.FC<LegalDocumentPageProps> = ({
                 </p>
 
                 <div className="mt-4 flex items-start gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <div className="mt-0.5 rounded-full bg-red-500/10 p-2 text-red-400">
+                  <div className="mt-0.5 rounded-full bg-accent-500/10 p-2 text-accent-400">
                     <CalendarDays className="h-4 w-4" />
                   </div>
                   <div>
@@ -173,7 +173,7 @@ const LegalDocumentPage: React.FC<LegalDocumentPageProps> = ({
                   <ul className="mt-3 space-y-3 text-sm text-white/65">
                     {summaryItems.map((item) => (
                       <li key={item} className="flex items-start gap-3">
-                        <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-red-500" />
+                        <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-accent-500" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -222,8 +222,8 @@ const LegalDocumentPage: React.FC<LegalDocumentPageProps> = ({
                   className={`${cardClass} p-6 sm:p-7`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10 text-red-400">
-                      {SectionIcon ? <SectionIcon className="h-5 w-5" /> : <span className="h-2.5 w-2.5 rounded-full bg-red-500" />}
+                    <div className="mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-accent-500/20 bg-accent-500/10 text-accent-400">
+                      {SectionIcon ? <SectionIcon className="h-5 w-5" /> : <span className="h-2.5 w-2.5 rounded-full bg-accent-500" />}
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -241,7 +241,7 @@ const LegalDocumentPage: React.FC<LegalDocumentPageProps> = ({
                         <ul className="mt-5 space-y-3 text-sm sm:text-[15px] leading-relaxed text-white/70">
                           {section.bullets.map((bullet) => (
                             <li key={bullet} className="flex items-start gap-3">
-                              <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-red-500" />
+                              <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-accent-500" />
                               <span>{bullet}</span>
                             </li>
                           ))}
@@ -249,7 +249,7 @@ const LegalDocumentPage: React.FC<LegalDocumentPageProps> = ({
                       )}
 
                       {section.note && (
-                        <div className="mt-5 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-sm leading-relaxed text-red-100/90">
+                        <div className="mt-5 rounded-2xl border border-accent-500/20 bg-accent-500/10 p-4 text-sm leading-relaxed text-accent-100/90">
                           {section.note}
                         </div>
                       )}

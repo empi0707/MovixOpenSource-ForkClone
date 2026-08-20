@@ -6,7 +6,7 @@ import './i18n' // Initialize i18n before App
 import App from './App.tsx'
 import axios from 'axios'
 import { api } from './services/api'
-import { registerBlockDetection } from './services/blockDetection'
+// blockDetection removed
 import './index.css'
 import './styles/light-mode.css'
 
@@ -138,11 +138,7 @@ if (localStorage.getItem('square_corners_enabled') === '1') {
   document.documentElement.classList.add('square-corners');
 }
 
-// Register block detection on both the default axios (used by most services)
-// and the api instance (used by contentAPI). Both need their own interceptors
-// since instances created via axios.create() don't inherit from the default.
-registerBlockDetection(axios)
-registerBlockDetection(api)
+// blockDetection removed — ISP block detection disabled
 
 // ---------------------------------------------------------------------------
 // Resilience patches — run before the app mounts.
@@ -217,14 +213,7 @@ if ('serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.register('/sw.js');
       registration.update().catch(() => {});
 
-      // Re-souscrire au push si permission déjà accordée mais subscription perdue
-      if ('PushManager' in window && Notification.permission === 'granted' && localStorage.getItem('auth_token')) {
-        const subscription = await registration.pushManager.getSubscription();
-        if (!subscription) {
-          const { subscribeToPush } = await import('./services/pushNotificationService');
-          subscribeToPush();
-        }
-      }
+      // Push notifications removed
     } catch {}
   });
 }

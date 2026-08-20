@@ -911,7 +911,7 @@ const StreamingLinksManager: React.FC = () => {
                           {canDeleteStreamingLink(link) && (
                             <button
                               onClick={() => deleteSpecificLink(index)}
-                              className="ml-3 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                              className="ml-3 px-3 py-1 bg-accent-600 text-white text-xs rounded hover:bg-accent-700"
                             >
                               {t('streamingLinks.deleteLink')}
                             </button>
@@ -938,7 +938,7 @@ const StreamingLinksManager: React.FC = () => {
                         {links.length > 1 && (
                           <button
                             onClick={() => removeLinkInput(index)}
-                            className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                            className="px-3 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700"
                           >
                             -
                           </button>
@@ -964,7 +964,7 @@ const StreamingLinksManager: React.FC = () => {
                   </button>
                   <button
                     onClick={deleteAllLinks}
-                    className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
+                    className="flex-1 px-4 py-3 bg-accent-600 text-white rounded-lg hover:bg-accent-700 font-semibold"
                   >
                     {t('streamingLinks.deleteAllLinks')}
                   </button>
@@ -1066,7 +1066,7 @@ const StreamingLinksManager: React.FC = () => {
                         {canDeleteDownloadLink(l) && (
                           <button
                             onClick={() => deleteDownloadLinkFromList(l.url, Boolean(l.full_saison))}
-                            className="px-3 py-1 rounded bg-red-600 text-white text-sm"
+                            className="px-3 py-1 rounded bg-accent-600 text-white text-sm"
                           >
                             Supprimer
                           </button>

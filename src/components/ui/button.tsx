@@ -9,15 +9,15 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, variant = "default", size = "default", ...props }, ref) => {
-        const baseStyles = "inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 disabled:pointer-events-none disabled:opacity-50 active:scale-95";
+        const baseStyles = "inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/50 disabled:pointer-events-none disabled:opacity-50 active:scale-95";
 
         const variants = {
-            default: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-500/20",
-            destructive: "bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30",
+            default: "bg-accent-600 text-white hover:bg-accent-700 shadow-lg shadow-accent-500/20",
+            destructive: "bg-accent-600/20 text-accent-400 border border-accent-500/30 hover:bg-accent-600/30",
             outline: "border border-white/10 bg-transparent text-white hover:bg-white/10",
             secondary: "bg-white/10 text-white hover:bg-white/20",
             ghost: "text-white/70 hover:bg-white/10 hover:text-white",
-            link: "text-red-400 underline-offset-4 hover:underline",
+            link: "text-accent-400 underline-offset-4 hover:underline",
         };
 
         const sizes = {

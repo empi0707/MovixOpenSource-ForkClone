@@ -799,8 +799,8 @@ const FranceTVPlayer: React.FC = () => {
       {/* Error overlay */}
       {error && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 px-4">
-          <AlertCircle className="w-14 h-14 text-red-400 mb-4" />
-          <p className="text-red-400 text-center mb-6 max-w-lg text-sm">{error}</p>
+          <AlertCircle className="w-14 h-14 text-accent-400 mb-4" />
+          <p className="text-accent-400 text-center mb-6 max-w-lg text-sm">{error}</p>
           <button onClick={() => navigate(-1)}
             className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-white transition-colors cursor-pointer">
             {t('common.back')}
@@ -827,7 +827,7 @@ const FranceTVPlayer: React.FC = () => {
             <motion.div
               animate={{
                 scale: isPipActive ? 0.85 : 1,
-                color: isPipActive ? '#dc2626' : '#ffffff'
+                color: isPipActive ? 'var(--accent-600)' : '#ffffff'
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -895,12 +895,12 @@ const FranceTVPlayer: React.FC = () => {
           >
             {/* Progress (red) */}
             <div
-              className="absolute inset-y-0 left-0 bg-red-600 rounded-full"
+              className="absolute inset-y-0 left-0 bg-accent-600 rounded-full"
               style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
             />
             {/* Handle */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-red-600 rounded-full -ml-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+              className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-accent-600 rounded-full -ml-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
               style={{ left: duration ? `${(currentTime / duration) * 100}%` : '0' }}
             />
           </div>
@@ -954,9 +954,9 @@ const FranceTVPlayer: React.FC = () => {
                         step="0.01"
                         value={isMuted ? 0 : volume}
                         onChange={handleVolumeChange}
-                        className="w-full accent-red-600 appearance-none h-1 rounded-full cursor-pointer"
+                        className="w-full accent-accent-600 appearance-none h-1 rounded-full cursor-pointer"
                         style={{
-                          background: `linear-gradient(to right, #dc2626 ${(isMuted ? 0 : volume) * 100}%, rgba(255, 255, 255, 0.2) ${(isMuted ? 0 : volume) * 100}%)`
+                          background: `linear-gradient(to right, var(--accent-600) ${(isMuted ? 0 : volume) * 100}%, rgba(255, 255, 255, 0.2) ${(isMuted ? 0 : volume) * 100}%)`
                         }}
                       />
                     </div>
@@ -1017,7 +1017,7 @@ const FranceTVPlayer: React.FC = () => {
                   whileTap={{ scale: 0.97 }}
                 >
                   {t('francetv.qualityTab')}
-                  {settingsTab === 'quality' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />}
+                  {settingsTab === 'quality' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600" />}
                 </motion.button>
               )}
               {audioTracks.length > 1 && (
@@ -1027,7 +1027,7 @@ const FranceTVPlayer: React.FC = () => {
                   whileTap={{ scale: 0.97 }}
                 >
                   Audio
-                  {settingsTab === 'audio' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />}
+                  {settingsTab === 'audio' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600" />}
                 </motion.button>
               )}
               {subtitles.length > 1 && (
@@ -1037,7 +1037,7 @@ const FranceTVPlayer: React.FC = () => {
                   whileTap={{ scale: 0.97 }}
                 >
                   {t('francetv.subtitlesTab')}
-                  {settingsTab === 'subtitles' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />}
+                  {settingsTab === 'subtitles' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600" />}
                 </motion.button>
               )}
               <motion.button
@@ -1046,7 +1046,7 @@ const FranceTVPlayer: React.FC = () => {
                 whileTap={{ scale: 0.97 }}
               >
                 {t('watch.speedTab', 'Vitesse')}
-                {settingsTab === 'speed' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />}
+                {settingsTab === 'speed' && <motion.div layoutId="activeSettingsTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600" />}
               </motion.button>
             </div>
 
@@ -1060,11 +1060,11 @@ const FranceTVPlayer: React.FC = () => {
                         key={q.value}
                         onClick={() => handleQualityChange(q.value)}
                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
-                          selectedQuality === q.value ? 'bg-red-600/20 text-red-400' : 'text-gray-300 hover:bg-white/5'
+                          selectedQuality === q.value ? 'bg-accent-600/20 text-accent-400' : 'text-gray-300 hover:bg-white/5'
                         }`}
                       >
                         {q.label}
-                        {selectedQuality === q.value && <span className="float-right text-red-400">✓</span>}
+                        {selectedQuality === q.value && <span className="float-right text-accent-400">✓</span>}
                       </button>
                     ))}
                   </motion.div>
@@ -1076,11 +1076,11 @@ const FranceTVPlayer: React.FC = () => {
                         key={a.value}
                         onClick={() => handleAudioChange(a.value)}
                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
-                          selectedAudio === a.value ? 'bg-red-600/20 text-red-400' : 'text-gray-300 hover:bg-white/5'
+                          selectedAudio === a.value ? 'bg-accent-600/20 text-accent-400' : 'text-gray-300 hover:bg-white/5'
                         }`}
                       >
                         {a.label}
-                        {selectedAudio === a.value && <span className="float-right text-red-400">✓</span>}
+                        {selectedAudio === a.value && <span className="float-right text-accent-400">✓</span>}
                       </button>
                     ))}
                   </motion.div>
@@ -1092,11 +1092,11 @@ const FranceTVPlayer: React.FC = () => {
                         key={s.value}
                         onClick={() => handleSubChange(s.value)}
                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
-                          selectedSub === s.value ? 'bg-red-600/20 text-red-400' : 'text-gray-300 hover:bg-white/5'
+                          selectedSub === s.value ? 'bg-accent-600/20 text-accent-400' : 'text-gray-300 hover:bg-white/5'
                         }`}
                       >
                         {s.label}
-                        {selectedSub === s.value && <span className="float-right text-red-400">✓</span>}
+                        {selectedSub === s.value && <span className="float-right text-accent-400">✓</span>}
                       </button>
                     ))}
                   </motion.div>
@@ -1108,11 +1108,11 @@ const FranceTVPlayer: React.FC = () => {
                         key={speed}
                         onClick={() => handleSpeedChange(speed)}
                         className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
-                          playbackSpeed === speed ? 'bg-red-600/20 text-red-400' : 'text-gray-300 hover:bg-white/5'
+                          playbackSpeed === speed ? 'bg-accent-600/20 text-accent-400' : 'text-gray-300 hover:bg-white/5'
                         }`}
                       >
                         {speed === 1 ? t('watch.normalLabel') : `${speed}x`}
-                        {playbackSpeed === speed && <span className="float-right text-red-400">✓</span>}
+                        {playbackSpeed === speed && <span className="float-right text-accent-400">✓</span>}
                       </button>
                     ))}
                   </motion.div>

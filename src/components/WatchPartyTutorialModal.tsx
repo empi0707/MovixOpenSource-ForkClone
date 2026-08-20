@@ -112,7 +112,7 @@ const WatchPartyTutorialModal: React.FC<WatchPartyTutorialModalProps> = ({ isOpe
                         {/* Header */}
                         <div className="p-4 md:p-6 border-b border-white/10 flex justify-between items-center shrink-0">
                             <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
-                                <HelpCircle className="text-red-500 h-5 w-5 md:h-6 md:w-6" />
+                                <HelpCircle className="text-accent-500 h-5 w-5 md:h-6 md:w-6" />
                                 {t('watchParty.howToCreate')}
                             </h3>
                             <motion.button
@@ -146,7 +146,7 @@ const WatchPartyTutorialModal: React.FC<WatchPartyTutorialModalProps> = ({ isOpe
                                                         />
                                                     ) : (
                                                         <div className="px-12 py-4 md:px-16 md:py-8 text-center select-none flex flex-col items-center justify-center h-full">
-                                                            <Users className="h-10 w-10 md:h-16 md:w-16 text-red-500 mb-4" />
+                                                            <Users className="h-10 w-10 md:h-16 md:w-16 text-accent-500 mb-4" />
                                                             <h4 className="text-lg md:text-xl font-bold text-white mb-2">{slide.title}</h4>
                                                             <p className="text-sm md:text-base text-white/70 max-w-md mx-auto leading-relaxed">{slide.text}</p>
                                                         </div>
@@ -160,13 +160,13 @@ const WatchPartyTutorialModal: React.FC<WatchPartyTutorialModalProps> = ({ isOpe
                                 {/* Navigation Buttons */}
                                 <button
                                     onClick={scrollPrev}
-                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/50 hover:bg-red-600 rounded-full text-white transition-all backdrop-blur-sm z-10"
+                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/50 hover:bg-accent-600 rounded-full text-white transition-all backdrop-blur-sm z-10"
                                 >
                                     <ChevronLeft size={20} className="md:w-6 md:h-6" />
                                 </button>
                                 <button
                                     onClick={scrollNext}
-                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/50 hover:bg-red-600 rounded-full text-white transition-all backdrop-blur-sm z-10"
+                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/50 hover:bg-accent-600 rounded-full text-white transition-all backdrop-blur-sm z-10"
                                 >
                                     <ChevronRight size={20} className="md:w-6 md:h-6" />
                                 </button>
@@ -190,7 +190,7 @@ const WatchPartyTutorialModal: React.FC<WatchPartyTutorialModalProps> = ({ isOpe
                                     <button
                                         key={index}
                                         onClick={() => scrollTo(index)}
-                                        className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-red-500 w-6 md:w-8' : 'bg-white/20 w-1.5 md:w-2 hover:bg-white/40'
+                                        className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-accent-500 w-6 md:w-8' : 'bg-white/20 w-1.5 md:w-2 hover:bg-white/40'
                                             }`}
                                     />
                                 ))}

@@ -118,7 +118,7 @@ const TutoLayout: React.FC<TutoLayoutProps> = ({
             <ol className="space-y-3">
               {s.stepKeys.map((key, idx) => (
                 <li key={idx} className="flex gap-3">
-                  <span className="shrink-0 w-7 h-7 rounded-full bg-red-500/20 border border-red-500/40 text-red-300 text-sm font-semibold flex items-center justify-center">
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-accent-500/20 border border-accent-500/40 text-accent-300 text-sm font-semibold flex items-center justify-center">
                     {idx + 1}
                   </span>
                   <span className="flex-1 text-zinc-300 leading-relaxed pt-0.5">
@@ -183,10 +183,10 @@ const TutoLayout: React.FC<TutoLayoutProps> = ({
                   className="rounded-lg border border-white/10 bg-white/5 p-4"
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="shrink-0 w-8 h-8 rounded-full bg-red-500/20 border border-red-500/40 text-red-300 text-sm font-semibold flex items-center justify-center">
+                    <span className="shrink-0 w-8 h-8 rounded-full bg-accent-500/20 border border-accent-500/40 text-accent-300 text-sm font-semibold flex items-center justify-center">
                       {idx + 1}
                     </span>
-                    <span className="shrink-0 text-red-400 flex items-center justify-center">
+                    <span className="shrink-0 text-accent-400 flex items-center justify-center">
                       {c.icon}
                     </span>
                     <h3 className="font-semibold text-white flex-1 leading-tight">
@@ -209,7 +209,7 @@ const TutoLayout: React.FC<TutoLayoutProps> = ({
                             href={cta.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-sm text-red-400 hover:text-red-300 underline-offset-2 hover:underline"
+                            className="inline-flex items-center gap-1 text-sm text-accent-400 hover:text-accent-300 underline-offset-2 hover:underline"
                           >
                             {t(cta.labelKey)}
                             <ExternalLink className="w-3 h-3" />
@@ -218,7 +218,7 @@ const TutoLayout: React.FC<TutoLayoutProps> = ({
                           <Link
                             key={cta.href}
                             to={cta.href}
-                            className="inline-flex items-center gap-1 text-sm text-red-400 hover:text-red-300 underline-offset-2 hover:underline"
+                            className="inline-flex items-center gap-1 text-sm text-accent-400 hover:text-accent-300 underline-offset-2 hover:underline"
                           >
                             {t(cta.labelKey)}
                           </Link>
@@ -278,7 +278,7 @@ const TutoLayout: React.FC<TutoLayoutProps> = ({
         >
           <Link
             to={backHref}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-400 text-white font-semibold text-sm transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-500 hover:bg-accent-400 text-white font-semibold text-sm transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             {t(backLabelKey)}

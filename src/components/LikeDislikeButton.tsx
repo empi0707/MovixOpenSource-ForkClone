@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { useProfile } from '../context/ProfileContext';
-import { useTurnstile } from '../context/TurnstileContext';
 import Counter from './ui/counter';
 
 const API_URL = import.meta.env.VITE_MAIN_API;
@@ -24,8 +22,6 @@ const getPlacesForValue = (value: number): number[] => {
 };
 
 const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, contentId }) => {
-  const { currentProfile } = useProfile();
-  const { isVerifying: verifying, resetToken: resetTurnstile, getValidToken } = useTurnstile();
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [userVote, setUserVote] = useState<'like' | 'dislike' | null>(null);
@@ -46,22 +42,17 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
     const fetchLikes = async () => {
       try {
         const authToken = localStorage.getItem('auth_token');
-        const profileId = currentProfile?.id;
-
-        const params = profileId ? { profileId } : {};
         const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
         const response = await axios.get(
           `${API_URL}/api/likes/${contentType}/${contentId}`,
-          { params, headers }
+          { headers }
         );
 
         previousLikes.current = 0;
         previousDislikes.current = 0;
-        // Set likes/dislikes which will trigger animation from 0 to actual value
         setLikes(response.data.likes);
         setDislikes(response.data.dislikes);
-        // Keep display at 0 - the useEffect will animate them up
         previousDisplayLikes.current = 0;
         previousDisplayDislikes.current = 0;
         animationStartLikes.current = 0;
@@ -73,20 +64,14 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
     };
 
     fetchLikes();
-  }, [contentType, contentId, currentProfile]);
+  }, [contentType, contentId]);
 
   // Handle like/dislike
   const handleVote = async (voteType: 'like' | 'dislike') => {
     const authToken = localStorage.getItem('auth_token');
-    const profileId = currentProfile?.id;
 
-    if (!authToken || !profileId) {
-      console.log('User must be authenticated and have a profile to vote');
-      return;
-    }
-
-    if (verifying) {
-      console.log('Turnstile verification in progress, please wait');
+    if (!authToken) {
+      console.log('User must be authenticated to vote');
       return;
     }
 
@@ -148,41 +133,22 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
 
     // Faire l'appel API en arrière-plan
     try {
-      const newVoteType = newUserVote;
-
-      // Obtenir un token Turnstile frais (reset automatique si expiré)
-      const freshToken = await getValidToken();
-      if (!freshToken) {
-        throw { response: { status: 403 } };
-      }
-
       const response = await axios.post(
         `${API_URL}/api/likes`,
         {
           contentType,
           contentId,
-          voteType: newVoteType,
-          profileId,
-          turnstileToken: freshToken
+          voteType: newUserVote,
         },
         {
           headers: { Authorization: `Bearer ${authToken}` }
         }
       );
 
-      // Synchroniser avec les valeurs du serveur (au cas où il y aurait une différence)
-      const serverLikes = response.data.likes;
-      const serverDislikes = response.data.dislikes;
-
-      // Mettre à jour les valeurs avec celles du serveur
-      // Si elles sont différentes des valeurs actuelles, les useEffect déclencheront automatiquement l'animation
-      setLikes(serverLikes);
-      setDislikes(serverDislikes);
-
+      // Synchroniser avec les valeurs du serveur
+      setLikes(response.data.likes);
+      setDislikes(response.data.dislikes);
       setUserVote(response.data.userVote);
-
-      // Reset Turnstile pour le prochain vote
-      resetTurnstile();
     } catch (error: any) {
       console.error('Error voting:', error);
       // En cas d'erreur, restaurer les anciennes valeurs
@@ -191,10 +157,6 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
       setUserVote(oldUserVote);
       previousLikes.current = oldLikes;
       previousDislikes.current = oldDislikes;
-      // Si 403 (token Turnstile expiré/invalide), reset pour en obtenir un nouveau
-      if (error?.response?.status === 403) {
-        resetTurnstile();
-      }
     } finally {
       setIsLoading(false);
     }
@@ -205,7 +167,6 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
     const diff = likes - displayLikes;
     if (diff !== 0) {
       const duration = 200;
-      // Limit steps for large numbers to keep animation smooth
       const maxSteps = 50;
       const steps = Math.min(Math.abs(diff) + 1, maxSteps);
       const stepDuration = duration / steps;
@@ -214,7 +175,6 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
       const direction = diff > 0 ? 1 : -1;
       let step = 0;
 
-      // Store initial value at start of animation
       animationStartLikes.current = displayLikes;
       previousDisplayLikes.current = displayLikes;
 
@@ -239,7 +199,6 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
     const diff = dislikes - displayDislikes;
     if (diff !== 0) {
       const duration = 200;
-      // Limit steps for large numbers to keep animation smooth
       const maxSteps = 50;
       const steps = Math.min(Math.abs(diff) + 1, maxSteps);
       const stepDuration = duration / steps;
@@ -248,7 +207,6 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
       const direction = diff > 0 ? 1 : -1;
       let step = 0;
 
-      // Store initial value at start of animation
       animationStartDislikes.current = displayDislikes;
       previousDisplayDislikes.current = displayDislikes;
 
@@ -271,25 +229,11 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
 
   return (
     <div className="flex flex-col items-start gap-2">
-      {verifying && (
-        <motion.div
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-gray-300 text-sm"
-        >
-          <svg className="animate-spin h-4 w-4 text-gray-300" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-          On vérifie que vous n'êtes pas un robot...
-        </motion.div>
-      )}
       <div className="flex items-center gap-3">
       {/* Like Button */}
       <motion.button
         onClick={() => handleVote('like')}
-        disabled={isLoading || verifying}
+        disabled={isLoading}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${userVote === 'like'
           ? 'bg-green-500/30 text-green-300 shadow-lg shadow-green-500/20'
           : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
@@ -346,9 +290,9 @@ const LikeDislikeButton: React.FC<LikeDislikeButtonProps> = ({ contentType, cont
       {/* Dislike Button */}
       <motion.button
         onClick={() => handleVote('dislike')}
-        disabled={isLoading || verifying}
+        disabled={isLoading}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${userVote === 'dislike'
-          ? 'bg-red-500/30 text-red-300 shadow-lg shadow-red-500/20'
+          ? 'bg-accent-500/30 text-accent-300 shadow-lg shadow-accent-500/20'
           : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
         whileHover={{ scale: 1.05 }}

@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import HeroSkeleton from '../components/skeletons/HeroSkeleton';
 import ContentRowSkeleton from '../components/skeletons/ContentRowSkeleton';
 
-import TelegramPromotion from '../components/TelegramPromotion';
 import HeroSlider from '../components/HeroSlider';
 import EmblaCarousel from '../components/EmblaCarousel';
 import EmblaCarouselPlatforms from '../components/EmblaCarouselPlatforms';
@@ -15,9 +14,11 @@ import { useWrappedTracker } from '../hooks/useWrappedTracker';
 import LazySection from '../components/LazySection';
 import { SquareBackground } from '../components/ui/square-background';
 import { SITE_URL } from '../config/runtime';
+import { BRANDING } from '../config/branding';
 import { getTmdbLanguage } from '../i18n';
 import { encodeId } from '../utils/idEncoder';
-import { getPersonalizedRecommendations, isRecommendationsEnabled, PersonalizedRecommendations } from '../services/recommendationService';
+// recommendationService removed
+type PersonalizedRecommendations = null;
 import CarouselTitle from '../components/CarouselTitle';
 
 // Nombre de sections à charger immédiatement (les premières sont prioritaires)
@@ -111,11 +112,11 @@ const homeStyles = `
 }
 
 .section-title:hover {
-  background: linear-gradient(90deg, #ff3333, #ff9999);
+  background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
   -webkit-background-clip: text;
   background-clip: text;
   transform: translateY(-2px);
-  text-shadow: 0px 4px 8px rgba(255, 51, 51, 0.4);
+  text-shadow: 0px 4px 8px color-mix(in srgb, var(--accent-500) 40%, transparent);
 }
 
 .section-title::after {
@@ -125,7 +126,7 @@ const homeStyles = `
   bottom: 0;
   width: 40px;
   height: 3px;
-  background: linear-gradient(90deg, #f11 0%, #f66 100%);
+  background: linear-gradient(90deg, var(--accent-600) 0%, var(--accent-400) 100%);
   border-radius: 3px;
   animation: homeExpandWidth 0.6s ease-out forwards 0.3s;
   transform-origin: left;
@@ -134,7 +135,7 @@ const homeStyles = `
 
 .section-title:hover::after {
   width: 100%;
-  background: linear-gradient(90deg, #ff3333, #ff9999);
+  background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
 }
 
 @keyframes homeFadeInTitle {
@@ -210,22 +211,7 @@ const normalizeHomeCategory = (category: Category): Category => ({
   items: category.items.map(normalizeHomeItem) as any,
 });
 
-const normalizePersonalizedReco = (reco: PersonalizedRecommendations | null): PersonalizedRecommendations | null => {
-  if (!reco) return reco;
-  return {
-    ...reco,
-    becauseYouWatched: (reco.becauseYouWatched || []).map((g: any) => ({
-      ...g,
-      items: (g.items || []).map(normalizeHomeItem),
-    })),
-    topGenres: (reco.topGenres || []).map((g: any) => ({
-      ...g,
-      items: (g.items || []).map(normalizeHomeItem),
-    })),
-    usersAlsoWatched: (reco.usersAlsoWatched || []).map(normalizeHomeItem),
-    trendingForYou: (reco.trendingForYou || []).map(normalizeHomeItem),
-  } as any;
-};
+// normalizePersonalizedReco removed with recommendationService
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -239,8 +225,8 @@ const Home: React.FC = () => {
   const [featuredSeries, setFeaturedSeries] = useState<any>(null);
 
   const [continueWatching, setContinueWatching] = useState<ContinueWatching[]>([]);
-  const [recommendations, setRecommendations] = useState<Media[]>([]);
-  const [personalizedReco, setPersonalizedReco] = useState<PersonalizedRecommendations | null>(null);
+  const [recommendations] = useState<Media[]>([]);
+  const [personalizedReco] = useState<PersonalizedRecommendations | null>(null);
   const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null);
 
   // Track page visit for Movix Wrapped
@@ -253,34 +239,8 @@ const Home: React.FC = () => {
 
 
 
-  const fetchRecommendations = async (watchHistory: ContinueWatching[]) => {
-    if (!isRecommendationsEnabled()) {
-      setRecommendations([]);
-      setPersonalizedReco(null);
-      return;
-    }
-
-    const token = localStorage.getItem('auth_token');
-    const profileData = localStorage.getItem('auth');
-    let profileId: string | null = null;
-    if (profileData) {
-      try {
-        const parsed = JSON.parse(profileData);
-        profileId = parsed?.selectedProfileId || parsed?.userProfile?.id || null;
-      } catch {}
-    }
-
-    if (token && profileId) {
-      const lang = getTmdbLanguage();
-      const reco = await getPersonalizedRecommendations(profileId, lang);
-      const normalizedReco = normalizePersonalizedReco(reco);
-      setPersonalizedReco(normalizedReco);
-      setRecommendations((normalizedReco?.trendingForYou || []) as any[]);
-    } else {
-      setRecommendations([]);
-      setPersonalizedReco(null);
-    }
-  };
+  // fetchRecommendations removed — recommendation system disabled
+  const fetchRecommendations = async (_watchHistory: ContinueWatching[]) => {};
 
   const fetchData = async () => {
     if (cancelTokenSourceRef.current) {
@@ -868,13 +828,13 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     // Simple title for homepage
-    document.title = `${t('nav.home')} - Movix`;
+    document.title = `${t('nav.home')} - ${BRANDING.siteName}`;
 
     // Add or update structured data for a WebSite
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "Movix",
+      "name": BRANDING.siteName,
       "url": SITE_URL,
       "potentialAction": {
         "@type": "SearchAction",
@@ -912,7 +872,7 @@ const Home: React.FC = () => {
   );
 
   const trendingTodayTitle = useMemo(
-    () => <CarouselTitle icon="🔥" iconClass="text-red-600" label={t('home.trendingToday')} />,
+    () => <CarouselTitle icon="🔥" iconClass="text-accent-600" label={t('home.trendingToday')} />,
     [t]
   );
 
@@ -984,7 +944,7 @@ const Home: React.FC = () => {
             animate={{ opacity: 1 }}
             className="flex items-center justify-center min-h-screen"
           >
-            <Loader2 className="w-12 h-12 text-red-600 animate-spin" />
+            <Loader2 className="w-12 h-12 text-accent-600 animate-spin" />
           </motion.div>
         ) : (
           <>
@@ -1098,10 +1058,6 @@ const Home: React.FC = () => {
             >
               {!loading && (
                 <div>
-                  <div className="pt-8 pb-20 sm:pt-12 sm:pb-32">
-                    <TelegramPromotion />
-                  </div>
-
                   {/* Tendances - Lazy loaded (index 3) */}
                   <div className="mb-16 px-4 md:px-8">
                     <LazySection index={3} immediateLoadCount={IMMEDIATE_LOAD_COUNT}>
@@ -1162,7 +1118,7 @@ const Home: React.FC = () => {
                           style={{ backgroundImage: 'linear-gradient(to right, rgba(9, 2, 1, 0.95) 0%, rgba(9, 2, 1, 0.4) 50%, transparent 80%)' }}
                         ></div>
                         <div className="flex items-start justify-center flex-col h-full z-20 relative gap-5 px-6 md:px-12 py-10">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/90 border border-red-500/40 text-white text-xs font-semibold uppercase tracking-wider">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-600/90 border border-accent-500/40 text-white text-xs font-semibold uppercase tracking-wider">
                             🔥 {t('home.teamSelection')}
                           </span>
                           <span className="text-white text-4xl sm:text-5xl font-bold leading-tight">

@@ -72,7 +72,7 @@ const JoinPartyModal: React.FC<JoinPartyModalProps> = ({ isOpen, onClose }) => {
                         {/* Header */}
                         <div className="p-6 border-b border-white/10 flex justify-between items-center">
                             <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                                <Key className="text-red-500 h-5 w-5" />
+                                <Key className="text-accent-500 h-5 w-5" />
                                 {t('watchParty.joinParty')}
                             </h3>
                             <button
@@ -95,11 +95,11 @@ const JoinPartyModal: React.FC<JoinPartyModalProps> = ({ isOpen, onClose }) => {
                                         value={code}
                                         onChange={(e) => setCode(e.target.value.toUpperCase())}
                                         placeholder={t('watchParty.codeExample')}
-                                        className="bg-black/50 border-white/10 text-white placeholder:text-white/30 text-center text-2xl tracking-[0.15em] font-mono h-16 uppercase focus-visible:ring-red-500"
+                                        className="bg-black/50 border-white/10 text-white placeholder:text-white/30 text-center text-2xl tracking-[0.15em] font-mono h-16 uppercase focus-visible:ring-accent-500"
                                         maxLength={8}
                                         autoFocus
                                     />
-                                    <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+                                    <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-accent-500/50 to-transparent" />
                                 </div>
                                 <p className="text-xs text-white/40 text-center">
                                     {t('watchParty.enterHostCode')}
@@ -113,7 +113,7 @@ const JoinPartyModal: React.FC<JoinPartyModalProps> = ({ isOpen, onClose }) => {
                                 <Button
                                     type="submit"
                                     disabled={code.length < 3}
-                                    className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-medium text-lg"
+                                    className="w-full h-12 bg-accent-600 hover:bg-accent-700 text-white font-medium text-lg"
                                 >
                                     {t('watchParty.join')}
                                     <ArrowRight className="ml-2 h-5 w-5" />

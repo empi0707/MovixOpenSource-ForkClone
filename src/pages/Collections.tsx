@@ -118,7 +118,7 @@ const CollectionCard: React.FC<CollectionCardProps> = React.memo(({
   return (
     <Link to={`/collection/${collection.id}`}>
       <div
-        className="bg-white/[0.03] rounded-xl overflow-hidden border border-white/10 hover:border-red-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
+        className="bg-white/[0.03] rounded-xl overflow-hidden border border-white/10 hover:border-accent-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
       >
       <div className="relative">
         {collection.backdrop_path ? (
@@ -233,8 +233,8 @@ const CollectionCard: React.FC<CollectionCardProps> = React.memo(({
             }}
             className={`flex items-center gap-1 px-3 py-1.5 text-white text-xs rounded-lg transition-colors ${
               collectionsStatus[collection.id]?.favorites
-                ? 'bg-red-700 hover:bg-red-800'
-                : 'bg-red-600 hover:bg-red-700'
+                ? 'bg-accent-700 hover:bg-accent-800'
+                : 'bg-accent-600 hover:bg-accent-700'
             }`}
           >
             <Heart size={14} className={collectionsStatus[collection.id]?.favorites ? 'fill-current' : ''} />
@@ -370,7 +370,7 @@ const CollectionListItem: React.FC<CollectionListItemProps> = React.memo(({
   return (
     <Link to={`/collection/${collection.id}`}>
       <div
-        className="bg-white/[0.03] rounded-xl p-6 border border-white/10 hover:border-red-500/30 transition-all duration-300 cursor-pointer group hover:bg-white/[0.06]"
+        className="bg-white/[0.03] rounded-xl p-6 border border-white/10 hover:border-accent-500/30 transition-all duration-300 cursor-pointer group hover:bg-white/[0.06]"
       >
         <div className="flex items-center gap-6">
           {/* Poster */}
@@ -394,9 +394,9 @@ const CollectionListItem: React.FC<CollectionListItemProps> = React.memo(({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-4 mb-2">
               <h3 className="text-xl font-bold text-white truncate">{collection.name}</h3>
-              <div className="flex items-center gap-1 bg-red-500/20 px-2 py-1 rounded-full">
-                <Film size={14} className="text-red-400" />
-                <span className="text-sm text-red-400 font-medium">
+              <div className="flex items-center gap-1 bg-accent-500/20 px-2 py-1 rounded-full">
+                <Film size={14} className="text-accent-400" />
+                <span className="text-sm text-accent-400 font-medium">
                   {totalMovies}
                 </span>
               </div>
@@ -490,8 +490,8 @@ const CollectionListItem: React.FC<CollectionListItemProps> = React.memo(({
                 }}
                 className={`flex items-center gap-1 px-2 py-1 text-white text-xs rounded transition-colors ${
                   collectionsStatus[collection.id]?.favorites
-                    ? 'bg-red-700 hover:bg-red-800'
-                    : 'bg-red-600 hover:bg-red-700'
+                    ? 'bg-accent-700 hover:bg-accent-800'
+                    : 'bg-accent-600 hover:bg-accent-700'
                 }`}
               >
                 <Heart size={12} className={collectionsStatus[collection.id]?.favorites ? 'fill-current' : ''} />
@@ -1115,7 +1115,7 @@ const Collections: React.FC = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col items-center justify-center h-64">
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-red-500 mb-4 mx-auto"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-accent-500 mb-4 mx-auto"></div>
               <p className="text-gray-400 text-center">
                 {loadingProgress || t('collections.loadingCollections')}
               </p>
@@ -1145,8 +1145,8 @@ const Collections: React.FC = () => {
           className="w-full flex flex-col items-center justify-center text-center mb-16"
         >
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="mb-6">
-            <div className="inline-flex items-center justify-center p-3 bg-red-500/10 rounded-full mb-4 ring-1 ring-red-500/50">
-              <Film className="w-8 h-8 text-red-500" />
+            <div className="inline-flex items-center justify-center p-3 bg-accent-500/10 rounded-full mb-4 ring-1 ring-accent-500/50">
+              <Film className="w-8 h-8 text-accent-500" />
             </div>
             <h1 className="text-2xl lg:text-4xl font-bold leading-relaxed w-full xl:max-w-4xl text-center">
               {splitTextIntoWords(randomText).map((seg, i) =>
@@ -1177,7 +1177,7 @@ const Collections: React.FC = () => {
                 placeholder={t('collections.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-white placeholder:text-white/30 focus:outline-none focus:border-red-500/50 transition-all"
+                className="w-full pl-12 pr-4 py-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-white placeholder:text-white/30 focus:outline-none focus:border-accent-500/50 transition-all"
               />
             </div>
 
@@ -1187,7 +1187,7 @@ const Collections: React.FC = () => {
                 onClick={() => setDisplayMode('cards')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                   displayMode === 'cards'
-                    ? 'bg-red-500 text-white shadow-lg'
+                    ? 'bg-accent-500 text-white shadow-lg'
                     : 'text-gray-400 hover:text-white hover:bg-white/10'
                 }`}
                 title={t('search.gridView')}
@@ -1199,7 +1199,7 @@ const Collections: React.FC = () => {
                 onClick={() => setDisplayMode('list')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                   displayMode === 'list'
-                    ? 'bg-red-500 text-white shadow-lg'
+                    ? 'bg-accent-500 text-white shadow-lg'
                     : 'text-gray-400 hover:text-white hover:bg-white/10'
                 }`}
                 title={t('collections.modeList')}
@@ -1219,7 +1219,7 @@ const Collections: React.FC = () => {
               <Search size={24} />
               {t('collections.searchResultsTitle')}
               {searchLoading && (
-                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-red-500 ml-2"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-accent-500 ml-2"></div>
               )}
             </h2>
                           {searchResults.length > 0 ? (
@@ -1339,7 +1339,7 @@ const Collections: React.FC = () => {
                       <p className="text-gray-400 text-sm">
                         {t('collections.collectionsDiscovered', { count: filteredCollections.length })}
                         {hasMoreCollections && !loadingMore && (
-                          <span className="text-red-400 ml-2">{t('collections.moreToCome')}</span>
+                          <span className="text-accent-400 ml-2">{t('collections.moreToCome')}</span>
                         )}
                       </p>
                     </div>
@@ -1350,7 +1350,7 @@ const Collections: React.FC = () => {
                         <div className="inline-flex items-center gap-3 bg-gray-800/50 rounded-full px-6 py-3 border border-gray-700/50">
                           <div className="relative">
                             <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-600"></div>
-                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-red-500 absolute top-0 left-0"></div>
+                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-accent-500 absolute top-0 left-0"></div>
                           </div>
                           <span className="text-sm text-gray-300">{t('collections.discovering')}</span>
                         </div>

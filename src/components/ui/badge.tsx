@@ -13,7 +13,7 @@ const badgeVariants = cva(
                 not_found_recent: "bg-orange-950/80 text-orange-200 border border-orange-500/30 backdrop-blur-md",
                 searching: "bg-blue-950/80 text-blue-200 border border-blue-500/30 backdrop-blur-md",
                 added: "bg-green-950/80 text-green-200 border border-green-500/30 backdrop-blur-md",
-                rejected: "bg-red-950/80 text-red-200 border border-red-500/30 backdrop-blur-md",
+                rejected: "bg-accent-950/80 text-accent-200 border border-accent-500/30 backdrop-blur-md",
                 movie: "bg-blue-600/80 text-white backdrop-blur-md shadow-sm",
                 tv: "bg-purple-600/80 text-white backdrop-blur-md shadow-sm",
                 premium: "bg-gradient-to-r from-amber-600/80 to-orange-600/80 text-white border border-amber-500/30",

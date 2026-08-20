@@ -456,7 +456,7 @@ const CollectionDetails: React.FC = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center justify-center h-64">
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-red-500"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-accent-500"></div>
             </motion.div>
           </div>
         </div>
@@ -474,7 +474,7 @@ const CollectionDetails: React.FC = () => {
             <p className="text-gray-400 mb-8">{t('collections.notAvailable')}</p>
             <Link
               to="/collections"
-              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-accent-600 hover:bg-accent-700 px-6 py-3 rounded-lg transition-colors"
             >
               <ArrowLeft size={20} />
               {t('collections.backToCollections')}
@@ -592,7 +592,7 @@ const CollectionDetails: React.FC = () => {
                     onClick={toggleFavorites}
                     className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${
                       isInFavorites
-                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        ? 'bg-accent-600 text-white hover:bg-accent-700'
                         : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
                     }`}
                   >
@@ -631,7 +631,7 @@ const CollectionDetails: React.FC = () => {
                       onClick={() => setShowMoviesWithoutImages(!showMoviesWithoutImages)}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                         showMoviesWithoutImages 
-                          ? 'bg-red-600 text-white' 
+                          ? 'bg-accent-600 text-white' 
                           : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       }`}
                     >
@@ -648,7 +648,7 @@ const CollectionDetails: React.FC = () => {
                       onClick={() => setViewMode('grid')}
                       className={`p-2 rounded transition-colors ${
                         viewMode === 'grid' 
-                          ? 'bg-red-600 text-white' 
+                          ? 'bg-accent-600 text-white' 
                           : 'text-gray-400 hover:text-white'
                       }`}
                     >
@@ -658,7 +658,7 @@ const CollectionDetails: React.FC = () => {
                       onClick={() => setViewMode('list')}
                       className={`p-2 rounded transition-colors ${
                         viewMode === 'list' 
-                          ? 'bg-red-600 text-white' 
+                          ? 'bg-accent-600 text-white' 
                           : 'text-gray-400 hover:text-white'
                       }`}
                     >
@@ -674,7 +674,7 @@ const CollectionDetails: React.FC = () => {
                   {displayedMovies.map((movie, index) => (
                     <motion.div key={movie.id} variants={itemVariants}>
                     <div
-                      className="bg-white/[0.03] rounded-xl overflow-hidden border border-white/10 hover:border-red-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
+                      className="bg-white/[0.03] rounded-xl overflow-hidden border border-white/10 hover:border-accent-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
                     >
                       <Link to={`/movie/${encodeId(movie.id)}`} className="block">
                         <div className="relative">
@@ -697,7 +697,7 @@ const CollectionDetails: React.FC = () => {
                           
                           {/* Overlay avec indicateur cliquable */}
                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <div className="bg-red-600 hover:bg-red-700 rounded-full p-3 transition-colors">
+                            <div className="bg-accent-600 hover:bg-accent-700 rounded-full p-3 transition-colors">
                               <Info size={20} />
                             </div>
                           </div>
@@ -711,7 +711,7 @@ const CollectionDetails: React.FC = () => {
                           )}
 
                           {/* Numéro du film dans la série */}
-                          <div className="absolute top-4 left-4 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+                          <div className="absolute top-4 left-4 bg-accent-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                             {index + 1}
                           </div>
                         </div>
@@ -745,12 +745,12 @@ const CollectionDetails: React.FC = () => {
                   {displayedMovies.map((movie, index) => (
                     <motion.div key={movie.id} variants={itemVariants}>
                     <div
-                      className="bg-white/[0.03] rounded-xl border border-white/10 hover:border-red-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
+                      className="bg-white/[0.03] rounded-xl border border-white/10 hover:border-accent-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
                     >
                       <Link to={`/movie/${encodeId(movie.id)}`} className="block">
                         <div className="flex gap-4 p-4">
                           {/* Numéro */}
-                          <div className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          <div className="flex-shrink-0 w-8 h-8 bg-accent-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                             {index + 1}
                           </div>
 
@@ -802,7 +802,7 @@ const CollectionDetails: React.FC = () => {
 
                               {/* Indicateur cliquable */}
                               <div className="flex-shrink-0 ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="bg-red-600 hover:bg-red-700 rounded-full p-2 transition-colors">
+                                <div className="bg-accent-600 hover:bg-accent-700 rounded-full p-2 transition-colors">
                                   <Info size={16} />
                                 </div>
                               </div>
@@ -825,13 +825,13 @@ const CollectionDetails: React.FC = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="container mx-auto px-4 py-8 relative z-10">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold mb-8 flex items-center gap-3">
-              <TrendingUp className="text-red-500" />
+              <TrendingUp className="text-accent-500" />
               <ShinyText text={t('collections.globalStats')} speed={2} color="#ffffff" shineColor="#ef4444" />
             </h2>
             
             {loadingDetails ? (
               <div className="flex items-center justify-center h-32">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-red-500"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-500"></div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -908,10 +908,10 @@ const CollectionDetails: React.FC = () => {
                   <div className="col-span-full">
                     <AnimatedBorderCard highlightColor="239 68 68" backgroundColor="12 12 12" className="p-6">
                       <div className="flex items-center gap-3 mb-3">
-                        <TrendingUp className={collectionStats.profitMargin > 0 ? "text-green-400" : "text-red-400"} size={24} />
+                        <TrendingUp className={collectionStats.profitMargin > 0 ? "text-green-400" : "text-accent-400"} size={24} />
                         <h3 className="text-lg font-semibold">{t('collections.profitLoss')}</h3>
                       </div>
-                      <p className={`text-2xl font-bold ${collectionStats.profitMargin > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <p className={`text-2xl font-bold ${collectionStats.profitMargin > 0 ? 'text-green-400' : 'text-accent-400'}`}>
                         {new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(collectionStats.totalRevenue - collectionStats.totalBudget)}
                         <span className="ml-2 text-lg">
                           ({collectionStats.profitMargin > 0 ? '+' : ''}{collectionStats.profitMargin.toFixed(1)}%)
@@ -931,7 +931,7 @@ const CollectionDetails: React.FC = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="container mx-auto px-4 py-8 relative z-10">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold mb-8 flex items-center gap-3">
-              <Building className="text-red-500" />
+              <Building className="text-accent-500" />
               <ShinyText text={t('collections.productionInfo')} speed={2} color="#ffffff" shineColor="#ef4444" />
             </h2>
             
@@ -1032,14 +1032,14 @@ const CollectionDetails: React.FC = () => {
               
               {loadingSimilar ? (
                 <div className="flex items-center justify-center h-32">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-red-500"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-500"></div>
                 </div>
               ) : (
                 <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {similarCollections.map((similarCollection) => (
                     <motion.div key={similarCollection.id} variants={itemVariants}>
                     <div
-                      className="bg-white/[0.03] rounded-xl overflow-hidden border border-white/10 hover:border-red-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
+                      className="bg-white/[0.03] rounded-xl overflow-hidden border border-white/10 hover:border-accent-500/30 transition-all duration-300 group cursor-pointer hover:bg-white/[0.06]"
                     >
                       <Link to={`/collection/${similarCollection.id}`} className="block">
                         <div className="relative">
@@ -1155,8 +1155,8 @@ const CollectionDetails: React.FC = () => {
                               }}
                               className={`flex items-center gap-1 px-3 py-1.5 text-white text-xs rounded-lg transition-colors ${
                                 similarCollectionsStatus[similarCollection.id]?.favorites
-                                  ? 'bg-red-700 hover:bg-red-800'
-                                  : 'bg-red-600 hover:bg-red-700'
+                                  ? 'bg-accent-700 hover:bg-accent-800'
+                                  : 'bg-accent-600 hover:bg-accent-700'
                               }`}
                             >
                               <Heart size={14} className={similarCollectionsStatus[similarCollection.id]?.favorites ? 'fill-current' : ''} />

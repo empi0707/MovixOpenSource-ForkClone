@@ -9,8 +9,8 @@
             content="index, follow, noarchive, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
         />
         <meta name="google" content="notranslate" />
-        <meta name="apple-mobile-web-app-title" content="Movix" />
-        <meta name="application-name" content="Movix" />
+        <meta name="apple-mobile-web-app-title" content="Movix" id="meta-app-title" />
+        <meta name="application-name" content="Movix" id="meta-app-name" />
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="theme-color" content="#000000" />
         <meta
@@ -36,9 +36,9 @@
         />
 
         <!-- Icons -->
-        <link rel="icon" href="/movix.png" />
-        <link rel="icon" type="image/png" href="/movix.png" sizes="96x96" />
-        <link rel="icon" type="image/svg+xml" href="/movix.png" />
+        <link rel="icon" href="/movix.png" id="favicon-main" />
+        <link rel="icon" type="image/png" href="/movix.png" sizes="96x96" id="favicon-png" />
+        <link rel="icon" type="image/svg+xml" href="/movix.png" id="favicon-svg" />
         <link rel="shortcut icon" href="/movix.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/movix.png" />
         <link rel="manifest" href="/manifest.json" />
@@ -233,6 +233,39 @@
             gtag("js", new Date());
 
             gtag("config", "G-6Q3B4D5KQL");
+        </script>
+        <!-- Branding override: applique le nom/favicon depuis localStorage avant le premier rendu React -->
+        <script>
+          (function() {
+            try {
+              var raw = localStorage.getItem('branding_override');
+              if (!raw) return;
+              var b = JSON.parse(raw);
+              var DEFAULT = 'MOVIX';
+              var name = (b.siteName || '').trim() || DEFAULT;
+              var favicon = (b.faviconUrl || '').trim();
+
+              // Meta tags
+              if (name !== DEFAULT) {
+                var t = document.getElementById('meta-app-title');
+                if (t) t.setAttribute('content', name);
+                var a = document.getElementById('meta-app-name');
+                if (a) a.setAttribute('content', name);
+                var d = document.querySelector('meta[name="description"]');
+                if (d) d.setAttribute('content', d.getAttribute('content').replace(/Movix|MOVIX/g, name));
+              }
+
+              // Favicon
+              if (favicon) {
+                ['favicon-main','favicon-png','favicon-svg'].forEach(function(id) {
+                  var el = document.getElementById(id);
+                  if (el) el.setAttribute('href', favicon);
+                });
+                var apple = document.querySelector('link[rel="apple-touch-icon"]');
+                if (apple) apple.setAttribute('href', favicon);
+              }
+            } catch(e) {}
+          })();
         </script>
     </head>
     <body>

@@ -3,15 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigationType,
 import { Toaster } from './components/ui/sonner';
 import { TooltipProvider } from './components/ui/tooltip';
 import Header from './components/Header';
+import BrandingSync from './components/BrandingSync';
+import AdBanner from './components/AdBanner';
 import Home from './pages/Home';
 import DnsBlockBanner from './components/DnsBlockBanner';
-import { AdFreePopupProvider } from './context/AdFreePopupContext';
 import { SearchProvider } from './context/SearchContext';
-import { AuthProvider } from './context/AuthContext';
-import { AdWarningProvider } from './context/AdWarningContext';
-import { VipModalProvider } from './context/VipModalContext';
-import { ProfileProvider, useProfile } from './context/ProfileContext';
-import { TurnstileProvider } from './context/TurnstileContext';
 import { LightModeProvider, useLightMode } from './context/LightModeContext';
 
 import NotFound from './pages/NotFound';
@@ -20,9 +16,8 @@ import NotFound from './pages/NotFound';
 // importent déjà leur propre CSS s'ils sont réactivés un jour.
 import axios from 'axios';
 import Footer from './components/Footer';
-import { AlertService } from './services/alertService';
-import NotificationToast from './components/NotificationToast';
-import { NotificationData } from './types/alerts';
+// alertService removed
+// NotificationToast and NotificationData removed with alert system
 import RedirectPopup from './components/RedirectPopup';
 import { SITE_URL } from './config/runtime';
 import RequireUsernameChange from './components/RequireUsernameChange';
@@ -40,7 +35,7 @@ import i18n, { detectInitialLanguage } from './i18n';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { IntroProvider, useIntro } from './context/IntroContext';
-import { APRIL_FOOLS_ADMIN_PATH, isAprilFoolsAdminEnabled } from './utils/aprilFools';
+// aprilFools removed
 import {
   pushPriorityToExtension,
   subscribeToPriorityChanges,
@@ -122,94 +117,8 @@ const API_HOSTNAME = (() => {
   }
 })();
 
-// Component to manage episode alerts notifications
-const AlertNotificationManager: React.FC = () => {
-  const [notifications, setNotifications] = useState<NotificationData[]>([]);
-
-  // Function to check and display alerts
-  const checkAlerts = (forceCheck = false) => {
-    debugAppLog('Checking alerts...', forceCheck ? '(forced)' : '');
-
-    // Only proceed if it's time to check (unless forced)
-    if (!forceCheck && !AlertService.shouldRunCheck()) {
-      debugAppLog('Not time to check yet, skipping...');
-      return;
-    }
-
-    const { alertsToShow, alertsToRemove } = AlertService.checkAlertsToTrigger();
-
-    debugAppLog('Alerts to show:', alertsToShow);
-    debugAppLog('Alerts to remove:', alertsToRemove);
-
-    // Remove expired alerts
-    alertsToRemove.forEach(alertId => {
-      AlertService.removeAlert(alertId);
-    });
-
-    // Show new notifications and mark them as notified
-    if (alertsToShow.length > 0) {
-      // Double-check that none of the alerts are dismissed before showing
-      const validAlerts = alertsToShow.filter(alert => {
-        const alertData = AlertService.getAlert(alert.showId, alert.season, alert.episode);
-        return alertData && !alertData.dismissed;
-      });
-
-      if (validAlerts.length > 0) {
-        setNotifications(prev => [...prev, ...validAlerts]);
-        // Mark alerts as notified
-        validAlerts.forEach(alert => {
-          AlertService.markAsNotified(alert.id);
-        });
-      }
-    }
-
-    // Update last check time
-    AlertService.updateLastCheckTime();
-  };
-
-  useEffect(() => {
-    // Force check immediately on mount/refresh (regardless of last check time)
-    checkAlerts(true);
-
-    // Set up interval to check every 5 minutes after the initial check
-    const interval = setInterval(() => checkAlerts(false), 5 * 60 * 1000); // 5 minutes
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleDismissNotification = (notificationId: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    // Dismiss the alert permanently (only when user explicitly clicks "Ignorer")
-    AlertService.dismissAlert(notificationId);
-  };
-
-  const handleRemindLater = (notificationId: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    // Reset notification status so it can be shown again later
-    AlertService.resetNotificationStatus(notificationId);
-  };
-
-  const handleGoToShow = (showId: string, notificationId: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    // Mark as dismissed since user took action
-    AlertService.dismissAlert(notificationId);
-    window.location.href = `/tv/${showId}`;
-  };
-
-  return (
-    <>
-      {notifications.map(notification => (
-        <NotificationToast
-          key={notification.id}
-          notification={notification}
-          onDismiss={() => handleDismissNotification(notification.id)}
-          onGoToShow={() => handleGoToShow(notification.showId, notification.id)}
-          onRemindLater={() => handleRemindLater(notification.id)}
-        />
-      ))}
-    </>
-  );
-};
+// AlertNotificationManager removed — alert system disabled
+const AlertNotificationManager: React.FC = () => null;
 
 // Helper function to detect iOS standalone mode (added to home screen)
 const isInStandaloneMode = () => {
@@ -458,34 +367,15 @@ const IOSHomeScreenHandler = () => {
 };
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const isDiscordAuth = localStorage.getItem('discord_auth') === 'true';
-  const isGoogleAuth = localStorage.getItem('google_auth') === 'true';
-  const isBip39Auth = localStorage.getItem('bip39_auth') === 'true';
-  const isVipUser = localStorage.getItem('is_vip') === 'true';
-
-  // Vérifier l'ancienne méthode d'authentification VIP (pour compatibilité)
-  let isVipAuth = false;
-  const authStr = localStorage.getItem('auth');
-  if (authStr) {
-    try {
-      const authObj = JSON.parse(authStr);
-      if (authObj.userProfile && authObj.userProfile.provider === 'access_code') {
-        isVipAuth = true;
-      }
-    } catch { }
-  }
-
-  const isAuthenticated = isDiscordAuth || isGoogleAuth || isBip39Auth || isVipAuth || isVipUser;
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  const isAuthenticated = localStorage.getItem('bip39_auth') === 'true';
+  return isAuthenticated ? children : <Navigate to="/login-bip39" />;
 };
 
 // Pages secondaires lazy-ifiées (perf) : elles étaient importées eagerly et ajoutaient
 // ~80 Ko de source au chunk d'entrée payé par tous les visiteurs. Déclarées au niveau
 // module pour garder une identité stable entre les renders.
-const CreateAccountLazy = lazy(() => import('./pages/CreateAccount'));
 const LoginBip39Lazy = lazy(() => import('./pages/LoginBip39'));
-const ProfileSelectionLazy = lazy(() => import('./pages/ProfileSelection'));
-const AprilFoolsAdminPageLazy = lazy(() => import('./pages/AprilFoolsAdminPage'));
+// CreateAccount, ProfileSelection, AprilFoolsAdminPage removed
 // IntroAnimation (~38 Ko) est opt-in et off par défaut : chunk séparé (perf)
 const IntroAnimationLazy = lazy(() => import('./components/IntroAnimation'));
 
@@ -572,7 +462,7 @@ const PersistenceManager = () => {
   }, []);
 
   // Check if we're on a watch route - if so, disable initial data loading but allow sync
-  const isWatchRoute = location.pathname.startsWith('/watch/') || location.pathname.startsWith('/watchparty/room/');
+  const isWatchRoute = location.pathname.startsWith('/watch/');
 
   // Store current user info in a ref to track changes
   const currentUserInfo = React.useRef<{ type: string | null, id: string | null }>(
@@ -1576,7 +1466,7 @@ const DefaultProfileNudge: React.FC = () => {
           <div className="bg-gray-900/95 backdrop-blur-md border border-gray-700/80 rounded-2xl shadow-2xl overflow-hidden">
             <div className="p-4">
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-red-500/50 flex-shrink-0">
+                <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-accent-500/50 flex-shrink-0">
                   <img
                     src="/avatars/disney/disney_avatar_1.png"
                     alt=""
@@ -1593,7 +1483,7 @@ const DefaultProfileNudge: React.FC = () => {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleCustomize}
-                  className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors"
+                  className="flex-1 px-3 py-2 bg-accent-600 hover:bg-accent-700 text-white text-xs font-medium rounded-lg transition-colors"
                 >
                   {t('profile.defaultProfileNudgeCta')}
                 </motion.button>
@@ -1615,95 +1505,8 @@ const DefaultProfileNudge: React.FC = () => {
 };
 
 // Profile Gate Component - checks if user needs to select a profile
+// Profile system removed — ProfileGate is now a passthrough
 const ProfileGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { currentProfile, profiles, isLoading } = useProfile();
-  const location = useLocation();
-  const [loadingTimedOut, setLoadingTimedOut] = React.useState(false);
-
-  // Skip profile gate on watch routes and BIP39 link flows
-  const isWatchRoute = location.pathname.startsWith('/watch/');
-  const isBip39LinkRoute = location.pathname.startsWith('/link-bip39');
-  const isOauthAuthorizeRoute = location.pathname.startsWith('/oauth/authorize');
-
-  // Check if user is authenticated
-  const isDiscordAuth = localStorage.getItem('discord_auth') === 'true';
-  const isGoogleAuth = localStorage.getItem('google_auth') === 'true';
-  const isBip39Auth = localStorage.getItem('bip39_auth') === 'true';
-  const isVipUser = localStorage.getItem('is_vip') === 'true';
-
-  // Vérifier l'ancienne méthode d'authentification VIP (pour compatibilité)
-  let isVipAuth = false;
-  const authStr = localStorage.getItem('auth');
-  if (authStr) {
-    try {
-      const authObj = JSON.parse(authStr);
-      if (authObj.userProfile && authObj.userProfile.provider === 'access_code') {
-        isVipAuth = true;
-      }
-    } catch { }
-  }
-
-  const isAuthenticated = isDiscordAuth || isGoogleAuth || isBip39Auth || isVipAuth || isVipUser;
-
-  // Timeout mechanism: if loading takes more than 5 seconds, continue without profiles
-  React.useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    if (isLoading || (profiles.length === 0 && isAuthenticated && !loadingTimedOut)) {
-      timeoutId = setTimeout(() => {
-        console.warn('ProfileGate: Loading timeout reached (5s), continuing without profile data');
-        setLoadingTimedOut(true);
-      }, 5000);
-    }
-
-    // Reset timeout state when loading completes successfully
-    if (!isLoading && profiles.length > 0) {
-      setLoadingTimedOut(false);
-    }
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [isLoading, profiles.length, isAuthenticated, loadingTimedOut]);
-
-  // Don't show profile gate for non-authenticated users, VIP users, watch routes, or BIP39 link flows
-  if (!isAuthenticated || isVipUser || isVipAuth || isWatchRoute || isBip39LinkRoute || isOauthAuthorizeRoute) {
-    if (isWatchRoute || isBip39LinkRoute || isOauthAuthorizeRoute) {
-      debugAppLog('ProfileGate: Skipping profile gate for route:', location.pathname);
-    }
-    return <>{children}</>;
-  }
-
-  // If loading timed out, continue without profile data
-  if (loadingTimedOut) {
-    debugAppLog('ProfileGate: Timeout reached, skipping profile gate');
-    return <>{children}</>;
-  }
-
-  // Show loading while profiles are being loaded or created
-  if (isLoading || (profiles.length === 0 && isAuthenticated)) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-          <p className="text-white">{i18n.t('profile.loadingProfiles')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // If no profiles exist or no profile is selected, show profile selection
-  if (profiles.length === 0 || !currentProfile) {
-    return (
-      <Suspense fallback={null}>
-        <ProfileSelectionLazy />
-      </Suspense>
-    );
-  }
-
-  // User has selected a profile, show the app
   return <>{children}</>;
 };
 
@@ -1713,7 +1516,7 @@ const AppWithIntro: React.FC = () => {
   const { showIntro, completeIntro } = useIntro();
 
   // Détecter si on est sur une route /watch ou la page 404
-  const isWatchRoute = location.pathname.startsWith('/watch/') || location.pathname.startsWith('/watchparty/room/') || location.pathname.startsWith('/ftv/watch/');
+  const isWatchRoute = location.pathname.startsWith('/watch/') || location.pathname.startsWith('/ftv/watch/');
   const isScreensaverDisabledRoute = isWatchRoute || location.pathname.startsWith('/live-tv');
 
   // Screensaver logic
@@ -1744,9 +1547,8 @@ const AppWithIntro: React.FC = () => {
     currentPath === '/anime' ||
     currentPath === '/tv-shows' ||
     currentPath.startsWith('/provider/');
-  const isWrappedRoute = currentPath === '/wrapped' || currentPath.startsWith('/wrapped/');
-  const shouldShowHeader = !isWatchRoute && !isWrappedRoute;
-  const isAprilFoolsAdminRouteEnabled = isAprilFoolsAdminEnabled(location.search);
+  const shouldShowHeader = !isWatchRoute;
+  // isAprilFoolsAdminRouteEnabled removed
   const isNoFooterPage = isWatchRoute;
   React.useEffect(() => {
     // Masquer le footer uniquement sur les routes lecteur
@@ -1764,19 +1566,10 @@ const AppWithIntro: React.FC = () => {
     };
   }, [isNoFooterPage]);
 
-  // Apply profile page styles
+  // Apply profile page styles (no profile pages remain — cleanup only)
   React.useEffect(() => {
-    const isProfilePage = currentPath === '/profile-selection' || currentPath === '/profile-management';
-
-    if (isProfilePage) {
-      document.body.classList.add('profile-page');
-      document.documentElement.classList.add('profile-page');
-    } else {
-      document.body.classList.remove('profile-page');
-      document.documentElement.classList.remove('profile-page');
-    }
-
-    // Cleanup
+    document.body.classList.remove('profile-page');
+    document.documentElement.classList.remove('profile-page');
     return () => {
       document.body.classList.remove('profile-page');
       document.documentElement.classList.remove('profile-page');
@@ -1877,25 +1670,13 @@ const AppWithIntro: React.FC = () => {
       <PersistenceManager />
       <div className={shouldShowHeader && !isHeroHeaderPage ? 'pt-20' : ''}>
         <AlertNotificationManager />
-        <DefaultProfileNudge />
-        <ProfileGate>
-          <Routes>
+        <Routes>
             {/* Eager — landing page, kept in main bundle */}
             <Route path="/" element={<Home />} />
 
-            {/* Routes spéciales avec props ou logique conditionnelle — lazy (perf) */}
+            {/* Admin BIP39 login only */}
             <Route path="/login-bip39" element={<DelayedSuspense fallback={<RouteProgressBar />}><LoginBip39Lazy /></DelayedSuspense>} />
-            <Route path="/create-account" element={<DelayedSuspense fallback={<RouteProgressBar />}><CreateAccountLazy /></DelayedSuspense>} />
-            <Route path="/link-bip39" element={<DelayedSuspense fallback={<RouteProgressBar />}><LoginBip39Lazy mode="link" /></DelayedSuspense>} />
-            <Route path="/link-bip39/create" element={<DelayedSuspense fallback={<RouteProgressBar />}><CreateAccountLazy mode="link" /></DelayedSuspense>} />
             <Route path="/terms" element={<Navigate to="/terms-of-service" replace />} />
-            <Route path="/profile-selection" element={<DelayedSuspense fallback={<RouteProgressBar />}><ProfileSelectionLazy /></DelayedSuspense>} />
-            <Route
-              path={APRIL_FOOLS_ADMIN_PATH}
-              element={isAprilFoolsAdminRouteEnabled
-                ? <DelayedSuspense fallback={<RouteProgressBar />}><AprilFoolsAdminPageLazy /></DelayedSuspense>
-                : <Navigate to="/" replace />}
-            />
 
             {/* Toutes les autres routes — depuis le registry */}
             {ROUTES.map(renderRouteEntry)}
@@ -1903,7 +1684,6 @@ const AppWithIntro: React.FC = () => {
             {/* 404 — eager (frequently entered cold) */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </ProfileGate>
         {!isWatchRoute && <Footer />}
       </div>
 
@@ -1925,7 +1705,7 @@ const MAINTENANCE_MODE = false; // Mettre à `false` pour désactiver le mode ma
 const EmbedBlockPage = () => (
   <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4 text-center sm:p-6 lg:p-8">
     <h1 className="text-4xl font-bold mb-4 sm:text-5xl lg:text-6xl">{i18n.t('embed.blocked')}</h1>
-    <div className="border-2 border-red-700 bg-red-950/60 rounded-lg p-6 max-w-md w-full shadow-lg sm:max-w-lg lg:max-w-2xl">
+    <div className="border-2 border-accent-700 bg-accent-950/60 rounded-lg p-6 max-w-md w-full shadow-lg sm:max-w-lg lg:max-w-2xl">
       <h2 className="text-2xl font-semibold mb-3 sm:text-3xl lg:text-4xl">{i18n.t('embed.unauthorized')}</h2>
       <p className="text-base mb-4 sm:text-lg lg:text-xl">
         {i18n.t('embed.message')}
@@ -1945,7 +1725,7 @@ const EmbedBlockPage = () => (
 const MaintenancePage = ({ onContinue }: { onContinue: () => void }) => (
   <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4 text-center sm:p-6 lg:p-8">
     <h1 className="text-4xl font-bold mb-4 sm:text-5xl lg:text-6xl">{i18n.t('maintenance.title')}</h1>
-    <div className="border-2 border-red-700 bg-red-950/60 rounded-lg p-6 max-w-md w-full shadow-lg sm:max-w-lg lg:max-w-2xl">
+    <div className="border-2 border-accent-700 bg-accent-950/60 rounded-lg p-6 max-w-md w-full shadow-lg sm:max-w-lg lg:max-w-2xl">
       <h2 className="text-2xl font-semibold mb-3 sm:text-3xl lg:text-4xl">{i18n.t('maintenance.subtitle')}</h2>
       <p className="text-base mb-4 sm:text-lg lg:text-xl">
         {i18n.t('maintenance.message')}
@@ -2001,26 +1781,16 @@ function App() {
       <LightModeProvider>
       <AnimationMotionConfig>
       <SearchProvider>
-        <AdFreePopupProvider>
-          <AuthProvider>
-            <AdWarningProvider>
-              <VipModalProvider>
-                <ProfileProvider>
-                  <TurnstileProvider>
-                    <IntroProvider>
-                      <IOSHomeScreenHandler />
-                      <AppWithIntro />
-                      <TopProgressBar />
-                      <Toaster position="bottom-right" richColors />
-                      <DnsBlockBanner />
-                      <RequireUsernameChange />
-                    </IntroProvider>
-                  </TurnstileProvider>
-                </ProfileProvider>
-              </VipModalProvider>
-            </AdWarningProvider>
-          </AuthProvider>
-        </AdFreePopupProvider>
+        <IntroProvider>
+          <IOSHomeScreenHandler />
+          <BrandingSync />
+          <AdBanner />
+          <AppWithIntro />
+          <TopProgressBar />
+          <Toaster position="bottom-right" richColors />
+          <DnsBlockBanner />
+          <RequireUsernameChange />
+        </IntroProvider>
       </SearchProvider>
       </AnimationMotionConfig>
       </LightModeProvider>

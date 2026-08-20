@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ThumbsUp, ThumbsDown, CheckCircle2, Loader2 } from 'lucide-react';
 import TurnstileWidget from './TurnstileWidget';
-import { submitHelpFeedback } from '../services/helpFeedbackService';
+// helpFeedbackService removed — stub
+const submitHelpFeedback = async (_slug: string, _vote: string, _token: string) => ({ success: false });
 
 const STORAGE_PREFIX = 'help_feedback_sent:';
 
@@ -112,8 +113,8 @@ const TutoFeedback: React.FC<TutoFeedbackProps> = ({ slug }) => {
                 aria-pressed={pendingVote === 'down'}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   pendingVote === 'down'
-                    ? 'border-red-500/60 bg-red-500/15 text-red-300'
-                    : 'border-white/15 bg-white/5 text-zinc-300 hover:border-red-500/40 hover:text-red-300'
+                    ? 'border-accent-500/60 bg-accent-500/15 text-accent-300'
+                    : 'border-white/15 bg-white/5 text-zinc-300 hover:border-accent-500/40 hover:text-accent-300'
                 }`}
               >
                 <ThumbsDown className="w-4 h-4" aria-hidden="true" />
@@ -131,7 +132,7 @@ const TutoFeedback: React.FC<TutoFeedbackProps> = ({ slug }) => {
                 type="button"
                 onClick={submit}
                 disabled={!pendingVote || !turnstileToken || submitting}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-500 hover:bg-accent-600 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors"
               >
                 {submitting && (
                   <Loader2
@@ -141,7 +142,7 @@ const TutoFeedback: React.FC<TutoFeedbackProps> = ({ slug }) => {
                 )}
                 {t('help.feedback.submit')}
               </button>
-              {error && <p className="text-sm text-red-400">{error}</p>}
+              {error && <p className="text-sm text-accent-400">{error}</p>}
             </div>
           </motion.div>
         )}

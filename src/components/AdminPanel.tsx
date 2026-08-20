@@ -94,7 +94,7 @@ const AdminPanel: React.FC = () => {
       >
         <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
           <div className="flex items-center justify-center mb-8">
-            <Lock className="w-12 h-12 text-red-600" />
+            <Lock className="w-12 h-12 text-accent-600" />
           </div>
           <h2 className="text-2xl font-bold text-center mb-8 text-white">{t('admin.adminPanel')}</h2>
           <form onSubmit={handleLogin} className="space-y-6">
@@ -116,10 +116,10 @@ const AdminPanel: React.FC = () => {
                 className="w-full p-3 bg-gray-700 rounded-lg text-white"
               />
             </div>
-            {error && <p className="text-red-500 text-center">{error}</p>}
+            {error && <p className="text-accent-500 text-center">{error}</p>}
             <button
               type="submit"
-              className="w-full bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 transition-colors"
+              className="w-full bg-accent-600 text-white p-3 rounded-lg hover:bg-accent-700 transition-colors"
             >
               {t('admin.connection')}
             </button>
@@ -155,10 +155,10 @@ const AdminPanel: React.FC = () => {
               onChange={(e) => setNewLink(e.target.value)}
               className="w-full p-3 bg-gray-700 rounded-lg text-white"
             />
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="text-accent-500">{error}</p>}
             <button
               onClick={handleAddLink}
-              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+              className="bg-accent-600 text-white px-6 py-3 rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               {t('admin.add')}
@@ -175,7 +175,7 @@ const AdminPanel: React.FC = () => {
                 className="flex items-center justify-between bg-gray-700 p-4 rounded-lg"
               >
                 <div className="flex items-center gap-4">
-                  <Film className="w-5 h-5 text-red-600" />
+                  <Film className="w-5 h-5 text-accent-600" />
                   <div>
                     <p className="text-white font-medium">ID: {link.movieId}</p>
                     <p className="text-gray-400 text-sm">{link.secondaryLink}</p>
@@ -183,7 +183,7 @@ const AdminPanel: React.FC = () => {
                 </div>
                 <button
                   onClick={() => handleDeleteLink(link.movieId)}
-                  className="text-red-500 hover:text-red-600 transition-colors"
+                  className="text-accent-500 hover:text-accent-600 transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>

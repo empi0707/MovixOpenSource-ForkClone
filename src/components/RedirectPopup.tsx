@@ -62,7 +62,7 @@ const RedirectPopup: React.FC<RedirectPopupProps> = ({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border-2 border-red-600"
+            className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border-2 border-accent-600"
           >
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
@@ -80,10 +80,10 @@ const RedirectPopup: React.FC<RedirectPopupProps> = ({
             {/* Content */}
             <div className="text-center">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-red-500 mb-4">
+                <h2 className="text-2xl font-bold text-accent-500 mb-4">
                   {t('redirect.ourNewAddress')}
                 </h2>
-                <div className="bg-red-600/20 border-2 border-red-500 rounded-lg p-4 mb-4">
+                <div className="bg-accent-600/20 border-2 border-accent-500 rounded-lg p-4 mb-4">
                   <p className="text-3xl font-bold text-white">{DEFAULT_PUBLIC_DOMAIN}</p>
                 </div>
                 <p className="text-gray-300 text-sm">

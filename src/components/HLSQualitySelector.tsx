@@ -30,7 +30,7 @@ export function HLSQualitySelector({
     <section className="mb-5 rounded-xl border border-white/10 bg-white/[0.04] p-3">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2 text-sm font-medium text-white">
-          <Gauge className="h-4 w-4 shrink-0 text-red-400" aria-hidden="true" />
+          <Gauge className="h-4 w-4 shrink-0 text-accent-400" aria-hidden="true" />
           <span className="truncate">{title}</span>
         </div>
         {effectiveHeight ? (
@@ -53,9 +53,9 @@ export function HLSQualitySelector({
               aria-pressed={active}
               onClick={() => onSelect(choice.value)}
               className={[
-                'min-h-11 rounded-lg border px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
+                'min-h-11 rounded-lg border px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
                 active
-                  ? 'border-red-500 bg-red-600 text-white'
+                  ? 'border-accent-500 bg-accent-600 text-white'
                   : 'border-white/10 bg-black/30 text-gray-300 hover:border-white/25 hover:text-white',
               ].join(' ')}
             >

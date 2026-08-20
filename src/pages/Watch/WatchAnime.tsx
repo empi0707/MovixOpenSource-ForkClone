@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useAdFreePopup } from '../../context/AdFreePopupContext';
+import { useProfile } from '../../context/ProfileContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -7,7 +9,6 @@ import useWatchStatus from '../../hooks/useWatchStatus';
 import { searchWithFallback, getSearchNameForId, getAnimeMatcherForId, getAnimeMatchTerms } from '../../utils/searchUtils';
 import { getTmdbId, encodeId } from '../../utils/idEncoder';
 import HLSPlayer from '../../components/HLSPlayer';
-import { useAdFreePopup } from '../../context/AdFreePopupContext';
 import AdFreePlayerAds from '../../components/AdFreePlayerAds';
 import { extractVidmolyM3u8, extractSibnetM3u8, extractOneUploadSources } from '../../utils/extractM3u8';
 import { pickAutoSelectedLanguage, sortHostersByPriority } from '../../utils/sourceAutoSelect';
@@ -21,7 +22,6 @@ import {
 import { PinButton } from '../../components/ui/PinButton';
 import { useWrappedTracker } from '../../hooks/useWrappedTracker';
 import { getTmdbLanguage } from '../../i18n';
-import { useProfile } from '../../context/ProfileContext';
 import { isContentAllowed, getClassificationLabel } from '../../utils/certificationUtils';
 import {
   createHlsAutoFallbackGuard,
@@ -1196,8 +1196,8 @@ const WatchAnime: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 bg-accent-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
@@ -1207,7 +1207,7 @@ const WatchAnime: React.FC = () => {
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+            className="px-6 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
           >
             {t('details.goBack')}
           </button>
@@ -1332,7 +1332,7 @@ const WatchAnime: React.FC = () => {
       ) : error ? (
         <div className="flex items-center justify-center h-full">
           <div className="max-w-2xl mx-auto bg-gray-800 p-8 rounded-xl shadow-2xl">
-            <h2 className="text-2xl font-bold text-red-500 mb-4">{t('watch.errorTitle')}</h2>
+            <h2 className="text-2xl font-bold text-accent-500 mb-4">{t('watch.errorTitle')}</h2>
             <p className="text-lg mb-6">{error}</p>
 
             {animeData && (
@@ -1546,7 +1546,7 @@ const WatchAnime: React.FC = () => {
                                 setShowSeasonDropdown(false); // Close dropdown on selection
                               }}
                               className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${displayedSeasonNumber === index + 1
-                                ? 'bg-red-800/50 text-red-100 font-semibold'
+                                ? 'bg-accent-800/50 text-accent-100 font-semibold'
                                 : 'text-gray-200 hover:bg-gray-700/50'
                                 }`}
                             >
@@ -1581,7 +1581,7 @@ const WatchAnime: React.FC = () => {
                           setShowEpisodesMenu(false);
                         }}
                         className={`flex items-start gap-3 p-2 rounded-lg transition-colors ${Number(episode) === index + 1 && displayedSeasonNumber === Number(season) // Highlight only if season and episode match URL
-                          ? 'bg-red-900/30 border border-red-800/50'
+                          ? 'bg-accent-900/30 border border-accent-800/50'
                           : 'hover:bg-gray-800/50'
                           }`}
                       >
@@ -1605,7 +1605,7 @@ const WatchAnime: React.FC = () => {
               onClick={() => setShowEmbedQuality(true)}
               className="fixed top-16 right-4 z-[10000] flex items-center gap-2 px-4 py-2 rounded-lg bg-black/90 border border-gray-700 hover:bg-gray-800/80 text-white font-medium text-sm transition-all duration-200"
             >
-              <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+              <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
               <span>{t('watch.sources')}</span>
             </button>
           )}
@@ -1627,7 +1627,7 @@ const WatchAnime: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.sourcesAndLanguages')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -1656,7 +1656,7 @@ const WatchAnime: React.FC = () => {
                             <div
                               key={lang}
                               className={`relative flex items-center rounded-lg transition-all duration-200 ${selectedLanguage === lang
-                                ? 'bg-gray-800 border-l-4 border-red-600 pl-3 font-medium'
+                                ? 'bg-gray-800 border-l-4 border-accent-600 pl-3 font-medium'
                                 : 'bg-gray-900/60 hover:bg-gray-800/80 text-gray-200 hover:text-white'
                                 }`}
                             >
@@ -1684,7 +1684,7 @@ const WatchAnime: React.FC = () => {
                     {/* Source Selector */}
                     <div className="mb-6">
                       <h4 className="text-white text-md font-semibold mb-3 flex items-center">
-                        <svg className="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 mr-2 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -1693,10 +1693,10 @@ const WatchAnime: React.FC = () => {
 
                       {/* Current Selected Source Info */}
                       {selectedSource && (
-                        <div className="bg-gray-800/60 rounded-lg p-3 mb-4 border-l-4 border-red-600">
+                        <div className="bg-gray-800/60 rounded-lg p-3 mb-4 border-l-4 border-accent-600">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-red-400 text-sm font-medium">{t('watch.currentSource')}</p>
+                              <p className="text-accent-400 text-sm font-medium">{t('watch.currentSource')}</p>
                               <p className="text-white font-semibold">
                                 {selectedSource.player}
                               </p>
@@ -1730,12 +1730,12 @@ const WatchAnime: React.FC = () => {
                               }}
                               onClick={() => handleSelectSource(source)}
                               className={`w-full px-4 py-3 text-sm text-left hover:bg-gray-800/80 rounded-lg mb-2 flex justify-between items-center ${selectedSource?.id === source.id
-                                ? 'bg-gray-800 border-l-4 border-red-600 pl-3'
+                                ? 'bg-gray-800 border-l-4 border-accent-600 pl-3'
                                 : 'bg-gray-900/60 text-white'
                                 }`}
                             >
                               <div className="flex flex-col">
-                                <span className={selectedSource?.id === source.id ? 'text-red-600 font-medium' : 'text-white'}>
+                                <span className={selectedSource?.id === source.id ? 'text-accent-600 font-medium' : 'text-white'}>
                                   {source.player}
                                 </span>
                                 <span className="text-xs text-gray-400">
@@ -1744,7 +1744,7 @@ const WatchAnime: React.FC = () => {
                                 </span>
                               </div>
                               {selectedSource?.id === source.id && (
-                                <span className="text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.active')}</span>
+                                <span className="text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>
                               )}
                             </motion.button>
                           ))}

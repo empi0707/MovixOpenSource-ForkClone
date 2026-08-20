@@ -240,7 +240,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .video-controls-button:hover {
-  @apply bg-red-600/20 transform scale-110;
+  @apply bg-accent-600/20 transform scale-110;
 }
 
 .progress-bar {

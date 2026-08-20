@@ -58,7 +58,7 @@ const CustomLists: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowNewListInput(true)}
-          className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+          className="flex items-center gap-2 bg-accent-600 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
           {t('lists.createList')}
@@ -109,7 +109,7 @@ const CustomLists: React.FC = () => {
               <h3 className="font-semibold">{list.name}</h3>
               <button
                 onClick={() => handleDeleteList(list.id)}
-                className="text-red-500 hover:text-red-600"
+                className="text-accent-500 hover:text-accent-600"
               >
                 <Trash2 className="w-4 h-4" />
               </button>

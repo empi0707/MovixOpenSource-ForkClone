@@ -15,6 +15,7 @@ const { getRedis } = require('../config/redis');
 const { fetchTmdbDetails } = require('../utils/tmdbCache');
 const {
   CACHE_DIR,
+  safeSerialize,
   generateFStreamCacheKey,
   getFStreamFromCache,
   saveFStreamToCache,
@@ -1012,6 +1013,56 @@ async function fetchMoviePlayersFromApi(pageUrl) {
   }
 
   if (lastError) console.error(`[FStream] API film_api: tous les proxies ont echoue. Derniere erreur: ${lastError.message}`);
+
+  // Dernier recours : appel direct sans proxy
+  try {
+    console.log(`[FStream] API film_api: tentative directe sans proxy pour ${apiUrl}`);
+    const directResponse = await axios({
+      method: 'get',
+      url: apiUrl,
+      timeout: 10000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Referer': pageUrl,
+        'Accept': 'application/json, text/plain, */*',
+        'Cookie': buildFStreamCookieHeader()
+      }
+    });
+    if (directResponse.status === 200 && directResponse.data) {
+      const data = typeof directResponse.data === 'string' ? JSON.parse(directResponse.data) : directResponse.data;
+      if (data && data.players && typeof data.players === 'object') {
+        const versionMap = { 'default': 'Default', 'vf': 'VF', 'vfq': 'VFQ', 'vff': 'VFF', 'vostfr': 'VOSTFR' };
+        const players = [];
+        for (const [provider, versions] of Object.entries(data.players)) {
+          if (!versions || typeof versions !== 'object') continue;
+          for (const [versionKey, url] of Object.entries(versions)) {
+            if (!url || typeof url !== 'string') continue;
+            let finalUrl = url;
+            if (provider === 'netu' && !url.startsWith('http')) finalUrl = `https://www.fembed.com/v/${url}`;
+            if (!finalUrl.startsWith('http')) continue;
+            let displayName = provider;
+            if (provider === 'premium') displayName = 'Premium';
+            else if (provider === 'vidzy') displayName = 'Vidzy';
+            else if (provider === 'uqload') displayName = 'Uqload';
+            else if (provider === 'netu') displayName = 'Netu';
+            else if (provider === 'voe') displayName = 'Voe';
+            else if (provider === 'dood') displayName = 'Dood';
+            else if (provider === 'filmoon') displayName = 'Filmoon';
+            else displayName = provider.charAt(0).toUpperCase() + provider.slice(1);
+            const version = versionMap[versionKey] || versionKey.toUpperCase();
+            players.push({ url: finalUrl, type: 'embed', quality: 'HD', player: displayName, version });
+          }
+        }
+        if (players.length > 0) {
+          console.log(`[FStream] API film_api: ${players.length} lecteurs trouvés via appel direct`);
+          return players;
+        }
+      }
+    }
+  } catch (directError) {
+    console.error(`[FStream] API film_api: appel direct aussi echoue: ${directError.message}`);
+  }
+
   return null;
 }
 
@@ -1666,7 +1717,10 @@ router.get('/movie/:id', async (req, res) => {
 
       const players = await getMoviePlayersForUrl(bestResult.link);
       if (players.total === 0) {
-        return res.status(404).json({ error: 'Aucun lecteur video trouve', searchQuery, bestResult: bestResult.title });
+        const noPlayersErr = new Error('Aucun lecteur video trouve');
+        noPlayersErr.httpStatus = 404;
+        noPlayersErr.httpPayload = { error: 'Aucun lecteur video trouve', searchQuery, bestResult: bestResult.title };
+        throw noPlayersErr;
       }
 
       return {
@@ -1677,11 +1731,16 @@ router.get('/movie/:id', async (req, res) => {
       };
     });
 
-    await saveFStreamToCache(cacheKey, result);
-    res.status(200).json(result);
+    const safeResult = safeSerialize(result);
+    await saveFStreamToCache(cacheKey, safeResult);
+    res.status(200).json(safeResult);
 
   } catch (error) {
-    console.error(`[FSTREAM MOVIE] Erreur: ${error.message}`);
+    if (error.httpStatus && error.httpPayload) {
+      return res.status(error.httpStatus).json(error.httpPayload);
+    }
+    if (res.headersSent) return;
+    console.error(`[FSTREAM MOVIE] Erreur: ${error.message}\n${error.stack}`);
     const errorResult = { success: false, error: 'Erreur lors de la recuperation des sources FStream', message: error.message, timestamp: new Date().toISOString() };
     await saveFStreamToCache(cacheKey, errorResult);
     res.status(500).json(errorResult);
@@ -2075,10 +2134,12 @@ router.get('/tv/:id/season/:season', async (req, res) => {
       };
     });
 
-    await saveFStreamToCache(cacheKey, result);
-    res.status(200).json(result);
+    const safeResult = safeSerialize(result);
+    await saveFStreamToCache(cacheKey, safeResult);
+    res.status(200).json(safeResult);
 
   } catch (error) {
+    if (res.headersSent) return;
     console.error(`[FSTREAM TV] Erreur: ${error.message}`);
     const errorResult = { success: false, error: 'Erreur lors de la recuperation des sources FStream', message: error.message, timestamp: new Date().toISOString() };
     await saveFStreamToCache(cacheKey, errorResult);

@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useAdFreePopup } from '../context/AdFreePopupContext';
+import { useProfile } from '../context/ProfileContext';
 import { getFrembedBase } from '../utils/frembedConfig';
 import { useParams, useNavigate } from 'react-router-dom';
 import { PrefetchLink as Link } from '@/routing/PrefetchLink';
@@ -11,19 +13,17 @@ import DetailsSkeleton from '../components/skeletons/DetailsSkeleton';
 
 import ShareButtons from '../components/ShareButtons';
 import HLSPlayer from '../components/HLSPlayer';
-import { useAdFreePopup } from '../context/AdFreePopupContext';
 import AdFreePlayerAds from '../components/AdFreePlayerAds';
 import EmblaCarousel from '../components/EmblaCarousel';
 import { encodeId, getTmdbId } from '../utils/idEncoder';
-import CommentsSection from '../components/CommentsSection';
 import LikeDislikeButton from '../components/LikeDislikeButton';
 import { useWrappedTracker } from '../hooks/useWrappedTracker';
 import { buildSiteUrl } from '../config/runtime';
+import { BRANDING } from '../config/branding';
 import LazySection from '../components/LazySection';
 import SEO from '../components/SEO';
 import { getTmdbLanguage } from '../i18n';
 import i18n from '../i18n';
-import { useProfile } from '../context/ProfileContext';
 import { getClassificationLabel as getClassificationLabelUtil, isContentAllowed } from '../utils/certificationUtils';
 
 const MAIN_API = import.meta.env.VITE_MAIN_API;
@@ -546,14 +546,14 @@ const ImagesSection = ({ movieId, images, loading }: { movieId: string; images: 
                         role="tab"
                         aria-selected={isActive}
                         onClick={() => setSelectedCategory(category)}
-                        className={`relative flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 ${
+                        className={`relative flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/60 ${
                           isActive ? 'text-white' : 'text-gray-400 hover:text-white'
                         }`}
                       >
                         {isActive && (
                           <motion.div
                             layoutId="movie-images-tabs-indicator"
-                            className="absolute inset-0 bg-red-600 rounded-lg shadow-sm shadow-red-600/30"
+                            className="absolute inset-0 bg-accent-600 rounded-lg shadow-sm shadow-accent-600/30"
                             transition={{ type: 'spring', bounce: 0.15, duration: 0.45 }}
                           />
                         )}
@@ -725,7 +725,7 @@ const ImagesSection = ({ movieId, images, loading }: { movieId: string; images: 
                         )}
                         {zipStatus === 'error' && (
                           <>
-                            <AlertTriangle className="w-5 h-5 text-red-300" />
+                            <AlertTriangle className="w-5 h-5 text-accent-300" />
                             <span>{t('details.downloadError')}</span>
                           </>
                         )}
@@ -1544,7 +1544,7 @@ const VideoPlayer = ({ movieId, backdropPath }: { movieId: string; backdropPath?
           <button
             onClick={() => handleSelectSource('primary')}
             className={`px-4 py-2 rounded ${selectedSource === 'primary'
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-700 hover:bg-gray-600'
               }`}
           >
@@ -1556,7 +1556,7 @@ const VideoPlayer = ({ movieId, backdropPath }: { movieId: string; backdropPath?
           <button
             onClick={() => setShowVostfrOptions(!showVostfrOptions)}
             className={`px-4 py-2 rounded flex items-center gap-2 ${(selectedSource === 'peachify' || selectedSource === 'vostfr' || selectedSource === 'videasy' || selectedSource === 'vidsrccc' || selectedSource === 'vidsrcsu' || selectedSource === 'vidsrcwtf1' || selectedSource === 'vidsrcwtf5')
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-700 hover:bg-gray-600'
               }`}
           >
@@ -1574,13 +1574,13 @@ const VideoPlayer = ({ movieId, backdropPath }: { movieId: string; backdropPath?
 
           {showVostfrOptions && (
             <div className="absolute z-50 top-full left-0 mt-1 bg-gray-800 rounded-lg shadow-lg overflow-hidden min-w-[200px]">
-              <button onClick={() => handleSelectSource('peachify')} className={`w-full px-4 py-2 text-left ${selectedSource === 'peachify' ? 'bg-red-600/70 text-white' : 'hover:bg-gray-700'}`}>Peachify</button>
-              <button onClick={() => handleSelectSource('vostfr')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vostfr' ? 'bg-red-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.wtf 3</button>
-              <button onClick={() => handleSelectSource('videasy')} className={`w-full px-4 py-2 text-left ${selectedSource === 'videasy' ? 'bg-red-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidlink</button>
-              <button onClick={() => handleSelectSource('vidsrccc')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrccc' ? 'bg-red-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.io</button>
-              <button onClick={() => handleSelectSource('vidsrcsu')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcsu' ? 'bg-red-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.su</button>
-              <button onClick={() => handleSelectSource('vidsrcwtf1')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcwtf1' ? 'bg-red-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.wtf 1</button>
-              <button onClick={() => handleSelectSource('vidsrcwtf5')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcwtf5' ? 'bg-red-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.wtf 5</button>
+              <button onClick={() => handleSelectSource('peachify')} className={`w-full px-4 py-2 text-left ${selectedSource === 'peachify' ? 'bg-accent-600/70 text-white' : 'hover:bg-gray-700'}`}>Peachify</button>
+              <button onClick={() => handleSelectSource('vostfr')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vostfr' ? 'bg-accent-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.wtf 3</button>
+              <button onClick={() => handleSelectSource('videasy')} className={`w-full px-4 py-2 text-left ${selectedSource === 'videasy' ? 'bg-accent-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidlink</button>
+              <button onClick={() => handleSelectSource('vidsrccc')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrccc' ? 'bg-accent-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.io</button>
+              <button onClick={() => handleSelectSource('vidsrcsu')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcsu' ? 'bg-accent-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.su</button>
+              <button onClick={() => handleSelectSource('vidsrcwtf1')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcwtf1' ? 'bg-accent-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.wtf 1</button>
+              <button onClick={() => handleSelectSource('vidsrcwtf5')} className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcwtf5' ? 'bg-accent-600/70 text-white' : 'hover:bg-gray-700'}`}>Vidsrc.wtf 5</button>
             </div>
           )}
         </div>
@@ -1647,7 +1647,7 @@ const VideoPlayer = ({ movieId, backdropPath }: { movieId: string; backdropPath?
             key={index}
             onClick={() => handleSelectSource(index)}
             className={`px-4 py-2 rounded ${selectedSource === index
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-700 hover:bg-gray-600'
               }`}
           >
@@ -2046,8 +2046,6 @@ const MovieDetails = (): JSX.Element => {
   const [showCollectionLeftButton, setShowCollectionLeftButton] = useState(false);
   const [showCollectionRightButton, setShowCollectionRightButton] = useState(true);
   const collectionRowRef = useRef<HTMLDivElement>(null);
-  // Référence pour la section commentaires
-  const commentsRef = useRef<HTMLDivElement>(null);
 
   // Vérifier si la barre d'onglets est scrollable
   useEffect(() => {
@@ -2383,14 +2381,14 @@ const MovieDetails = (): JSX.Element => {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={handleWatchClick}
-            className="flex flex-col items-center gap-2 px-4 sm:px-6 py-4 sm:py-5 bg-red-600 hover:bg-red-700 rounded-lg flex-1 min-w-0 justify-center text-xs sm:text-sm"
+            className="flex flex-col items-center gap-2 px-4 sm:px-6 py-4 sm:py-5 bg-accent-600 hover:bg-accent-700 rounded-lg flex-1 min-w-0 justify-center text-xs sm:text-sm"
           >
             {hasProgress ? (
               <>
                 <Play className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                 <div className="flex flex-col items-center text-center w-full min-w-0">
                   <span>{t('details.continueBtn')}</span>
-                  <span className="text-xs bg-red-800/80 text-white px-1.5 py-0.5 rounded font-medium mt-1">
+                  <span className="text-xs bg-accent-800/80 text-white px-1.5 py-0.5 rounded font-medium mt-1">
                     {formatTime(watchProgress)}/{formatTime(videoDuration)}
                   </span>
                 </div>
@@ -2436,7 +2434,7 @@ const MovieDetails = (): JSX.Element => {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={() => updateWatchStatus('watchlist', !watchStatus.watchlist)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg ${watchStatus.watchlist
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-800 hover:bg-gray-700'
               }`}
           >
@@ -2456,7 +2454,7 @@ const MovieDetails = (): JSX.Element => {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={() => updateWatchStatus('favorite', !watchStatus.favorite)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg ${watchStatus.favorite
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-800 hover:bg-gray-700'
               }`}
           >
@@ -2478,7 +2476,7 @@ const MovieDetails = (): JSX.Element => {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={() => updateWatchStatus('watched', !watchStatus.watched)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg ${watchStatus.watched
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-800 hover:bg-gray-700'
               }`}
           >
@@ -2573,9 +2571,9 @@ const MovieDetails = (): JSX.Element => {
       setIsReleased(releaseDate ? releaseDate <= new Date() : true);
 
       // Simple movie title
-      document.title = `${movie.title} - Movix`;
+      document.title = `${movie.title} - ${BRANDING.siteName}`;
     } else {
-      document.title = 'Film - Movix';
+      document.title = `Film - ${BRANDING.siteName}`;
     }
   }, [movie, id]);
 
@@ -2715,7 +2713,7 @@ const MovieDetails = (): JSX.Element => {
   if (loading) {
     return <DetailsSkeleton />;
   }
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (error) return <div className="text-center text-accent-500">{error}</div>;
   if (!movie) return <div className="text-center">{t('details.movieNotFound')}</div>;
 
   // Age restriction check
@@ -2725,8 +2723,8 @@ const MovieDetails = (): JSX.Element => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 bg-accent-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
@@ -2736,7 +2734,7 @@ const MovieDetails = (): JSX.Element => {
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+            className="px-6 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
           >
             {t('details.goBack')}
           </button>
@@ -2750,12 +2748,12 @@ const MovieDetails = (): JSX.Element => {
   const movieYear = movie.release_date && !isNaN(new Date(movie.release_date).getTime())
     ? new Date(movie.release_date).getFullYear()
     : null;
-  const movieTitle = movieYear ? `${movie.title} (${movieYear}) - Movix` : `${movie.title} - Movix`;
+  const movieTitle = movieYear ? `${movie.title} (${movieYear}) - ${BRANDING.siteName}` : `${movie.title} - ${BRANDING.siteName}`;
   const movieCanonicalUrl = buildSiteUrl(`/movie/${encodedId || id}`);
   const movieSocialImage = movie.backdrop_path || movie.poster_path
     ? `https://image.tmdb.org/t/p/original${movie.backdrop_path || movie.poster_path}`
     : undefined;
-  const movieDescription = movie.overview?.trim() || `Découvrez ${movie.title} sur Movix.`;
+  const movieDescription = movie.overview?.trim() || `Découvrez ${movie.title} sur ${BRANDING.siteName}.`;
 
   return (
     <MotionConfig reducedMotion="user">
@@ -2880,11 +2878,11 @@ const MovieDetails = (): JSX.Element => {
             transition: all 0.3s ease;
           }
           .section-title:hover {
-            background: linear-gradient(90deg, #ff3333, #ff9999);
+            background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
             -webkit-background-clip: text;
             background-clip: text;
             transform: translateY(-2px);
-            text-shadow: 0px 4px 8px rgba(255, 51, 51, 0.4);
+            text-shadow: 0px 4px 8px color-mix(in srgb, var(--accent-500) 40%, transparent);
           }
           .section-title::after {
             content: '';
@@ -2893,7 +2891,7 @@ const MovieDetails = (): JSX.Element => {
             bottom: 0;
             width: 40px;
             height: 3px;
-            background: linear-gradient(90deg, #f11 0%, #f66 100%);
+            background: linear-gradient(90deg, var(--accent-600) 0%, var(--accent-400) 100%);
             border-radius: 3px;
             animation: expandWidth 0.6s ease-out forwards 0.3s;
             transform-origin: left;
@@ -2901,7 +2899,7 @@ const MovieDetails = (): JSX.Element => {
           }
           .section-title:hover::after {
             width: 100%;
-            background: linear-gradient(90deg, #ff3333, #ff9999);
+            background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
           }
           @keyframes fadeInTitle {
             0% { opacity: 0; transform: translateY(10px); }
@@ -3018,7 +3016,7 @@ const MovieDetails = (): JSX.Element => {
                   {t('details.overviewTab')}
                   {activeTab === 'overview' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -3036,7 +3034,7 @@ const MovieDetails = (): JSX.Element => {
                   {t('details.detailsTab')}
                   {activeTab === 'details' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -3055,7 +3053,7 @@ const MovieDetails = (): JSX.Element => {
                   {t('details.videosTab')}
                   {activeTab === 'videos' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -3093,7 +3091,7 @@ const MovieDetails = (): JSX.Element => {
                   {t('details.castTab')}
                   {activeTab === 'cast' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -3112,7 +3110,7 @@ const MovieDetails = (): JSX.Element => {
                   {t('details.crewTab')}
                   {activeTab === 'crew' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -3133,7 +3131,7 @@ const MovieDetails = (): JSX.Element => {
                     {t('details.sagaTab')}
                     {activeTab === 'collection' && (
                       <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                         layoutId="activeTab"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
@@ -3141,21 +3139,6 @@ const MovieDetails = (): JSX.Element => {
                   </motion.button>
                 )}
 
-                {/* Bouton Commentaires (scroll vers la section) */}
-                <motion.button
-                  onClick={() => {
-                    // Scroll vers les commentaires
-                    commentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                  className="px-6 py-3 font-medium text-sm flex-shrink-0 text-gray-400 hover:text-white"
-                  whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
-                  whileTap={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-                >
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4" />
-                    {t('details.commentsTab')}
-                  </div>
-                </motion.button>
               </div>
 
               {/* Indicateur de défilement à droite */}
@@ -3202,8 +3185,8 @@ const MovieDetails = (): JSX.Element => {
                     </div>
 
                     {/* TMDB Info Box */}
-                    <div className="mb-6 p-4 border border-red-500/50 bg-red-500/10 rounded-lg flex gap-3 items-start">
-                      <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <div className="mb-6 p-4 border border-accent-500/50 bg-accent-500/10 rounded-lg flex gap-3 items-start">
+                      <AlertTriangle className="w-5 h-5 text-accent-500 flex-shrink-0 mt-0.5" />
                       <div className="text-sm text-gray-300">
                         <p>
                           {t('details.tmdbInfoNote')}{' '}
@@ -3211,7 +3194,7 @@ const MovieDetails = (): JSX.Element => {
                             href={`https://www.themoviedb.org/movie/${id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-red-400 hover:text-red-300 underline"
+                            className="text-accent-400 hover:text-accent-300 underline"
                           >
                             TMDB
                           </a>
@@ -3251,11 +3234,11 @@ const MovieDetails = (): JSX.Element => {
                       <h3 className="text-lg font-semibold mb-2">{t('details.classificationLabel')}</h3>
                       <div className="flex items-center gap-2">
                         {certifications['FR'] ? (
-                          <span className="bg-red-600/70 text-white px-3 py-1 rounded-md font-bold">
+                          <span className="bg-accent-600/70 text-white px-3 py-1 rounded-md font-bold">
                             {getClassificationLabel(certifications['FR'], t)}
                           </span>
                         ) : certifications['US'] ? (
-                          <span className="bg-red-600/70 text-white px-3 py-1 rounded-md font-bold">
+                          <span className="bg-accent-600/70 text-white px-3 py-1 rounded-md font-bold">
                             {getClassificationLabel(certifications['US'], t)}
                           </span>
                         ) : (
@@ -3293,7 +3276,7 @@ const MovieDetails = (): JSX.Element => {
                             to={`/genre/movie/${genre.id}`}
                             className="flex items-center gap-1 px-3 py-2 bg-gray-800 rounded-lg text-sm hover:bg-gray-700 transition-colors inline-block border border-gray-700 hover:border-gray-600"
                           >
-                            <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                            <span className="w-2 h-2 rounded-full bg-accent-500"></span>
                             {genre.name}
                           </Link>
                         </motion.div>
@@ -3661,7 +3644,7 @@ const MovieDetails = (): JSX.Element => {
                           }}
                         >
                           <h4 className="text-gray-400 text-sm mb-1">{t('details.profitLossLabel')}</h4>
-                          <p className={`font-semibold ${movie.revenue - movie.budget > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          <p className={`font-semibold ${movie.revenue - movie.budget > 0 ? 'text-green-400' : 'text-accent-400'}`}>
                             {new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(movie.revenue - movie.budget)}
                             {movie.revenue > 0 && movie.budget > 0 && (
                               <span className="ml-2 text-xs text-gray-400">
@@ -3755,7 +3738,7 @@ const MovieDetails = (): JSX.Element => {
                                 <span className={`text-xs font-semibold ${movie.budget && movie.revenue && movie.budget > 0 ? (
                                   movie.revenue >= movie.budget * 2.5 ? 'text-green-400' :
                                     movie.revenue >= movie.budget ? 'text-yellow-400' :
-                                      'text-red-400'
+                                      'text-accent-400'
                                 ) : 'text-gray-300'
                                   }`}>
                                   {movie.budget && movie.revenue && movie.budget > 0 ? (
@@ -3789,7 +3772,7 @@ const MovieDetails = (): JSX.Element => {
                                 </ul>
                               </div>
                               <div className="bg-gray-900 p-2 rounded-lg">
-                                <h5 className="text-xs font-medium text-red-400 mb-1">{t('details.limitingFactors')}</h5>
+                                <h5 className="text-xs font-medium text-accent-400 mb-1">{t('details.limitingFactors')}</h5>
                                 <ul className="list-disc pl-4 text-xs text-gray-300 space-y-0.5">
                                   {movie.vote_average < 6 && <li>{t('details.lowRating', { rating: movie.vote_average })}</li>}
                                   {movie.budget && movie.budget > 150000000 && <li>{t('details.veryHighBudget')}</li>}
@@ -3840,7 +3823,7 @@ const MovieDetails = (): JSX.Element => {
                         setShowMultiLangView(!showMultiLangView);
                       }}
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium shadow-lg border transition-all duration-300 ${showMultiLangView
-                        ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-red-500/20'
+                        ? 'bg-gradient-to-r from-accent-600 to-accent-700 hover:from-accent-700 hover:to-accent-800 border-accent-500/20'
                         : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 border-purple-500/20'
                         }`}
                     >
@@ -3851,7 +3834,7 @@ const MovieDetails = (): JSX.Element => {
 
                   {(loadingVideos || loadingMultiLangVideos) ? (
                     <div className="flex items-center justify-center h-40">
-                      <Loader className="w-8 h-8 animate-spin text-red-600" />
+                      <Loader className="w-8 h-8 animate-spin text-accent-600" />
                     </div>
                   ) : showMultiLangView ? (
                     // Vue multi-langues
@@ -3975,7 +3958,7 @@ const MovieDetails = (): JSX.Element => {
                         {videos.map((video: any, index: number) => (
                           <motion.div
                             key={video.id}
-                            className="group bg-gray-800/70 rounded-xl overflow-hidden border border-gray-700/50 hover:border-red-500/30"
+                            className="group bg-gray-800/70 rounded-xl overflow-hidden border border-gray-700/50 hover:border-accent-500/30"
                             initial={{ opacity: 0, y: 20, scale: 0.9 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             transition={{
@@ -4012,7 +3995,7 @@ const MovieDetails = (): JSX.Element => {
                                 whileHover={{ backgroundColor: "rgba(0,0,0,0.1)" }}
                               >
                                 <motion.div
-                                  className="w-14 h-14 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg"
+                                  className="w-14 h-14 rounded-full bg-accent-600/90 flex items-center justify-center shadow-lg"
                                   whileHover={{
                                     scale: 1.1,
                                     backgroundColor: "rgba(239, 68, 68, 1)",
@@ -4031,7 +4014,7 @@ const MovieDetails = (): JSX.Element => {
                               animate={{ opacity: 1 }}
                               transition={{ delay: index * 0.1 + 0.2 }}
                             >
-                              <h4 className="font-semibold mb-2 line-clamp-1 text-white group-hover:text-red-400 transition-colors">{video.name}</h4>
+                              <h4 className="font-semibold mb-2 line-clamp-1 text-white group-hover:text-accent-400 transition-colors">{video.name}</h4>
                               <div className="flex items-center text-sm text-gray-400">
                                 <motion.span
                                   className="bg-gray-700/70 px-2 py-1 rounded-md mr-2 text-xs font-medium"
@@ -4073,7 +4056,7 @@ const MovieDetails = (): JSX.Element => {
                 >
                   {loadingCollection ? (
                     <div className="flex items-center justify-center h-40 w-full">
-                      <Loader className="w-8 h-8 animate-spin text-red-600" />
+                      <Loader className="w-8 h-8 animate-spin text-accent-600" />
                     </div>
                   ) : collection ? (
                     <div>
@@ -4172,7 +4155,7 @@ const MovieDetails = (): JSX.Element => {
                                               button.querySelector('svg')?.setAttribute('fill', 'black');
                                               // Notification
                                               const notification = document.createElement('div');
-                                              notification.className = 'fixed top-16 right-4 bg-red-500 text-white py-2 px-4 rounded shadow-lg z-50 animate-fadeIn';
+                                              notification.className = 'fixed top-16 right-4 bg-accent-500 text-white py-2 px-4 rounded shadow-lg z-50 animate-fadeIn';
                                               notification.textContent = t('search.removedFromWatchlist');
                                               document.body.appendChild(notification);
                                               setTimeout(() => {
@@ -4241,7 +4224,7 @@ const MovieDetails = (): JSX.Element => {
                                         )}
                                       </div>
                                       {part.id === Number(id) && (
-                                        <div className="bg-red-600 text-white text-xs px-2 py-1 rounded-full self-start">
+                                        <div className="bg-accent-600 text-white text-xs px-2 py-1 rounded-full self-start">
                                           {t('details.currentBadge')}
                                         </div>
                                       )}
@@ -4332,7 +4315,7 @@ const MovieDetails = (): JSX.Element => {
                   {t('details.movieNotYetReleasedDesc')}
                 </motion.p>
                 <motion.button
-                  className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="px-6 py-3 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ y: 10, opacity: 0 }}
@@ -4359,7 +4342,7 @@ const MovieDetails = (): JSX.Element => {
                 transition={{ duration: 0.5 }}
               >
                 <motion.div
-                  className="w-24 h-24 rounded-full bg-red-600/80 hover:bg-red-600 flex items-center justify-center mb-6 cursor-pointer"
+                  className="w-24 h-24 rounded-full bg-accent-600/80 hover:bg-accent-600 flex items-center justify-center mb-6 cursor-pointer"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleWatchClick}
@@ -4401,7 +4384,7 @@ const MovieDetails = (): JSX.Element => {
             className="mt-12"
           >
             <EmblaCarousel
-              title={<span><span className="text-red-600 mr-2">🔥</span>{t('details.similarMovies')}</span>}
+              title={<span><span className="text-accent-600 mr-2">🔥</span>{t('details.similarMovies')}</span>}
               items={recommendations.map(movie => ({
                 id: movie.id,
                 title: movie.title,
@@ -4417,26 +4400,6 @@ const MovieDetails = (): JSX.Element => {
           </LazySection>
         )}
 
-        {/* Section Commentaires - Lazy loaded when approaching viewport.
-            Ref ancré sur le wrapper (toujours rendu) pour que le bouton
-            "Commentaires" puisse scroller avant le chargement lazy. */}
-        <div ref={commentsRef} id="comments-section">
-          <LazySection
-            index={1}
-            immediateLoadCount={0}
-            rootMargin="200px"
-            minHeight="400px"
-            className="mt-20 mb-20"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <CommentsSection contentType="movie" contentId={id!} />
-            </motion.div>
-          </LazySection>
-        </div>
 
         {/* Modal Rapport */}
 

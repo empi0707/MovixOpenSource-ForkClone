@@ -177,14 +177,14 @@ class ErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBounda
       return (
         <div style={{ minHeight: '100vh', backgroundColor: '#000', color: '#f3f4f6', fontFamily: 'ui-sans-serif, system-ui, sans-serif', padding: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ maxWidth: 420, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 32, fontWeight: 900, color: '#dc2626', letterSpacing: '0.1em', marginBottom: 24 }}>MOVIX</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: 'var(--accent-600)', letterSpacing: '0.1em', marginBottom: 24 }}>MOVIX</div>
             {reloadScheduled && (
-              <div style={{ width: 40, height: 40, margin: '0 auto 24px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: '#dc2626', borderRadius: '50%', animation: 'movix-eb-spin 0.8s linear infinite' }} />
+              <div style={{ width: 40, height: 40, margin: '0 auto 24px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--accent-600)', borderRadius: '50%', animation: 'movix-eb-spin 0.8s linear infinite' }} />
             )}
             <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#fff' }}>{title}</h1>
             <p style={{ margin: '12px 0 0', fontSize: 14, color: '#9ca3af', lineHeight: 1.5 }}>{body}</p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 24 }}>
-              <button onClick={this.handleReload} style={{ padding: '10px 20px', borderRadius: 8, border: 'none', fontWeight: 600, fontSize: 14, cursor: 'pointer', backgroundColor: '#dc2626', color: '#fff' }}>Recharger</button>
+              <button onClick={this.handleReload} style={{ padding: '10px 20px', borderRadius: 8, border: 'none', fontWeight: 600, fontSize: 14, cursor: 'pointer', backgroundColor: 'var(--accent-600)', color: '#fff' }}>Recharger</button>
               <button onClick={this.handleGoHome} style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #333', fontWeight: 600, fontSize: 14, cursor: 'pointer', backgroundColor: 'transparent', color: '#9ca3af' }}>Accueil</button>
             </div>
           </div>
@@ -201,7 +201,7 @@ class ErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBounda
         <div style={{ maxWidth: 700, width: '100%' }}>
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -213,8 +213,8 @@ class ErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBounda
           </div>
 
           {/* Error message */}
-          <div style={{ backgroundColor: '#1c1c1c', border: '1px solid #dc2626', borderRadius: 8, padding: 16, marginBottom: 16 }}>
-            <p style={{ margin: 0, fontSize: 13, color: '#dc2626', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Erreur</p>
+          <div style={{ backgroundColor: '#1c1c1c', border: '1px solid var(--accent-600)', borderRadius: 8, padding: 16, marginBottom: 16 }}>
+            <p style={{ margin: 0, fontSize: 13, color: 'var(--accent-600)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Erreur</p>
             <p style={{ margin: '8px 0 0', fontSize: 15, color: '#fca5a5', fontFamily: 'ui-monospace, monospace', wordBreak: 'break-word' }}>
               {error?.message ?? 'Erreur inconnue'}
             </p>
@@ -276,7 +276,7 @@ class ErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBounda
                 fontWeight: 600,
                 fontSize: 14,
                 cursor: sending || sent ? 'default' : 'pointer',
-                backgroundColor: sent ? '#16a34a' : sendError ? '#dc2626' : '#dc2626',
+                backgroundColor: sent ? '#16a34a' : sendError ? 'var(--accent-600)' : 'var(--accent-600)',
                 color: '#fff',
                 opacity: sending ? 0.6 : 1,
                 transition: 'opacity 0.2s, background-color 0.2s',

@@ -177,7 +177,7 @@ const EmblaCarouselPlatforms: React.FC<EmblaCarouselPlatformsProps> = ({ title, 
           className={`hidden md:flex absolute left-6 md:left-8 top-1/2 z-20
                      w-12 h-32 rounded-2xl items-center justify-center text-white/90 hover:text-white
                      bg-gradient-to-b from-neutral-900/70 via-black/80 to-neutral-900/70 backdrop-blur-md
-                     ring-1 ring-white/10 hover:ring-red-500/40
+                     ring-1 ring-white/10 hover:ring-accent-500/40
                      shadow-2xl shadow-black/70
                      transition-all duration-300 ease-out
                      -translate-y-1/2
@@ -195,7 +195,7 @@ const EmblaCarouselPlatforms: React.FC<EmblaCarouselPlatformsProps> = ({ title, 
           className={`hidden md:flex absolute right-6 md:right-8 top-1/2 z-20
                      w-12 h-32 rounded-2xl items-center justify-center text-white/90 hover:text-white
                      bg-gradient-to-b from-neutral-900/70 via-black/80 to-neutral-900/70 backdrop-blur-md
-                     ring-1 ring-white/10 hover:ring-red-500/40
+                     ring-1 ring-white/10 hover:ring-accent-500/40
                      shadow-2xl shadow-black/70
                      transition-all duration-300 ease-out
                      -translate-y-1/2

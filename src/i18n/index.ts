@@ -27,7 +27,7 @@ export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number]['code'];
 // Languages that actually have translation files loaded
 const LOADED_LANGUAGE_CODES = ['fr', 'en'] as const;
 type LoadedLanguage = typeof LOADED_LANGUAGE_CODES[number];
-const DEFAULT_LANGUAGE: LoadedLanguage = 'en';
+const DEFAULT_LANGUAGE: LoadedLanguage = 'fr';
 const LOADED_LANG_CODES = new Set<SupportedLanguage>(LOADED_LANGUAGE_CODES);
 export const AVAILABLE_LANGUAGES = SUPPORTED_LANGUAGES.filter(l => LOADED_LANG_CODES.has(l.code));
 

@@ -24,7 +24,7 @@ const PlayerMockup: React.FC<PlayerMockupProps> = ({
           />
           {annotationKind === 'gear' && (
             <span
-              className="absolute top-[30%] right-[8%] text-red-500 font-bold text-sm sm:text-lg drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] pointer-events-none whitespace-nowrap"
+              className="absolute top-[30%] right-[8%] text-accent-500 font-bold text-sm sm:text-lg drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] pointer-events-none whitespace-nowrap"
               aria-hidden="true"
             >
               {t('help.changerLecteur.arrowLabel')}

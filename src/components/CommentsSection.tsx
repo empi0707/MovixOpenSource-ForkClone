@@ -76,7 +76,7 @@ const SpoilerToggle: React.FC<SpoilerToggleProps> = ({ checked, onChange, size =
       type="button"
       onClick={() => onChange(!checked)}
       className={`flex items-center gap-2 transition-all duration-200 rounded-lg font-medium ${checked
-        ? 'bg-red-600/20 text-red-400 border-2 border-red-500/50 hover:bg-red-600/30 hover:border-red-500'
+        ? 'bg-accent-600/20 text-accent-400 border-2 border-accent-500/50 hover:bg-accent-600/30 hover:border-accent-500'
         : 'bg-gray-700/50 text-gray-300 border-2 border-gray-600/50 hover:bg-gray-700/70 hover:border-gray-500'
         } ${sizeClasses}`}
     >
@@ -86,7 +86,7 @@ const SpoilerToggle: React.FC<SpoilerToggleProps> = ({ checked, onChange, size =
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="w-2 h-2 bg-red-500 rounded-full"
+          className="w-2 h-2 bg-accent-500 rounded-full"
         />
       )}
     </button>
@@ -313,7 +313,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                 <motion.div
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
-                  className="flex items-center gap-2 text-red-400"
+                  className="flex items-center gap-2 text-accent-400"
                 >
                   <Trash2 className="w-4 h-4" />
                   <span className="text-sm font-medium">{t('comments.commentDeleted')}</span>
@@ -344,7 +344,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <span className="font-semibold text-white text-sm sm:text-base truncate">{comment.username}</span>
             {comment.is_admin === 1 && (
-              <span className="px-1.5 sm:px-2 py-0.5 bg-red-600 text-white text-[10px] sm:text-xs rounded-full whitespace-nowrap">
+              <span className="px-1.5 sm:px-2 py-0.5 bg-accent-600 text-white text-[10px] sm:text-xs rounded-full whitespace-nowrap">
                 Admin
               </span>
             )}
@@ -367,7 +367,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 maxLength={500}
-                className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+                className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-accent-600 resize-none"
                 rows={3}
               />
               <MarkdownToolbar
@@ -425,7 +425,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                   initial={{ opacity: 1 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="inline-flex items-center gap-1 mt-1 sm:mt-2 text-[10px] sm:text-xs text-red-400"
+                  className="inline-flex items-center gap-1 mt-1 sm:mt-2 text-[10px] sm:text-xs text-accent-400"
                 >
                   <AlertTriangle className="w-3 h-3" />
                   <span className="hidden sm:inline">{t('comments.spoilerContent')}</span>
@@ -439,7 +439,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
           <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mt-3 sm:mt-4 flex-wrap">
             <button
               onClick={() => onReaction('comment', comment.id)}
-              className={`flex items-center gap-1 transition-colors ${comment.userReaction ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+              className={`flex items-center gap-1 transition-colors ${comment.userReaction ? 'text-accent-500' : 'text-gray-400 hover:text-accent-500'
                 }`}
               disabled={!isAuthenticated}
             >
@@ -479,7 +479,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
             {(isAdmin || (profileId && profileId === comment.profile_id)) && (
               <button
                 onClick={() => onRequestDeleteComment(comment.id)}
-                className="text-xs sm:text-sm text-red-500 hover:text-red-400 transition-colors flex items-center gap-1"
+                className="text-xs sm:text-sm text-accent-500 hover:text-accent-400 transition-colors flex items-center gap-1"
               >
                 <Trash2 className="w-3 h-3" />
                 <span className="hidden sm:inline">{t('common.delete')}</span>
@@ -552,7 +552,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                       {replyingTo.username && (
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xs sm:text-sm text-gray-400">
-                            {t('comments.replyTo')} <span className="text-red-500">@{replyingTo.username}</span>
+                            {t('comments.replyTo')} <span className="text-accent-500">@{replyingTo.username}</span>
                           </span>
                           <button
                             onClick={() => setReplyingTo(null)}
@@ -568,7 +568,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                         onChange={(e) => setReplyContent(e.target.value)}
                         placeholder={t('comments.writeReply')}
                         maxLength={500}
-                        className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+                        className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-accent-600 resize-none"
                         rows={2}
                       />
                       <MarkdownToolbar
@@ -635,7 +635,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                                 <motion.div
                                   initial={{ scale: 0.8 }}
                                   animate={{ scale: 1 }}
-                                  className="flex items-center gap-2 text-red-400"
+                                  className="flex items-center gap-2 text-accent-400"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                   <span className="text-xs font-medium">{t('comments.replyDeleted')}</span>
@@ -663,7 +663,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                             <span className="font-semibold text-white text-xs sm:text-sm truncate">{reply.username}</span>
                             {reply.is_admin === 1 && (
-                              <span className="px-1.5 sm:px-2 py-0.5 bg-red-600 text-white text-[10px] sm:text-xs rounded-full whitespace-nowrap">
+                              <span className="px-1.5 sm:px-2 py-0.5 bg-accent-600 text-white text-[10px] sm:text-xs rounded-full whitespace-nowrap">
                                 Admin
                               </span>
                             )}
@@ -674,7 +674,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                             )}
                             <span className="text-[10px] sm:text-xs text-gray-400 whitespace-nowrap">{formatDate(reply.created_at)}</span>
                             {reply.parent_reply_id && reply.reply_to_username && (
-                              <span className="text-[10px] sm:text-xs text-red-500 truncate">
+                              <span className="text-[10px] sm:text-xs text-accent-500 truncate">
                                 → @{reply.reply_to_username}
                               </span>
                             )}
@@ -690,7 +690,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                                 value={editContent}
                                 onChange={(e) => setEditContent(e.target.value)}
                                 maxLength={500}
-                                className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+                                className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent-600 resize-none"
                                 rows={2}
                               />
                               <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -742,7 +742,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                                   initial={{ opacity: 1 }}
                                   animate={{ opacity: 1 }}
                                   exit={{ opacity: 0 }}
-                                  className="inline-flex items-center gap-1 mt-1 text-[10px] sm:text-xs text-red-400"
+                                  className="inline-flex items-center gap-1 mt-1 text-[10px] sm:text-xs text-accent-400"
                                 >
                                   <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                   <span className="hidden sm:inline">{t('comments.spoilerContent')}</span>
@@ -756,7 +756,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                           <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-2 flex-wrap">
                             <button
                               onClick={() => onReaction('reply', reply.id)}
-                              className={`flex items-center gap-1 transition-colors ${reply.userReaction ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+                              className={`flex items-center gap-1 transition-colors ${reply.userReaction ? 'text-accent-500' : 'text-gray-400 hover:text-accent-500'
                                 }`}
                               disabled={!isAuthenticated}
                             >
@@ -792,7 +792,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                             {(isAdmin || (profileId && profileId === reply.profile_id)) && (
                               <button
                                 onClick={() => onRequestDeleteReply(reply.id, comment.id)}
-                                className="text-[10px] sm:text-xs text-red-500 hover:text-red-400 transition-colors flex items-center gap-1"
+                                className="text-[10px] sm:text-xs text-accent-500 hover:text-accent-400 transition-colors flex items-center gap-1"
                               >
                                 <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                 <span className="hidden sm:inline">{t('common.delete')}</span>
@@ -837,7 +837,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                           >
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-xs sm:text-sm text-gray-400">
-                                {t('comments.replyTo')} <span className="text-red-500">@{replyingTo.username}</span>
+                                {t('comments.replyTo')} <span className="text-accent-500">@{replyingTo.username}</span>
                               </span>
                               <button
                                 onClick={() => setReplyingTo(null)}
@@ -851,7 +851,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                               onChange={(e) => setReplyContent(e.target.value)}
                               placeholder={t('comments.writeReply')}
                               maxLength={500}
-                              className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+                              className="w-full bg-gray-700/50 text-white rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-accent-600 resize-none"
                               rows={2}
                             />
                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mt-2">
@@ -893,7 +893,7 @@ const CommentItem = React.memo<CommentItemProps>((props) => {
                   >
                     <button
                       onClick={() => onLoadMoreReplies(comment.id)}
-                      className="text-xs sm:text-sm text-gray-400 hover:text-red-500 transition-colors px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-gray-700/50 w-full sm:w-auto text-center"
+                      className="text-xs sm:text-sm text-gray-400 hover:text-accent-500 transition-colors px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-gray-700/50 w-full sm:w-auto text-center"
                     >
                       {t('comments.showMore', { count: (repliesTotalCount || 0) - (replies?.length || 0) })}
                     </button>
@@ -1914,13 +1914,13 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ contentType, contentI
                     {t('comments.limit')}
                   </div>
                   <div className={`px-3 py-1.5 rounded-lg border ${commentLimits.movieLimit !== null && commentLimits.movieCount >= commentLimits.movieLimit
-                    ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                    ? 'bg-accent-500/10 border-accent-500/30 text-accent-400'
                     : 'bg-gray-700/30 border-gray-600/30 text-gray-400'
                     }`}>
                     {contentType === 'movie' ? t('comments.onThisMovie') : t('comments.onThisSeries')} : <span className="font-semibold text-gray-200">{commentLimits.movieCount}/{commentLimits.movieLimit}</span>
                   </div>
                   <div className={`px-3 py-1.5 rounded-lg border ${commentLimits.hourLimit !== null && commentLimits.hourCount >= commentLimits.hourLimit
-                    ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                    ? 'bg-accent-500/10 border-accent-500/30 text-accent-400'
                     : 'bg-gray-700/30 border-gray-600/30 text-gray-400'
                     }`}>
                     {t('comments.thisHour')} : <span className="font-semibold text-gray-200">{commentLimits.hourCount}/{commentLimits.hourLimit}</span>
@@ -1929,7 +1929,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ contentType, contentI
               )}
               {commentLimits && commentLimits.isAdmin && (
                 <div className="mt-3 flex flex-wrap gap-3 text-xs sm:text-sm items-center">
-                  <div className="px-3 py-1.5 rounded-lg border bg-red-600/20 border-red-500/30 text-red-400 font-semibold">
+                  <div className="px-3 py-1.5 rounded-lg border bg-accent-600/20 border-accent-500/30 text-accent-400 font-semibold">
                     👑 {t('comments.adminNoLimit')}
                   </div>
                 </div>
@@ -2120,8 +2120,8 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ contentType, contentI
               className="bg-gray-900 rounded-2xl p-6 max-w-sm w-full border border-gray-700/50 shadow-2xl"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
-                  <Trash2 className="w-5 h-5 text-red-500" />
+                <div className="w-10 h-10 rounded-full bg-accent-500/10 flex items-center justify-center">
+                  <Trash2 className="w-5 h-5 text-accent-500" />
                 </div>
                 <h3 className="text-lg font-bold text-white">
                   {deleteConfirm.type === 'comment' ? t('comments.deleteConfirm') : t('comments.deleteReplyConfirm')}
@@ -2145,7 +2145,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ contentType, contentI
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={executeDelete}
-                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-medium transition-colors text-sm flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 bg-accent-600 hover:bg-accent-500 text-white rounded-xl font-medium transition-colors text-sm flex items-center justify-center gap-2"
                 >
                   <Trash2 className="w-4 h-4" />
                   {t('common.delete')}

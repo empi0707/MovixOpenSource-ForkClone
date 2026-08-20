@@ -54,7 +54,7 @@ const AdminHelpFeedback: React.FC = () => {
     if (total < 3) return 'text-zinc-400';
     if (ratio >= 0.8) return 'text-green-400';
     if (ratio >= 0.5) return 'text-amber-400';
-    return 'text-red-400';
+    return 'text-accent-400';
   };
 
   return (
@@ -66,7 +66,7 @@ const AdminHelpFeedback: React.FC = () => {
           <span>{t('admin.helpFeedback.totalUp')}</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-zinc-300">
-          <ThumbsDown className="w-4 h-4 text-red-400" />
+          <ThumbsDown className="w-4 h-4 text-accent-400" />
           <span className="font-semibold text-white">{totals.down}</span>
           <span>{t('admin.helpFeedback.totalDown')}</span>
         </div>
@@ -90,7 +90,7 @@ const AdminHelpFeedback: React.FC = () => {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+        <div className="flex items-center gap-2 rounded-lg border border-accent-500/30 bg-accent-500/10 p-3 text-sm text-accent-300">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -124,7 +124,7 @@ const AdminHelpFeedback: React.FC = () => {
                   aria-label={t('admin.helpFeedback.colDown')}
                 >
                   <ThumbsDown
-                    className="w-4 h-4 text-red-400 inline-block"
+                    className="w-4 h-4 text-accent-400 inline-block"
                     aria-hidden="true"
                   />
                 </th>
@@ -152,7 +152,7 @@ const AdminHelpFeedback: React.FC = () => {
                   <td className="text-right px-4 py-2.5 text-green-400 tabular-nums">
                     {row.up}
                   </td>
-                  <td className="text-right px-4 py-2.5 text-red-400 tabular-nums">
+                  <td className="text-right px-4 py-2.5 text-accent-400 tabular-nums">
                     {row.down}
                   </td>
                   <td className="text-right px-4 py-2.5 text-zinc-300 tabular-nums">

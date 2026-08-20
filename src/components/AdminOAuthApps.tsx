@@ -529,7 +529,7 @@ const AppCard: React.FC<AppCardProps> = ({ app, onEdit, onStats, onDelete, onTog
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 18 }}
                 onClick={(e) => { e.stopPropagation(); setIconDeleteOpen(true); }}
-                className="absolute -right-1.5 -top-1.5 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-lg ring-2 ring-black/60 transition-colors hover:bg-red-400"
+                className="absolute -right-1.5 -top-1.5 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-accent-500 text-white shadow-lg ring-2 ring-black/60 transition-colors hover:bg-accent-400"
                 title={t('adminOauthApps.removeIcon')}
                 aria-label={t('adminOauthApps.removeIcon')}
               >

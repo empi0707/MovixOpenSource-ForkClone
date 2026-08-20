@@ -338,7 +338,7 @@ const AdminSharedLists: React.FC = () => {
                                                     <div className="space-y-1">
                                                         {list.moderationReason && (
                                                             <div className="flex flex-col gap-1">
-                                                                <Badge variant="rejected" className="bg-red-500/20 text-red-400 border-red-500/30 w-fit">
+                                                                <Badge variant="rejected" className="bg-accent-500/20 text-accent-400 border-accent-500/30 w-fit">
                                                                     {list.moderationReason}
                                                                 </Badge>
                                                                 <span className="text-[10px] text-white/40">{t('admin.generatedByGemini')}</span>
@@ -401,11 +401,11 @@ const AdminSharedLists: React.FC = () => {
                                                                     setSelectedList(list);
                                                                     setDeleteModalOpen(true);
                                                                 }}
-                                                                className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                                                                className="p-2 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 transition-colors"
                                                                 title={t('admin.deletePermanently')}
                                                                 disabled={submitting}
                                                             >
-                                                                <Trash2 className="h-4 w-4 text-red-400" />
+                                                                <Trash2 className="h-4 w-4 text-accent-400" />
                                                             </motion.button>
                                                         </>
                                                     ) : (
@@ -416,10 +416,10 @@ const AdminSharedLists: React.FC = () => {
                                                                 setSelectedList(list);
                                                                 setDeleteModalOpen(true);
                                                             }}
-                                                            className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                                                            className="p-2 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 transition-colors"
                                                             title={t('admin.delete')}
                                                         >
-                                                            <Trash2 className="h-4 w-4 text-red-400" />
+                                                            <Trash2 className="h-4 w-4 text-accent-400" />
                                                         </motion.button>
                                                     )}
                                                 </div>
@@ -456,11 +456,11 @@ const AdminSharedLists: React.FC = () => {
                 title={t('admin.deleteSharedList')}
             >
                 <div className="space-y-6">
-                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                    <div className="p-4 bg-accent-500/10 border border-accent-500/20 rounded-lg flex items-start gap-3">
+                        <AlertCircle className="h-5 w-5 text-accent-400 shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-sm text-red-200 font-medium">{t('admin.irreversibleAction')}</p>
-                            <p className="text-xs text-red-100/70">
+                            <p className="text-sm text-accent-200 font-medium">{t('admin.irreversibleAction')}</p>
+                            <p className="text-xs text-accent-100/70">
                                 {t('admin.deleteSharedListWarning')}
                             </p>
                         </div>
@@ -473,7 +473,7 @@ const AdminSharedLists: React.FC = () => {
                             <p className="text-xs text-white/40">{t('lists.itemsInList', { count: selectedList.itemCount })} · {t('watchParty.code')}: {selectedList.shareCode}</p>
                             {selectedList.moderationReason && (
                                 <div className="flex items-center gap-2 mt-2">
-                                    <Badge variant="rejected" className="bg-red-500/20 text-red-400 border-red-500/30">
+                                    <Badge variant="rejected" className="bg-accent-500/20 text-accent-400 border-accent-500/30">
                                         {selectedList.moderationReason}
                                     </Badge>
                                     {selectedList.moderationDetails && (

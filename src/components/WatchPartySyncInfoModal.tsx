@@ -58,12 +58,12 @@ const WatchPartySyncInfoModal: React.FC<WatchPartySyncInfoModalProps> = ({
       className="max-w-3xl"
     >
       <div className="space-y-6 text-white">
-        <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-5">
-          <div className="mb-2 flex items-center gap-2 text-red-200">
+        <div className="rounded-2xl border border-accent-500/20 bg-accent-500/10 p-5">
+          <div className="mb-2 flex items-center gap-2 text-accent-200">
             <HelpCircle className="h-5 w-5" />
             <p className="text-sm font-semibold">{t('watchParty.syncModeHelpIntroTitle')}</p>
           </div>
-          <p className="text-sm leading-6 text-red-100/85">
+          <p className="text-sm leading-6 text-accent-100/85">
             {t('watchParty.syncModeHelpIntroBody')}
           </p>
         </div>
@@ -72,7 +72,7 @@ const WatchPartySyncInfoModal: React.FC<WatchPartySyncInfoModalProps> = ({
           {sections.map(({ icon: Icon, title, items }) => (
             <div key={title} className="rounded-2xl border border-white/10 bg-white/5 p-5">
               <div className="mb-3 flex items-center gap-2 text-white">
-                <Icon className="h-5 w-5 text-red-400" />
+                <Icon className="h-5 w-5 text-accent-400" />
                 <h4 className="font-semibold">{title}</h4>
               </div>
               <div className="space-y-2 text-sm leading-6 text-white/75">

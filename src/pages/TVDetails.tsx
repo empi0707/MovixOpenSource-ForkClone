@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo, forwardRef, useImperativeHandle } from 'react';
+import { useAdFreePopup } from '../context/AdFreePopupContext';
+import { useProfile } from '../context/ProfileContext';
 import { getFrembedBase } from '../utils/frembedConfig';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { PrefetchLink as Link } from '@/routing/PrefetchLink';
@@ -13,7 +15,6 @@ import DetailsSkeleton from '../components/skeletons/DetailsSkeleton';
 import CustomDropdown from '../components/CustomDropdown';
 import ShareButtons from '../components/ShareButtons';
 import HLSPlayer, { HLSPlayerRef } from '../components/HLSPlayer';
-import { useAdFreePopup } from '../context/AdFreePopupContext';
 import AdFreePlayerAds from '../components/AdFreePlayerAds';
 import AlertButton from '../components/AlertButton';
 import {
@@ -34,14 +35,13 @@ import { encodeId, getTmdbId } from '../utils/idEncoder';
 import AntiSpoilerSettingsModal from '../components/AntiSpoilerSettings';
 import { useAntiSpoilerSettings } from '../hooks/useAntiSpoilerSettings';
 import { buildSiteUrl } from '../config/runtime';
-import CommentsSection from '../components/CommentsSection';
+import { BRANDING } from '../config/branding';
 import LikeDislikeButton from '../components/LikeDislikeButton';
 import { useWrappedTracker } from '../hooks/useWrappedTracker';
 import LazySection from '../components/LazySection';
 import SEO from '../components/SEO';
 import { getTmdbLanguage } from '../i18n';
 import i18n from '../i18n';
-import { useProfile } from '../context/ProfileContext';
 import { getClassificationLabel as getClassificationLabelUtil, isContentAllowed } from '../utils/certificationUtils';
 
 const MAIN_API = import.meta.env.VITE_MAIN_API;
@@ -591,14 +591,14 @@ const TVImagesSection = ({ tvId }: { tvId: string }) => {
                         role="tab"
                         aria-selected={isActive}
                         onClick={() => setSelectedCategory(category)}
-                        className={`relative flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 ${
+                        className={`relative flex-1 min-w-0 flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/60 ${
                           isActive ? 'text-white' : 'text-gray-400 hover:text-white'
                         }`}
                       >
                         {isActive && (
                           <motion.div
                             layoutId="tv-images-tabs-indicator"
-                            className="absolute inset-0 bg-red-600 rounded-lg shadow-sm shadow-red-600/30"
+                            className="absolute inset-0 bg-accent-600 rounded-lg shadow-sm shadow-accent-600/30"
                             transition={{ type: 'spring', bounce: 0.15, duration: 0.45 }}
                           />
                         )}
@@ -770,7 +770,7 @@ const TVImagesSection = ({ tvId }: { tvId: string }) => {
                         )}
                         {zipStatus === 'error' && (
                           <>
-                            <AlertTriangle className="w-5 h-5 text-red-300" />
+                            <AlertTriangle className="w-5 h-5 text-accent-300" />
                             <span>{t('details.downloadError')}</span>
                           </>
                         )}
@@ -1766,7 +1766,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
           <button
             onClick={() => handleSelectSource('primary')}
             className={`px-4 py-2 rounded ${selectedSource === 'primary'
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-700 hover:bg-gray-600'
               }`}
           >
@@ -1778,7 +1778,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
           <button
             onClick={() => setShowVostfrOptions(!showVostfrOptions)}
             className={`px-4 py-2 rounded flex items-center gap-2 ${(selectedSource === 'peachify' || selectedSource === 'vostfr' || selectedSource === 'videasy' || selectedSource === 'vidsrccc' || selectedSource === 'vidsrcsu' || selectedSource === 'vidsrcwtf1' || selectedSource === 'vidsrcwtf5')
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-700 hover:bg-gray-600'
               }`}
           >
@@ -1799,7 +1799,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
               <button
                 onClick={() => handleSelectSource('peachify')}
                 className={`w-full px-4 py-2 text-left ${selectedSource === 'peachify'
-                  ? 'bg-red-600/70 text-white'
+                  ? 'bg-accent-600/70 text-white'
                   : 'hover:bg-gray-700'
                   }`}
               >
@@ -1809,7 +1809,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
               <button
                 onClick={() => handleSelectSource('vostfr')}
                 className={`w-full px-4 py-2 text-left ${selectedSource === 'vostfr'
-                  ? 'bg-red-600/70 text-white'
+                  ? 'bg-accent-600/70 text-white'
                   : 'hover:bg-gray-700'
                   }`}
               >
@@ -1819,7 +1819,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
               <button
                 onClick={() => handleSelectSource('videasy')}
                 className={`w-full px-4 py-2 text-left ${selectedSource === 'videasy'
-                  ? 'bg-red-600/70 text-white'
+                  ? 'bg-accent-600/70 text-white'
                   : 'hover:bg-gray-700'
                   }`}
               >
@@ -1829,7 +1829,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
               <button
                 onClick={() => handleSelectSource('vidsrccc')}
                 className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrccc'
-                  ? 'bg-red-600/70 text-white'
+                  ? 'bg-accent-600/70 text-white'
                   : 'hover:bg-gray-700'
                   }`}
               >
@@ -1839,7 +1839,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
               <button
                 onClick={() => handleSelectSource('vidsrcsu')}
                 className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcsu'
-                  ? 'bg-red-600/70 text-white'
+                  ? 'bg-accent-600/70 text-white'
                   : 'hover:bg-gray-700'
                   }`}
               >
@@ -1849,7 +1849,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
               <button
                 onClick={() => handleSelectSource('vidsrcwtf1')}
                 className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcwtf1'
-                  ? 'bg-red-600/70 text-white'
+                  ? 'bg-accent-600/70 text-white'
                   : 'hover:bg-gray-700'
                   }`}
               >
@@ -1859,7 +1859,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
               <button
                 onClick={() => handleSelectSource('vidsrcwtf5')}
                 className={`w-full px-4 py-2 text-left ${selectedSource === 'vidsrcwtf5'
-                  ? 'bg-red-600/70 text-white'
+                  ? 'bg-accent-600/70 text-white'
                   : 'hover:bg-gray-700'
                   }`}
               >
@@ -1975,7 +1975,7 @@ const VideoPlayer = forwardRef<VideoPlayerRefHandle, VideoPlayerProps>(({ showId
             key={index}
             onClick={() => handleSelectSource(index)}
             className={`px-4 py-2 rounded ${selectedSource === index
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-700 hover:bg-gray-600'
               }`}
           >
@@ -2588,8 +2588,6 @@ const TVDetails: React.FC = () => {
   const hoverTimeoutRef = useRef<number | null>(null);
   // Ajout d'une référence pour le conteneur de cartes similaires
   const similarRowRef = useRef<HTMLDivElement>(null);
-  // Référence pour la section commentaires
-  const commentsRef = useRef<HTMLDivElement>(null);
   // État pour tracker quelle carte est survolée
   // const [_hoveredSimilarIndex, _setHoveredSimilarIndex] = useState<number | null>(null);
   // Ajout du state pour les cartes d'épisode élargies
@@ -3470,14 +3468,14 @@ const TVDetails: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={handleContinueWatching}
-            className="flex flex-col items-center gap-2 px-4 sm:px-6 py-4 sm:py-5 bg-red-600 hover:bg-red-700 rounded-lg flex-1 min-w-0 justify-center text-xs sm:text-sm"
+            className="flex flex-col items-center gap-2 px-4 sm:px-6 py-4 sm:py-5 bg-accent-600 hover:bg-accent-700 rounded-lg flex-1 min-w-0 justify-center text-xs sm:text-sm"
           >
             <Play className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
             <div className="text-center">
               {continueWatchingData.hasProgress ? (
                 <div className="flex flex-col items-center text-center w-full">
                       <span>{t('details.resumeEpisode', { episode: continueWatchingData.episodeNumber, season: getSeasonDisplayName(continueWatchingData.seasonNumber, id, t) })}</span>
-                  <span className="text-xs bg-red-800/80 text-white px-1.5 py-0.5 rounded font-medium mt-1">
+                  <span className="text-xs bg-accent-800/80 text-white px-1.5 py-0.5 rounded font-medium mt-1">
                     {formatTime(continueWatchingData.position)}/{formatTime(continueWatchingData.duration)}
                   </span>
                 </div>
@@ -3523,7 +3521,7 @@ const TVDetails: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => updateWatchStatus('watchlist', !watchStatus.watchlist)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg ${watchStatus.watchlist
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-800 hover:bg-gray-700'
               }`}
           >
@@ -3536,7 +3534,7 @@ const TVDetails: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => updateWatchStatus('favorite', !watchStatus.favorite)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg ${watchStatus.favorite
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-800 hover:bg-gray-700'
               }`}
           >
@@ -3549,7 +3547,7 @@ const TVDetails: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => updateWatchStatus('watched', !watchStatus.watched)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg ${watchStatus.watched
-              ? 'bg-red-600 text-white'
+              ? 'bg-accent-600 text-white'
               : 'bg-gray-800 hover:bg-gray-700'
               }`}
           >
@@ -3694,7 +3692,7 @@ const TVDetails: React.FC = () => {
   useEffect(() => {
     if (tvShow) {
       // Simple TV show title
-      document.title = `${tvShow.name} - Movix`;
+      document.title = `${tvShow.name} - ${BRANDING.siteName}`;
     } else {
       document.title = t('details.tvShowDefaultTitle');
     }
@@ -4051,7 +4049,7 @@ const TVDetails: React.FC = () => {
     return <DetailsSkeleton />;
   }
 
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (error) return <div className="text-center text-accent-500">{error}</div>;
   if (!tvShow) return <div className="text-center">{t('details.tvNotFound')}</div>;
 
   // Age restriction check
@@ -4061,8 +4059,8 @@ const TVDetails: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 bg-accent-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
@@ -4072,7 +4070,7 @@ const TVDetails: React.FC = () => {
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+            className="px-6 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
           >
             {t('details.goBack')}
           </button>
@@ -4249,7 +4247,7 @@ const TVDetails: React.FC = () => {
                       key={`anime-${selectedSeason}-${ep.index}`}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1, transition: { delay: index * 0.05, duration: 0.3 } }}
-                      className={`group relative rounded-xl overflow-hidden border border-white/10 hover:border-red-500 transition-all duration-300 bg-gray-800 flex flex-col ${isSelected ? 'ring-2 ring-red-500' : ''}`}
+                      className={`group relative rounded-xl overflow-hidden border border-white/10 hover:border-accent-500 transition-all duration-300 bg-gray-800 flex flex-col ${isSelected ? 'ring-2 ring-accent-500' : ''}`}
                       whileHover={{ y: -5, transition: { duration: 0.2 } }}
                     >
                       <button
@@ -4257,7 +4255,7 @@ const TVDetails: React.FC = () => {
                         onClick={() => handleAnimeGridClick(ep)}
                       >
                         <div className="flex flex-col">
-                          <h4 className="text-lg font-medium group-hover:text-red-500 transition-colors mb-2">
+                          <h4 className="text-lg font-medium group-hover:text-accent-500 transition-colors mb-2">
                             {ep.index}. {ep.name}
                           </h4>
                           <div className="flex flex-wrap gap-2 mt-2">
@@ -4314,7 +4312,7 @@ const TVDetails: React.FC = () => {
                         scale: 1,
                         transition: { delay: index * 0.05, duration: 0.3 }
                       }}
-                      className={`group relative rounded-xl overflow-hidden border border-white/10 hover:border-red-500 transition-all duration-300 bg-white/10 flex flex-col ${isSelected ? 'ring-2 ring-red-500' : ''}`}
+                      className={`group relative rounded-xl overflow-hidden border border-white/10 hover:border-accent-500 transition-all duration-300 bg-white/10 flex flex-col ${isSelected ? 'ring-2 ring-accent-500' : ''}`}
                       whileHover={{ y: -5, transition: { duration: 0.2 } }}
                       layout={false}
                     >
@@ -4396,7 +4394,7 @@ const TVDetails: React.FC = () => {
                             ))}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="bg-red-600/90 rounded-full p-3 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                                <div className="bg-accent-600/90 rounded-full p-3 transform scale-0 group-hover:scale-100 transition-transform duration-300">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-play h-6 w-6 text-white"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
                                 </div>
                               </div>
@@ -4406,7 +4404,7 @@ const TVDetails: React.FC = () => {
                             {displayProgress > 0 && (
                               <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
                                 <div
-                                  className={`h-full ${displayProgress >= 95 ? 'bg-green-500' : 'bg-red-600'} transition-all`}
+                                  className={`h-full ${displayProgress >= 95 ? 'bg-green-500' : 'bg-accent-600'} transition-all`}
                                   style={{ width: `${displayProgress}%` }}
                                 />
                               </div>
@@ -4416,17 +4414,17 @@ const TVDetails: React.FC = () => {
                           <div className="p-4">
                             <div className="flex items-start justify-between gap-4">
                               <div>
-                                <h4 className="text-lg font-medium group-hover:text-red-500 transition-colors">
+                                <h4 className="text-lg font-medium group-hover:text-accent-500 transition-colors">
                                   {shouldHide('episodeNames') ? getMaskedContent(ep.name, 'episodeNames', undefined, ep.episode_number) : `${ep.episode_number}. ${ep.name}`}
                                 </h4>
                                 <div className="flex items-center gap-3 mt-1 text-sm text-white/60">
                                   <div className="flex items-center gap-1.5">
-                                    <Calendar className="h-3.5 w-3.5 text-red-400 opacity-70" />
+                                    <Calendar className="h-3.5 w-3.5 text-accent-400 opacity-70" />
                                     <span>{ep.air_date ? new Date(ep.air_date).toLocaleDateString(i18n.language, { year: 'numeric', month: 'long', day: 'numeric' }) : t('details.dateUnknown')}</span>
                                   </div>
                                   {ep.runtime && (
                                     <div className="flex items-center gap-1.5">
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock h-3.5 w-3.5 text-red-400 opacity-70"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock h-3.5 w-3.5 text-accent-400 opacity-70"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                       <span>{Math.floor(ep.runtime / 60)}h {ep.runtime % 60}m</span>
                                     </div>
                                   )}
@@ -4457,7 +4455,7 @@ const TVDetails: React.FC = () => {
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         onClick={toggleCardExpansion(`s${selectedSeason}e${ep.episode_number}`)}
-                                        className="text-xs text-red-400 hover:text-red-300 mt-1 flex items-center"
+                                        className="text-xs text-accent-400 hover:text-accent-300 mt-1 flex items-center"
                                       >
                                         {expandedCards[`s${selectedSeason}e${ep.episode_number}`] ? (
                                           <>
@@ -4484,7 +4482,7 @@ const TVDetails: React.FC = () => {
                                     updateWatchStatus('episodeWatchlist', !watchStatus.episodeWatchlist[episodeKey], episodeKey);
                                   }
                                 }}
-                                className={`p-2 rounded ${watchStatus?.episodeWatchlist?.[episodeKey] ? 'text-red-600' : 'text-gray-400'} hover:bg-gray-800`}
+                                className={`p-2 rounded ${watchStatus?.episodeWatchlist?.[episodeKey] ? 'text-accent-600' : 'text-gray-400'} hover:bg-gray-800`}
                                 title={t('details.addToWatchlistTitle')}
                               >
                                 <List className="w-4 h-4" />
@@ -4496,7 +4494,7 @@ const TVDetails: React.FC = () => {
                                     updateWatchStatus('episodeWatched', !watchStatus.episodeWatched[episodeKey], episodeKey);
                                   }
                                 }}
-                                className={`p-2 rounded ${watchStatus?.episodeWatched?.[episodeKey] ? 'text-red-600' : 'text-gray-400'} hover:bg-gray-800`}
+                                className={`p-2 rounded ${watchStatus?.episodeWatched?.[episodeKey] ? 'text-accent-600' : 'text-gray-400'} hover:bg-gray-800`}
                                 title={t('details.markAsWatched')}
                               >
                                 <Check className="w-4 h-4" />
@@ -4536,12 +4534,12 @@ const TVDetails: React.FC = () => {
   const tvYear = tvShow.first_air_date && !isNaN(new Date(tvShow.first_air_date).getTime())
     ? new Date(tvShow.first_air_date).getFullYear()
     : null;
-  const tvTitle = tvYear ? `${tvShow.name} (${tvYear}) - Movix` : `${tvShow.name} - Movix`;
+  const tvTitle = tvYear ? `${tvShow.name} (${tvYear}) - ${BRANDING.siteName}` : `${tvShow.name} - ${BRANDING.siteName}`;
   const tvCanonicalUrl = buildSiteUrl(`/tv/${encodedId || id}`);
   const tvSocialImage = tvShow.backdrop_path || tvShow.poster_path
     ? `https://image.tmdb.org/t/p/original${tvShow.backdrop_path || tvShow.poster_path}`
     : undefined;
-  const tvDescription = tvShow.overview?.trim() || `Découvrez ${tvShow.name} sur Movix.`;
+  const tvDescription = tvShow.overview?.trim() || `Découvrez ${tvShow.name} sur ${BRANDING.siteName}.`;
 
   return (
     <MotionConfig reducedMotion="user">
@@ -4674,11 +4672,11 @@ const TVDetails: React.FC = () => {
           transition: all 0.3s ease;
         }
         .section-title:hover {
-          background: linear-gradient(90deg, #ff3333, #ff9999);
+          background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
           -webkit-background-clip: text;
           background-clip: text;
           transform: translateY(-2px);
-          text-shadow: 0px 4px 8px rgba(255, 51, 51, 0.4);
+          text-shadow: 0px 4px 8px color-mix(in srgb, var(--accent-500) 40%, transparent);
         }
         .section-title::after {
           content: '';
@@ -4687,7 +4685,7 @@ const TVDetails: React.FC = () => {
           bottom: 0;
           width: 40px;
           height: 3px;
-          background: linear-gradient(90deg, #f11 0%, #f66 100%);
+          background: linear-gradient(90deg, var(--accent-600) 0%, var(--accent-400) 100%);
           border-radius: 3px;
           animation: expandWidth 0.6s ease-out forwards 0.3s;
           transform-origin: left;
@@ -4695,7 +4693,7 @@ const TVDetails: React.FC = () => {
         }
         .section-title:hover::after {
           width: 100%;
-          background: linear-gradient(90deg, #ff3333, #ff9999);
+          background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
         }
         @keyframes fadeInTitle {
           0% { opacity: 0; transform: translateY(10px); }
@@ -4828,7 +4826,7 @@ const TVDetails: React.FC = () => {
                   {t('details.overviewTab')}
                   {activeTab === 'overview' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -4843,7 +4841,7 @@ const TVDetails: React.FC = () => {
                   {t('details.detailsTab')}
                   {activeTab === 'details' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -4858,7 +4856,7 @@ const TVDetails: React.FC = () => {
                   {t('details.videosTab')}
                   {activeTab === 'videos' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -4890,7 +4888,7 @@ const TVDetails: React.FC = () => {
                   {t('details.castTab')}
                   {activeTab === 'cast' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -4906,28 +4904,13 @@ const TVDetails: React.FC = () => {
                   {t('details.crewTab')}
                   {activeTab === 'crew' && (
                     <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-600"
                       layoutId="activeTab"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
                 </motion.button>
 
-                {/* Bouton Commentaires (scroll vers la section) */}
-                <motion.button
-                  onClick={() => {
-                    // Scroll vers les commentaires
-                    commentsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                  className="px-6 py-3 font-medium text-sm flex-shrink-0 text-gray-400 hover:text-white"
-                  whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
-                  whileTap={{ backgroundColor: "rgba(255,255,255,0.1)" }}
-                >
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4" />
-                    {t('details.commentsTab')}
-                  </div>
-                </motion.button>
               </div>
               {isTabsScrollable && (
                 <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-black to-transparent pointer-events-none flex items-center justify-end pr-2">
@@ -4965,8 +4948,8 @@ const TVDetails: React.FC = () => {
                     </div>
 
                     {/* TMDB Info Box */}
-                    <div className="mb-6 p-4 border border-red-500/50 bg-red-500/10 rounded-lg flex gap-3 items-start">
-                      <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <div className="mb-6 p-4 border border-accent-500/50 bg-accent-500/10 rounded-lg flex gap-3 items-start">
+                      <AlertTriangle className="w-5 h-5 text-accent-500 flex-shrink-0 mt-0.5" />
                       <div className="text-sm text-gray-300">
                         <p>
                           {t('details.tmdbInfoNote')}{' '}
@@ -4974,7 +4957,7 @@ const TVDetails: React.FC = () => {
                             href={`https://www.themoviedb.org/tv/${id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-red-400 hover:text-red-300 underline"
+                            className="text-accent-400 hover:text-accent-300 underline"
                           >
                             TMDB
                           </a>
@@ -5031,7 +5014,7 @@ const TVDetails: React.FC = () => {
                               to={`/genre/tv/${genre.id}`}
                               className="flex items-center gap-1 px-3 py-2 bg-gray-800 rounded-lg text-sm hover:bg-gray-700 transition-colors inline-block border border-gray-700 hover:border-gray-600"
                             >
-                              <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                              <span className="w-2 h-2 rounded-full bg-accent-500"></span>
                               {genre.name}
                             </Link>
                           </motion.div>
@@ -5043,11 +5026,11 @@ const TVDetails: React.FC = () => {
                       <h3 className="text-lg font-semibold mb-2">{t('details.classificationLabel')}</h3>
                       <div className="flex items-center gap-2">
                         {certifications['FR'] ? (
-                          <span className="bg-red-600/70 text-white px-3 py-1 rounded-md font-bold">
+                          <span className="bg-accent-600/70 text-white px-3 py-1 rounded-md font-bold">
                             {getClassificationLabel(certifications['FR'], t)}
                           </span>
                         ) : certifications['US'] ? (
-                          <span className="bg-red-600/70 text-white px-3 py-1 rounded-md font-bold">
+                          <span className="bg-accent-600/70 text-white px-3 py-1 rounded-md font-bold">
                             {getClassificationLabel(certifications['US'], t)}
                           </span>
                         ) : (
@@ -5080,7 +5063,7 @@ const TVDetails: React.FC = () => {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                                className={`group cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 bg-gray-900 ${selectedSeason === seasonNumber ? 'border-red-600' : 'border-gray-800 hover:border-red-500'}`}
+                                className={`group cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 bg-gray-900 ${selectedSeason === seasonNumber ? 'border-accent-600' : 'border-gray-800 hover:border-accent-500'}`}
                                 onClick={() => handleSeasonChange(seasonNumber)}
                                 whileHover={{ y: -5 }}
                               >
@@ -5111,7 +5094,7 @@ const TVDetails: React.FC = () => {
                           </div>
                         </div> */}
                                   {selectedSeason === seasonNumber && (
-                                    <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">{t('details.currentSeasonBadge')}</div>
+                                    <div className="absolute top-2 right-2 bg-accent-600 text-white text-xs px-2 py-1 rounded-full">{t('details.currentSeasonBadge')}</div>
                                   )}
                                 </div>
                                 {/* Nom complet de la saison affiché en dessous pour les animes */}
@@ -5144,7 +5127,7 @@ const TVDetails: React.FC = () => {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ duration: 0.3 }}
-                                className={`group cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${selectedSeason === season ? 'border-red-600' : 'border-gray-800 hover:border-red-500'}`}
+                                className={`group cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${selectedSeason === season ? 'border-accent-600' : 'border-gray-800 hover:border-accent-500'}`}
                                 onClick={() => handleSeasonChange(season)}
                                 whileHover={{ y: -5 }}
                               >
@@ -5181,7 +5164,7 @@ const TVDetails: React.FC = () => {
                                     </div>
                                   </div>
                                   {selectedSeason === season && (
-                                    <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">{t('details.currentSeasonBadge')}</div>
+                                    <div className="absolute top-2 right-2 bg-accent-600 text-white text-xs px-2 py-1 rounded-full">{t('details.currentSeasonBadge')}</div>
                                   )}
                                 </div>
                               </motion.div>
@@ -5743,7 +5726,7 @@ const TVDetails: React.FC = () => {
                     {/* Informations globales - toujours visibles en mode simple */}
                     <div className="mb-4">
                       <h4 className="text-md font-medium mb-2 text-gray-300 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                        <span className="w-2 h-2 rounded-full bg-accent-500"></span>
                         {t('details.globalLabel')}
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -5923,7 +5906,7 @@ const TVDetails: React.FC = () => {
                                     </ul>
                                   </div>
                                   <div className="bg-gray-900 p-2 rounded-lg">
-                                    <h5 className="text-xs font-medium text-red-400 mb-1">{t('details.negativeFactors')}</h5>
+                                    <h5 className="text-xs font-medium text-accent-400 mb-1">{t('details.negativeFactors')}</h5>
                                     <ul className="list-disc pl-4 text-xs text-gray-300 space-y-0.5">
                                       {!tvShow.in_production &&
                                         <li>{t('details.productionEndedFactor')}</li>
@@ -6047,7 +6030,7 @@ const TVDetails: React.FC = () => {
                                 </div>
                               </div>
                               <div className="overflow-hidden h-2 mt-1 text-xs flex rounded bg-gray-700">
-                                <div style={{ width: "55%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
+                                <div style={{ width: "55%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-accent-500"></div>
                               </div>
                             </div>
 
@@ -6192,7 +6175,7 @@ const TVDetails: React.FC = () => {
                         setShowMultiLangView(!showMultiLangView);
                       }}
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium shadow-lg border transition-all duration-300 ${showMultiLangView
-                        ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-red-500/20'
+                        ? 'bg-gradient-to-r from-accent-600 to-accent-700 hover:from-accent-700 hover:to-accent-800 border-accent-500/20'
                         : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 border-purple-500/20'
                         }`}
                     >
@@ -6204,7 +6187,7 @@ const TVDetails: React.FC = () => {
                   {/* Section Vidéos Générales */}
                   {(loadingVideos || loadingMultiLangVideos) ? (
                     <div className="flex items-center justify-center h-40 w-full">
-                      <Loader className="w-8 h-8 animate-spin text-red-600" />
+                      <Loader className="w-8 h-8 animate-spin text-accent-600" />
                     </div>
                   ) : showMultiLangView ? (
                     // Vue multi-langues
@@ -6342,7 +6325,7 @@ const TVDetails: React.FC = () => {
                               {filteredVideos.map((video: any, index: number) => (
                                 <motion.div
                                   key={video.id || video.key}
-                                  className="group bg-gray-800/70 rounded-xl overflow-hidden border border-gray-700/50 hover:border-red-500/30"
+                                  className="group bg-gray-800/70 rounded-xl overflow-hidden border border-gray-700/50 hover:border-accent-500/30"
                                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
                                   animate={{ opacity: 1, y: 0, scale: 1 }}
                                   transition={{
@@ -6379,7 +6362,7 @@ const TVDetails: React.FC = () => {
                                       whileHover={{ backgroundColor: "rgba(0,0,0,0.1)" }}
                                     >
                                       <motion.div
-                                        className="w-14 h-14 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg"
+                                        className="w-14 h-14 rounded-full bg-accent-600/90 flex items-center justify-center shadow-lg"
                                         whileHover={{
                                           scale: 1.1,
                                           backgroundColor: "rgba(239, 68, 68, 1)",
@@ -6398,11 +6381,11 @@ const TVDetails: React.FC = () => {
                                     animate={{ opacity: 1 }}
                                     transition={{ delay: index * 0.1 + 0.2 }}
                                   >
-                                    <h4 className="font-semibold mb-2 line-clamp-1 text-white group-hover:text-red-400 transition-colors">{video.name}</h4>
+                                    <h4 className="font-semibold mb-2 line-clamp-1 text-white group-hover:text-accent-400 transition-colors">{video.name}</h4>
                                     <div className="flex items-center text-sm text-gray-400">
                                       <motion.span
                                         className={`text-xs px-2 py-1 rounded-md mr-2 font-medium ${video.type === 'Trailer'
-                                          ? 'bg-red-600/70 text-white'
+                                          ? 'bg-accent-600/70 text-white'
                                           : video.type === 'Teaser'
                                             ? 'bg-blue-600/70 text-white'
                                             : video.type === 'Clip'
@@ -6465,7 +6448,7 @@ const TVDetails: React.FC = () => {
                                         className="w-full h-full object-cover"
                                       />
                                       <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-16 h-16 rounded-full bg-red-600/80 flex items-center justify-center">
+                                        <div className="w-16 h-16 rounded-full bg-accent-600/80 flex items-center justify-center">
                                           <Play className="w-8 h-8 text-white ml-1" />
                                         </div>
                                       </div>
@@ -6491,7 +6474,7 @@ const TVDetails: React.FC = () => {
                     </div>
                   ) : loadingVideos ? (
                     <div className="flex items-center justify-center h-40 w-full">
-                      <Loader className="w-8 h-8 animate-spin text-red-600" />
+                      <Loader className="w-8 h-8 animate-spin text-accent-600" />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-40 text-gray-400">
@@ -6506,7 +6489,7 @@ const TVDetails: React.FC = () => {
                   </h3>
                   {loadingVideos ? (
                     <div className="flex items-center justify-center h-40 w-full">
-                      <Loader className="w-8 h-8 animate-spin text-red-600" />
+                      <Loader className="w-8 h-8 animate-spin text-accent-600" />
                     </div>
                   ) : availableSeasons.length > 0 ? (
                     availableSeasons.map(seasonNum => (
@@ -6531,7 +6514,7 @@ const TVDetails: React.FC = () => {
                               }));
                             }}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium shadow-lg border transition-all duration-300 ${showSeasonMultiLangView[seasonNum]
-                              ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-red-500/20'
+                              ? 'bg-gradient-to-r from-accent-600 to-accent-700 hover:from-accent-700 hover:to-accent-800 border-accent-500/20'
                               : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 border-purple-500/20'
                               }`}
                           >
@@ -6542,7 +6525,7 @@ const TVDetails: React.FC = () => {
 
                         {(loadingVideos || loadingSeasonMultiLangVideos[seasonNum]) ? (
                           <div className="flex items-center justify-center h-40">
-                            <Loader className="w-8 h-8 animate-spin text-red-600" />
+                            <Loader className="w-8 h-8 animate-spin text-accent-600" />
                           </div>
                         ) : showSeasonMultiLangView[seasonNum] ? (
                           // Vue multi-langues pour cette saison
@@ -6666,7 +6649,7 @@ const TVDetails: React.FC = () => {
                               {seasonVideos[seasonNum].map((video: any, index: number) => (
                                 <motion.div
                                   key={video.id || video.key}
-                                  className="group bg-gray-800/70 rounded-xl overflow-hidden border border-gray-700/50 hover:border-red-500/30"
+                                  className="group bg-gray-800/70 rounded-xl overflow-hidden border border-gray-700/50 hover:border-accent-500/30"
                                   initial={{ opacity: 0, y: 20, scale: 0.9 }}
                                   animate={{ opacity: 1, y: 0, scale: 1 }}
                                   transition={{
@@ -6703,7 +6686,7 @@ const TVDetails: React.FC = () => {
                                       whileHover={{ backgroundColor: "rgba(0,0,0,0.1)" }}
                                     >
                                       <motion.div
-                                        className="w-14 h-14 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg"
+                                        className="w-14 h-14 rounded-full bg-accent-600/90 flex items-center justify-center shadow-lg"
                                         whileHover={{
                                           scale: 1.1,
                                           backgroundColor: "rgba(239, 68, 68, 1)",
@@ -6722,10 +6705,10 @@ const TVDetails: React.FC = () => {
                                     animate={{ opacity: 1 }}
                                     transition={{ delay: index * 0.1 + 0.2 }}
                                   >
-                                    <h4 className="font-semibold mb-2 line-clamp-1 text-white group-hover:text-red-400 transition-colors">{video.name}</h4>
+                                    <h4 className="font-semibold mb-2 line-clamp-1 text-white group-hover:text-accent-400 transition-colors">{video.name}</h4>
                                     <div className="flex items-center text-sm text-gray-400">
                                       <motion.span
-                                        className={`text-xs px-2 py-1 rounded-md mr-2 font-medium ${video.type === 'Trailer' ? 'bg-red-600/70 text-white' :
+                                        className={`text-xs px-2 py-1 rounded-md mr-2 font-medium ${video.type === 'Trailer' ? 'bg-accent-600/70 text-white' :
                                           video.type === 'Teaser' ? 'bg-blue-600/70 text-white' :
                                             video.type === 'Clip' ? 'bg-green-600/70 text-white' :
                                               'bg-gray-700/70 text-gray-300'
@@ -6867,7 +6850,7 @@ const TVDetails: React.FC = () => {
                   <button
                     key={`lang-${link.language}-${i}`}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedLanguage === link.language
-                      ? 'bg-red-600 text-white ring-2 ring-red-400 shadow-lg shadow-red-900/30'
+                      ? 'bg-accent-600 text-white ring-2 ring-accent-400 shadow-lg shadow-accent-900/30'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       }`}
                     onClick={() => setSelectedLanguage(link.language)}
@@ -6891,7 +6874,7 @@ const TVDetails: React.FC = () => {
                       <button
                         key={`player-${index}`}
                         className={`px-3 py-2 rounded-md flex items-center justify-center transition-all ${selectedPlayer === index.toString()
-                          ? 'bg-red-600 text-white font-medium ring-2 ring-red-400 scale-105 shadow-lg shadow-red-900/30'
+                          ? 'bg-accent-600 text-white font-medium ring-2 ring-accent-400 scale-105 shadow-lg shadow-accent-900/30'
                           : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105'
                           }`}
                         onClick={() => setSelectedPlayer(index.toString())}
@@ -6956,7 +6939,7 @@ const TVDetails: React.FC = () => {
             </motion.div>
           ) : recommendations.length > 0 ? (
             <EmblaCarousel
-              title={<span><span className="text-red-600 mr-2">🔥</span>{t('details.similarSeries')}</span>}
+              title={<span><span className="text-accent-600 mr-2">🔥</span>{t('details.similarSeries')}</span>}
               items={recommendations.map(show => ({
                 id: Number(show.id),
                 title: show.name,
@@ -6983,26 +6966,6 @@ const TVDetails: React.FC = () => {
         </motion.div>
       </LazySection>
 
-      {/* Section Commentaires - Lazy loaded when approaching viewport.
-          Le ref est ancré sur le wrapper (toujours rendu) pour que le bouton
-          "Commentaires" puisse scroller même avant le chargement lazy. */}
-      <div ref={commentsRef} id="comments-section">
-        <LazySection
-          index={1}
-          immediateLoadCount={0}
-          rootMargin="200px"
-          minHeight="400px"
-          className="mt-20 mb-20"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <CommentsSection contentType="tv" contentId={id!} />
-          </motion.div>
-        </LazySection>
-      </div>
 
       {showUpcomingModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -7093,7 +7056,7 @@ const TVDetails: React.FC = () => {
                 {t('details.cancel')}
               </button>
               <button
-                className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="px-6 py-3 bg-accent-600 text-white rounded-lg font-medium hover:bg-accent-700 transition-colors"
                 onClick={() => {
                   setShowUpcomingModal(false);
                   setForceShowUpcoming(true);

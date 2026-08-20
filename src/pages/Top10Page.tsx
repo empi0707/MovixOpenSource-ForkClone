@@ -532,7 +532,7 @@ const Top10Page: React.FC = () => {
             </div>
           ) : currentError ? (
             <AnimatedBorderCard highlightColor="239 68 68" backgroundColor="10 10 10" className="p-8 text-center">
-              <p className="text-red-400">{t(currentError)}</p>
+              <p className="text-accent-400">{t(currentError)}</p>
             </AnimatedBorderCard>
           ) : currentData.length === 0 ? (
             <AnimatedBorderCard highlightColor="99 102 241" backgroundColor="10 10 10" className="p-12 text-center">
@@ -784,10 +784,10 @@ const Top10Page: React.FC = () => {
                       </div>
                       <p className="text-xs text-white/50">{t('top10.loggedInUsersDesc')}</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-red-500/[0.05] border border-red-500/10">
+                    <div className="p-3 rounded-lg bg-accent-500/[0.05] border border-accent-500/10">
                       <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 rounded-full bg-red-500/70" />
-                        <span className="text-red-400/80 font-medium">{t('top10.guestsAnonymous')}</span>
+                        <div className="w-2 h-2 rounded-full bg-accent-500/70" />
+                        <span className="text-accent-400/80 font-medium">{t('top10.guestsAnonymous')}</span>
                       </div>
                       <p className="text-xs text-white/40">{t('top10.guestsAnonymousDesc')}</p>
                     </div>

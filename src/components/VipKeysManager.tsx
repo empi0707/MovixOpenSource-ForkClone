@@ -242,7 +242,7 @@ const VipKeysManager: React.FC = () => {
     const isExpired = expiresAt && expiresAt < new Date();
 
     if (isActive && !isExpired) return { text: t('admin.active'), class: 'bg-green-600' };
-    if (isExpired) return { text: t('admin.expired'), class: 'bg-red-600' };
+    if (isExpired) return { text: t('admin.expired'), class: 'bg-accent-600' };
     return { text: t('admin.inactive'), class: 'bg-gray-600' };
   };
 
@@ -418,7 +418,7 @@ const VipKeysManager: React.FC = () => {
                       </button>
                       <button
                         onClick={() => deleteKey(key.key_value)}
-                        className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                        className="px-3 py-1 bg-accent-600 text-white text-sm rounded hover:bg-accent-700"
                       >
                         {t('admin.delete')}
                       </button>

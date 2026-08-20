@@ -63,7 +63,7 @@ interface ReportStats {
 
 const REASON_LABELS: Record<string, { labelKey: string; color: string }> = {
     spam: { labelKey: 'admin.reasonSpam', color: 'bg-gray-500' },
-    harassment: { labelKey: 'admin.reasonHarassment', color: 'bg-red-500' },
+    harassment: { labelKey: 'admin.reasonHarassment', color: 'bg-accent-500' },
     sexual_content: { labelKey: 'admin.reasonSexualContent', color: 'bg-pink-500' },
     unmarked_spoiler: { labelKey: 'admin.reasonUnmarkedSpoiler', color: 'bg-yellow-500' },
     impersonation: { labelKey: 'admin.reasonImpersonation', color: 'bg-purple-500' },
@@ -283,12 +283,12 @@ const AdminReports: React.FC = () => {
 
             {/* Error message */}
             {fetchError && (
-                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                <div className="p-4 bg-accent-500/10 border border-accent-500/20 rounded-lg flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-accent-400 shrink-0 mt-0.5" />
                     <div>
-                        <p className="text-sm text-red-200 font-medium">{t('errors.loadingFailed')}</p>
-                        <p className="text-xs text-red-100/70">{fetchError}</p>
-                        <p className="text-xs text-red-100/50 mt-1">{t('admin.reportsApiHint')}</p>
+                        <p className="text-sm text-accent-200 font-medium">{t('errors.loadingFailed')}</p>
+                        <p className="text-xs text-accent-100/70">{fetchError}</p>
+                        <p className="text-xs text-accent-100/50 mt-1">{t('admin.reportsApiHint')}</p>
                     </div>
                 </div>
             )}
@@ -343,7 +343,7 @@ const AdminReports: React.FC = () => {
                                                 </Badge>
 
                                                 {report.report_count > 1 && (
-                                                    <Badge className="bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 border border-red-500/30">
+                                                    <Badge className="bg-accent-500/20 text-accent-400 text-[10px] px-2 py-0.5 border border-accent-500/30">
                                                         {t('admin.reportCountPlural', { count: report.report_count })}
                                                     </Badge>
                                                 )}
@@ -467,11 +467,11 @@ const AdminReports: React.FC = () => {
                 className="max-w-md"
             >
                 <div className="space-y-6">
-                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                    <div className="p-4 bg-accent-500/10 border border-accent-500/20 rounded-lg flex items-start gap-3">
+                        <AlertCircle className="h-5 w-5 text-accent-400 shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-sm text-red-200 font-medium">{t('admin.irreversibleAction')}</p>
-                            <p className="text-xs text-red-100/70">
+                            <p className="text-sm text-accent-200 font-medium">{t('admin.irreversibleAction')}</p>
+                            <p className="text-xs text-accent-100/70">
                                 {t('admin.deleteReportedContentDesc')}
                             </p>
                         </div>

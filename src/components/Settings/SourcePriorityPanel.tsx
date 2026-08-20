@@ -648,9 +648,9 @@ export const SourcePriorityPanel: React.FC = () => {
           <div className="flex items-start gap-3">
             <span
               aria-hidden
-              className="shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-red-500/15 border border-red-500/30"
+              className="shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-accent-500/15 border border-accent-500/30"
             >
-              <AlertTriangle size={22} className="text-red-400" />
+              <AlertTriangle size={22} className="text-accent-400" />
             </span>
             <p className="text-sm text-white/80 leading-relaxed">
               {t('settings.sourcePriority.resetConfirmDescription')}

@@ -63,11 +63,10 @@ import {
   createLocalPlaybackAwakeLease,
   shouldKeepLocalPlaybackAwake,
 } from '../utils/localPlaybackAwake';
-import {
-  createAndroidCastRemoteController,
-  createWebCastRemoteController,
-  isMovixAndroidCastBridgeCompatible,
-} from '../services/castRemoteController';
+// castRemoteController removed — Chromecast feature disabled
+const createAndroidCastRemoteController = (..._args: unknown[]) => null;
+const createWebCastRemoteController = (..._args: unknown[]) => null;
+const isMovixAndroidCastBridgeCompatible = () => false;
 import type {
   CastRemoteController,
   CastRemoteStatus,
@@ -391,7 +390,7 @@ const SourceQualityMeta = ({ qualityLabel, isActive = false }: { qualityLabel: s
   const { t } = useTranslation();
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const hasEstimatedBitrate = /~\s*\d+\s*kbps/i.test(qualityLabel);
-  const labelClassName = `text-[11px] ${isActive ? 'text-red-300' : 'text-gray-500'}`;
+  const labelClassName = `text-[11px] ${isActive ? 'text-accent-300' : 'text-gray-500'}`;
 
   if (!hasEstimatedBitrate) {
     return (
@@ -8983,12 +8982,12 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                             <button
                               onClick={() => handleSourceChange(source.type, source.id, source.url)}
                               disabled={(source.type === 'rivestream_hls' && loadingRivestream) || (source.type === 'kisskh_main' && loadingKisskh)}
-                              className={`w-full flex-1 px-4 py-3 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isActive ? 'bg-gray-800 border-l-4 border-red-600 pl-3' : 'bg-gray-900/60 text-white'
-                                } ${onlyQualityMenu && embedType && embedUrl && source.type === embedType && source.url === embedUrl ? 'ring-2 ring-red-500 bg-gray-800/80' : ''} ${(source.type === 'rivestream_hls' && loadingRivestream) ? 'opacity-70 cursor-not-allowed' : ''
+                              className={`w-full flex-1 px-4 py-3 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isActive ? 'bg-gray-800 border-l-4 border-accent-600 pl-3' : 'bg-gray-900/60 text-white'
+                                } ${onlyQualityMenu && embedType && embedUrl && source.type === embedType && source.url === embedUrl ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''} ${(source.type === 'rivestream_hls' && loadingRivestream) ? 'opacity-70 cursor-not-allowed' : ''
                                 }`}
                             >
                               <div className="min-w-0 flex flex-1 flex-col">
-                                <span className={`${isActive ? 'text-red-600 font-medium' : 'text-white'} ${(source.type === 'rivestream_hls' && loadingRivestream) ? 'animate-pulse' : ''
+                                <span className={`${isActive ? 'text-accent-600 font-medium' : 'text-white'} ${(source.type === 'rivestream_hls' && loadingRivestream) ? 'animate-pulse' : ''
                                   }`}>
                                   {source.label}
                                   {topLevelForPin && __pinnedSourceId === topLevelForPin && (
@@ -9015,9 +9014,9 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                   />
                                 )}
                                 {onlyQualityMenu && embedType && embedUrl && source.type === embedType && source.url === embedUrl && (
-                                  <span className="ml-2 text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>
+                                  <span className="ml-2 text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>
                                 )}
-                                {isActive && <span className="text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                {isActive && <span className="text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                               </div>
                             </button>
                             {topLevelForPin && (
@@ -9058,11 +9057,11 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                       >
                                         <button
                                           onClick={() => handleSourceChange('darkino', `darkino_${index}`, darkiSource.m3u8 || '')}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isDarkinoSourceActive ? 'bg-gray-800/80 border-l-2 border-red-600 pl-3' : 'bg-gray-900/40 text-gray-300'
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isDarkinoSourceActive ? 'bg-gray-800/80 border-l-2 border-accent-600 pl-3' : 'bg-gray-900/40 text-gray-300'
                                             }`}
                                         >
                                           <div className="min-w-0 flex flex-1 flex-col">
-                                            <span className={isDarkinoSourceActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                            <span className={isDarkinoSourceActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                               {darkiSource.label || darkiSource.quality || `Source ${index + 1}`}
                                               {darkiHosterId && darkiHosterId !== 'unknown' && __pinnedHosterId === darkiHosterId && (
                                                 <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
@@ -9072,7 +9071,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                           </div>
                                           <div className="ml-3 flex items-center gap-2">
                                             <span className="text-xs text-gray-400">{darkiSource.language || t('watch.french')}</span>
-                                            {isDarkinoSourceActive && <span className="text-xs px-2 py-0.5 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                            {isDarkinoSourceActive && <span className="text-xs px-2 py-0.5 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                           </div>
                                         </button>
                                         {__renderHosterPin(darkiHosterId)}
@@ -9116,11 +9115,11 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                       >
                                         <button
                                           onClick={() => handleSourceChange('nexus_hls', `nexus_hls_${representativeIndex}`, nexusSource.url)}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isNexusHlsActive ? 'bg-gray-800/80 border-l-2 border-red-600 pl-3' : 'bg-gray-900/40 text-gray-300'
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isNexusHlsActive ? 'bg-gray-800/80 border-l-2 border-accent-600 pl-3' : 'bg-gray-900/40 text-gray-300'
                                             }`}
                                         >
                                           <div className="min-w-0 flex flex-1 flex-col">
-                                            <span className={isNexusHlsActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                            <span className={isNexusHlsActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                           🚀 {seekStreamingLabel}
                                           {nexusHlsHosterId && nexusHlsHosterId !== 'unknown' && __pinnedHosterId === nexusHlsHosterId && (
                                             <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
@@ -9128,7 +9127,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                         </span>
                                             {renderSourceQualityMeta(activeNexusSource.url, isNexusHlsActive, undefined, seekStreamingLabel)}
                                           </div>
-                                          {isNexusHlsActive && <span className="ml-2 text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                          {isNexusHlsActive && <span className="ml-2 text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                         </button>
                                         {__renderHosterPin(nexusHlsHosterId)}
                                         {renderCopySourceButton(nexusSource.url)}
@@ -9150,11 +9149,11 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                       >
                                         <button
                                           onClick={() => handleSourceChange('nexus_hls', `nexus_hls_${index}`, nexusSource.url)}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isNexusHlsActive ? 'bg-gray-800/80 border-l-2 border-red-600 pl-3' : 'bg-gray-900/40 text-gray-300'
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isNexusHlsActive ? 'bg-gray-800/80 border-l-2 border-accent-600 pl-3' : 'bg-gray-900/40 text-gray-300'
                                             }`}
                                         >
                                           <div className="min-w-0 flex flex-1 flex-col">
-                                            <span className={isNexusHlsActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                            <span className={isNexusHlsActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                               🚀 {nexusSource.label || `Nexus HLS ${index + 1}`}
                                               {nexusHlsHosterId && nexusHlsHosterId !== 'unknown' && __pinnedHosterId === nexusHlsHosterId && (
                                                 <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
@@ -9162,7 +9161,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                             </span>
                                             {renderSourceQualityMeta(nexusSource.url, isNexusHlsActive, undefined, nexusSource.label || `Nexus HLS ${index + 1}`)}
                                           </div>
-                                          {isNexusHlsActive && <span className="ml-2 text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                          {isNexusHlsActive && <span className="ml-2 text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                         </button>
                                         {__renderHosterPin(nexusHlsHosterId)}
                                         {renderCopySourceButton(nexusSource.url)}
@@ -9184,11 +9183,11 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                       >
                                         <button
                                           onClick={() => handleSourceChange('nexus_file', `nexus_file_${index}`, nexusSource.url || '')}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isNexusFileActive ? 'bg-gray-800/80 border-l-2 border-red-600 pl-3' : 'bg-gray-900/40 text-gray-300'
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center ${isNexusFileActive ? 'bg-gray-800/80 border-l-2 border-accent-600 pl-3' : 'bg-gray-900/40 text-gray-300'
                                             }`}
                                         >
                                           <div className="min-w-0 flex flex-1 flex-col">
-                                            <span className={isNexusFileActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                            <span className={isNexusFileActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                           {nexusSource.label || `Nexus File ${index + 1}`}
                                           {nexusFileHosterId && nexusFileHosterId !== 'unknown' && __pinnedHosterId === nexusFileHosterId && (
                                             <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
@@ -9196,7 +9195,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                         </span>
                                             {renderSourceQualityMeta(nexusSource.url, isNexusFileActive, undefined, nexusSource.label || `Nexus File ${index + 1}`)}
                                           </div>
-                                          {isNexusFileActive && <span className="ml-2 text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                          {isNexusFileActive && <span className="ml-2 text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                         </button>
                                         {__renderHosterPin(nexusFileHosterId)}
                                         {renderCopySourceButton(nexusSource.url)}
@@ -9233,7 +9232,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                           animate={{ opacity: 1, x: 0 }}
                                           transition={{ duration: 0.2, delay: index * 0.03 }}
                                           onClick={() => handleSourceChange('omega', `omega_${index}`, omegaSource.link || '')}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isEmbedActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isEmbedActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                         >
                                           <span>
                                             {capitalizeFirstLetter(omegaSource.player || t('watch.playerN', { n: index + 1 }))}
@@ -9244,7 +9243,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                           {(omegaSource.player?.toLowerCase().includes('supervideo') || omegaSource.player?.toLowerCase().includes('dropload')) && (
                                             <span className="text-xs text-gray-400">{t('watch.noAds')}</span>
                                           )}
-                                          {isEmbedActive && <span className="ml-2 text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>}
+                                          {isEmbedActive && <span className="ml-2 text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>}
                                         </motion.button>
                                         {__renderHosterPin(omegaHosterId)}
                                       </div>
@@ -9275,7 +9274,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                           animate={{ opacity: 1, x: 0 }}
                                           transition={{ duration: 0.2, delay: index * 0.03 }}
                                           onClick={() => handleSourceChange('coflix', `coflix_${index}`, coflixUrl)}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isCoflixActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isCoflixActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                         >
                                           <span>
                                             {(coflixSource.quality || `Source ${index + 1}`).split('/')[0].trim() || `Source ${index + 1}`}
@@ -9284,7 +9283,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                             )}
                                           </span>
                                           <span className="text-xs text-gray-400">{coflixSource.language || t('watch.french')}</span>
-                                          {isCoflixActive && <span className="ml-2 text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>}
+                                          {isCoflixActive && <span className="ml-2 text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>}
                                         </motion.button>
                                         {__renderHosterPin(coflixHosterId)}
                                       </div>
@@ -9339,11 +9338,11 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ duration: 0.2, delay: index * 0.03 }}
                                         onClick={() => handleSourceChange('vostfr', vostfrSource.id, sourceUrl)}
-                                        className={`w-full px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg mb-2 flex justify-between items-center bg-gray-900/40 text-gray-300 ${isVostfrActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                        className={`w-full px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg mb-2 flex justify-between items-center bg-gray-900/40 text-gray-300 ${isVostfrActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                       >
                                         <span>{vostfrSource.label}</span>
                                         <span className="text-xs text-gray-400">{t('watch.voVostfr')}</span>
-                                        {isVostfrActive && <span className="ml-2 text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>}
+                                        {isVostfrActive && <span className="ml-2 text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>}
                                       </motion.button>
                                     );
                                   })}
@@ -9406,7 +9405,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   animate={{ opacity: 1, x: 0 }}
                                                   transition={{ duration: 0.2, delay: index * 0.03 }}
                                                   onClick={() => handleSourceChange('fstream', `fstream_${globalIndex}`, fstreamSource.url)}
-                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isFstreamActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isFstreamActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                                 >
                                                   <span>
                                                     {fstreamSource.label}
@@ -9416,7 +9415,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   </span>
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-xs text-gray-500">{fstreamSource.category}</span>
-                                                    {isFstreamActive && <span className="text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>}
+                                                    {isFstreamActive && <span className="text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>}
                                                   </div>
                                                 </motion.button>
                                                 {__renderHosterPin(fstreamHosterId)}
@@ -9482,7 +9481,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   animate={{ opacity: 1, x: 0 }}
                                                   transition={{ duration: 0.2, delay: index * 0.03 }}
                                                   onClick={() => handleSourceChange('wiflix', `wiflix_${globalIndex}`, wiflixSource.url)}
-                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isWiflixActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isWiflixActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                                 >
                                                   <span>
                                                     {wiflixSource.label}
@@ -9492,7 +9491,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   </span>
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-xs text-gray-500">{wiflixSource.category}</span>
-                                                    {isWiflixActive && <span className="text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>}
+                                                    {isWiflixActive && <span className="text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>}
                                                   </div>
                                                 </motion.button>
                                                 {__renderHosterPin(wiflixHosterId)}
@@ -9554,7 +9553,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   animate={{ opacity: 1, x: 0 }}
                                                   transition={{ duration: 0.2, delay: index * 0.03 }}
                                                   onClick={() => handleSourceChange('j1f', `j1f_${globalIndex}`, j1fSource.url)}
-                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isJ1fActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isJ1fActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                                 >
                                                   <span>
                                                     {j1fSource.label}
@@ -9564,7 +9563,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   </span>
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-xs text-gray-500">{j1fSource.category}</span>
-                                                    {isJ1fActive && <span className="text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>}
+                                                    {isJ1fActive && <span className="text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>}
                                                   </div>
                                                 </motion.button>
                                                 {__renderHosterPin(j1fHosterId)}
@@ -9626,7 +9625,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   animate={{ opacity: 1, x: 0 }}
                                                   transition={{ duration: 0.2, delay: index * 0.03 }}
                                                   onClick={() => handleSourceChange('swiftflow', `swiftflow_${globalIndex}`, swiftflowSource.url)}
-                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isSwiftflowActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isSwiftflowActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                                 >
                                                   <span>
                                                     {swiftflowSource.label}
@@ -9636,7 +9635,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   </span>
                                                   <div className="flex items-center gap-2">
                                                     <span className="text-xs text-gray-500">{swiftflowSource.category}</span>
-                                                    {isSwiftflowActive && <span className="text-xs px-2 py-1 bg-red-600 text-white rounded-full">{t('watch.inProgress')}</span>}
+                                                    {isSwiftflowActive && <span className="text-xs px-2 py-1 bg-accent-600 text-white rounded-full">{t('watch.inProgress')}</span>}
                                                   </div>
                                                 </motion.button>
                                                 {__renderHosterPin(swiftflowHosterId)}
@@ -9677,10 +9676,10 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                         >
                                           <button
                                             onClick={() => handleSourceChange('bravo', `bravo_${index}`, bravoSource.url)}
-                                            className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isBravoActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                            className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isBravoActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                           >
                                             <div className="min-w-0 flex flex-1 flex-col">
-                                              <span className={isBravoActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                              <span className={isBravoActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                                 {bravoSource.label}
                                                 {bravoHosterId && bravoHosterId !== 'unknown' && __pinnedHosterId === bravoHosterId && (
                                                   <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
@@ -9688,7 +9687,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                               </span>
                                               {renderSourceQualityMeta(bravoSource.url, isBravoActive, undefined, bravoSource.label)}
                                             </div>
-                                            {isBravoActive && <span className="text-xs px-2 py-0.5 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                            {isBravoActive && <span className="text-xs px-2 py-0.5 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                           </button>
                                           {__renderHosterPin(bravoHosterId)}
                                           {renderCopySourceButton(bravoSource.url)}
@@ -9767,10 +9766,10 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                               >
                                                 <button
                                                   onClick={() => handleSourceChange('rivestream', `rivestream_${globalIndex}`, rivestreamSource.url)}
-                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isRivestreamActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                                  className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isRivestreamActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                                 >
                                                   <div className="min-w-0 flex flex-1 flex-col">
-                                                    <span className={isRivestreamActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                                    <span className={isRivestreamActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                                       {rivestreamSource.label}
                                                       {rivestreamHosterId && rivestreamHosterId !== 'unknown' && __pinnedHosterId === rivestreamHosterId && (
                                                         <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
@@ -9780,7 +9779,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                                   </div>
                                                   <div className="ml-3 flex items-center gap-2">
                                                     <span className="text-xs text-gray-400">{rivestreamSource.service}</span>
-                                                    {isRivestreamActive && <span className="text-xs px-2 py-0.5 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                                    {isRivestreamActive && <span className="text-xs px-2 py-0.5 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                                   </div>
                                                 </button>
                                                 {__renderHosterPin(rivestreamHosterId)}
@@ -9824,10 +9823,10 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                           animate={{ opacity: 1, x: 0 }}
                                           transition={{ duration: 0.2, delay: index * 0.03 }}
                                           onClick={() => handleSourceChange('viper', index.toString(), vSource.url)}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isViperSourceActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isViperSourceActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                         >
                                           <div className="flex flex-col">
-                                            <span className={isViperSourceActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                            <span className={isViperSourceActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                               {vSource.label}
                                               {viperHosterId && viperHosterId !== 'unknown' && __pinnedHosterId === viperHosterId && (
                                                 <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
@@ -9838,7 +9837,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                               {vSource.quality && <span className="text-[10px] text-gray-500">{vSource.quality}</span>}
                                             </div>
                                           </div>
-                                          {isViperSourceActive && <span className="text-xs px-2 py-0.5 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                          {isViperSourceActive && <span className="text-xs px-2 py-0.5 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                         </motion.button>
                                         {__renderHosterPin(viperHosterId)}
                                       </div>
@@ -9869,17 +9868,17 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                                           animate={{ opacity: 1, x: 0 }}
                                           transition={{ duration: 0.2, delay: index * 0.03 }}
                                           onClick={() => handleSourceChange('vox', index.toString(), vSource.link)}
-                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isVoxSourceActive ? 'ring-2 ring-red-500 bg-gray-800/80' : ''}`}
+                                          className={`w-full flex-1 px-4 py-2 text-sm text-left hover:bg-gray-800/80 rounded-lg flex justify-between items-center bg-gray-900/40 text-gray-300 ${isVoxSourceActive ? 'ring-2 ring-accent-500 bg-gray-800/80' : ''}`}
                                         >
                                           <div className="flex flex-col">
-                                            <span className={isVoxSourceActive ? 'text-red-600 font-medium' : 'text-white'}>
+                                            <span className={isVoxSourceActive ? 'text-accent-600 font-medium' : 'text-white'}>
                                               {vSource.name}
                                               {voxHosterId && voxHosterId !== 'unknown' && __pinnedHosterId === voxHosterId && (
                                                 <span className="ml-2 text-xs text-amber-400 font-semibold">#1</span>
                                               )}
                                             </span>
                                           </div>
-                                          {isVoxSourceActive && <span className="text-xs px-2 py-0.5 bg-red-600 text-white rounded-full">{t('watch.active')}</span>}
+                                          {isVoxSourceActive && <span className="text-xs px-2 py-0.5 bg-accent-600 text-white rounded-full">{t('watch.active')}</span>}
                                         </motion.button>
                                         {__renderHosterPin(voxHosterId)}
                                       </div>
@@ -10466,7 +10465,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
           <div className="relative z-20 w-full flex-none bg-black/95 shadow-lg">
             <div className="flex min-h-14 items-center justify-between px-3 py-1.5 sm:px-5 sm:py-2">
               <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-none text-red-500 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-none text-accent-500 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zM21 3H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
                 </svg>
                 <div className="flex min-w-0 flex-col">
@@ -10570,7 +10569,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                       );
                     }
                   }}
-                  className="inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-red-500 bg-red-600 px-4 text-sm font-bold text-white shadow-xl transition-colors duration-200 hover:border-red-400 hover:bg-red-700 sm:px-5 sm:text-base"
+                  className="inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-accent-500 bg-accent-600 px-4 text-sm font-bold text-white shadow-xl transition-colors duration-200 hover:border-accent-400 hover:bg-accent-700 sm:px-5 sm:text-base"
                   title={t('watch.playPause')}
                 >
                   {castStatus.state === 'playing'
@@ -10664,7 +10663,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                         style={{ width: 'var(--slider-progress)' }}
                       />
                       <div
-                        className="absolute top-0 left-0 h-full bg-red-500 rounded-full"
+                        className="absolute top-0 left-0 h-full bg-accent-500 rounded-full"
                         style={{ width: 'var(--slider-fill)' }}
                       />
                       <div
@@ -10869,7 +10868,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
           <span className="text-lg font-bold">{t('watch.zoomValue', { value: Math.round(zoomState.scale * 100) })}</span>
           <button
             onClick={resetZoom}
-            className="bg-red-600 hover:bg-red-500 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+            className="bg-accent-600 hover:bg-accent-500 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -10944,7 +10943,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center"
+            className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-accent-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center"
           >
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -10991,7 +10990,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
             </div>
           )}
           <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-            <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-accent-600 border-t-transparent rounded-full animate-spin" />
           </div>
           <div className="absolute left-0 right-0 bottom-20 z-10 flex justify-center pointer-events-none">
             <p className="text-sm text-gray-300 text-center px-4 bg-black/50 rounded-lg py-2">
@@ -11015,9 +11014,9 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
             {t('watch.back')}
           </button>
 
-          <div className="bg-gray-900/90 p-8 rounded-xl border border-red-500/50 max-w-lg text-center backdrop-blur-sm shadow-2xl relative">
-            <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="bg-gray-900/90 p-8 rounded-xl border border-accent-500/50 max-w-lg text-center backdrop-blur-sm shadow-2xl relative">
+            <div className="mx-auto w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-accent-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
@@ -11035,7 +11034,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                   window.dispatchEvent(new CustomEvent('showSourcesMenu'));
                 }
               }}
-              className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto gap-2"
+              className="px-6 py-2.5 bg-accent-600 hover:bg-accent-700 text-white rounded-lg font-bold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center mx-auto gap-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
@@ -11422,7 +11421,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
           tabIndex={showControls ? 0 : -1}
           className="absolute top-16 right-2 z-50 flex items-center gap-2 px-4 py-2 rounded-lg bg-black/70 backdrop-blur-sm border border-gray-700 text-white font-medium text-sm shadow-lg border-opacity-50"
         >
-          <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
           <span>{t('watch.sources')}</span>
@@ -11496,11 +11495,11 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
               style={{ width: `${getBufferedWidth()}%` }}
             />
             <div
-              className="absolute h-full bg-red-600 rounded-full"
+              className="absolute h-full bg-accent-600 rounded-full"
               style={{ width: `${(currentTime / duration) * 100}%` }}
             />
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-red-600 rounded-full -ml-2"
+              className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-accent-600 rounded-full -ml-2"
               style={{ left: `${(currentTime / duration) * 100}%` }}
             />
           </div>
@@ -11564,9 +11563,9 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                           step="0.01"
                           value={volume} // Keep slider value controlled by state
                           onChange={handleVolumeChange} // Use updated handler
-                          className="w-full accent-red-600 appearance-none h-1 rounded-full"
+                          className="w-full accent-accent-600 appearance-none h-1 rounded-full"
                           style={{
-                            background: `linear-gradient(to right, #dc2626 ${volume * 100}%, rgba(255, 255, 255, 0.2) ${volume * 100}%)`
+                            background: `linear-gradient(to right, var(--accent-600) ${volume * 100}%, rgba(255, 255, 255, 0.2) ${volume * 100}%)`
                           }}
                         />
                       </div>
@@ -11583,13 +11582,13 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
               <div className="relative flex items-center h-[24px]">
                 <button
                   onClick={toggleWatchParty}
-                  className="text-white hover:text-red-600 transition-colors flex items-center justify-center"
+                  className="text-white hover:text-accent-600 transition-colors flex items-center justify-center"
                   aria-label={t('watch.watchParty')}
                 >
                   <motion.div
                     animate={{
                       scale: isWatchPartyActive ? 0.85 : 1,
-                      color: isWatchPartyActive ? '#dc2626' : '#ffffff'
+                      color: isWatchPartyActive ? 'var(--accent-600)' : '#ffffff'
                     }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -11605,13 +11604,13 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
               <div className="relative flex items-center h-[24px]">
                 <button
                   onClick={togglePip}
-                  className="text-white hover:text-red-600 transition-colors flex items-center justify-center"
+                  className="text-white hover:text-accent-600 transition-colors flex items-center justify-center"
                   aria-label={t('watch.pictureInPicture')}
                 >
                   <motion.div
                     animate={{
                       scale: isPipActive ? 0.85 : 1,
-                      color: isPipActive ? '#dc2626' : '#ffffff'
+                      color: isPipActive ? 'var(--accent-600)' : '#ffffff'
                     }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -11627,13 +11626,13 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
               <div className="relative flex items-center h-[24px]">
                 <button
                   onClick={toggleLoop}
-                  className="text-white hover:text-red-600 transition-colors flex items-center justify-center"
+                  className="text-white hover:text-accent-600 transition-colors flex items-center justify-center"
                   aria-label={t('watch.loopPlayback')}
                 >
                   <motion.div
                     animate={{
                       scale: isLooping ? 0.85 : 1,
-                      color: isLooping ? '#dc2626' : '#ffffff'
+                      color: isLooping ? 'var(--accent-600)' : '#ffffff'
                     }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -11651,7 +11650,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                   e.stopPropagation();
                   enterLockMode();
                 }}
-                className="text-white hover:text-red-600 transition-colors flex items-center justify-center h-[24px]"
+                className="text-white hover:text-accent-600 transition-colors flex items-center justify-center h-[24px]"
                 aria-label={t('watch.lockControls')}
                 title={t('watch.lockControls')}
               >
@@ -11660,7 +11659,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
               <div className="relative flex items-center h-[24px]">
                 <button
                   onClick={() => setShowSettings(!showSettings)}
-                  className="text-white hover:text-red-600 transition-colors flex items-center justify-center"
+                  className="text-white hover:text-accent-600 transition-colors flex items-center justify-center"
                 >
                   <motion.div
                     animate={{
@@ -11677,7 +11676,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
               </div>
               <button
                 onClick={toggleFullscreen}
-                className="text-white hover:text-red-600 transition-colors flex items-center justify-center h-[24px]"
+                className="text-white hover:text-accent-600 transition-colors flex items-center justify-center h-[24px]"
               >
                 {isFullscreen ?
                   <Minimize size={isMobile ? 20 : 24} /> :
@@ -11714,7 +11713,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                           maxWidth: `${isMobile ? 20 : 24}px`,
                           maxHeight: `${isMobile ? 20 : 24}px`,
                           overflow: 'hidden',
-                          ['--connected-color' as any]: '#dc2626',
+                          ['--connected-color' as any]: 'var(--accent-600)',
                           ['--disconnected-color' as any]: '#ffffff'
                         }}
                       />
@@ -11758,13 +11757,13 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
 
                         setShowCastMenu(false);
                       }}
-                      className="text-white hover:text-red-600 transition-colors flex items-center justify-center"
+                      className="text-white hover:text-accent-600 transition-colors flex items-center justify-center"
                       aria-label={airPlayAvailable && !castAvailable ? t('watch.airplay') : castAvailable && !airPlayAvailable ? t('watch.cast') : t('watch.streamTo')}
                     >
                       <motion.div
                         animate={{
                           scale: (isAirPlaying || isCasting) ? 0.85 : 1,
-                          color: (isAirPlaying || isCasting) ? '#dc2626' : '#ffffff'
+                          color: (isAirPlaying || isCasting) ? 'var(--accent-600)' : '#ffffff'
                         }}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
@@ -11953,7 +11952,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
 
                       {/* Show appropriate errors */}
                       {(airPlayError || castError) && (
-                        <div className="mt-2 p-2 bg-red-900/50 border border-red-700 rounded text-xs text-red-300">
+                        <div className="mt-2 p-2 bg-accent-900/50 border border-accent-700 rounded text-xs text-accent-300">
                           {airPlayError || castError}
                         </div>
                       )}
@@ -12215,7 +12214,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                               }
                             }}
                             className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${selectedSeasonNumber === season.season_number
-                              ? 'bg-red-800/50 text-red-100 font-semibold'
+                              ? 'bg-accent-800/50 text-accent-100 font-semibold'
                               : 'text-gray-200 hover:bg-gray-700/50'
                               }`}
                           >
@@ -12283,7 +12282,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                         setShowInternalEpisodesMenu(false);
                       }}
                       className={`flex items-start gap-3 p-2 rounded-lg transition-colors ${episodeNumber === episode.episode_number && seasonNumber === selectedSeasonNumber
-                        ? 'bg-red-900/30 border border-red-800/50'
+                        ? 'bg-accent-900/30 border border-accent-800/50'
                         : 'hover:bg-gray-800/50'
                         }`}
                     >
@@ -12470,7 +12469,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 text-sm">
                 {/* Lecture */}
-                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-red-400 uppercase tracking-wider mt-2 mb-1">{t('watch.shortcutsPlayback')}</div>
+                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-accent-400 uppercase tracking-wider mt-2 mb-1">{t('watch.shortcutsPlayback')}</div>
                 {[
                   ['Espace / K', t('watch.shortcutPlayPause')],
                   ['J', t('watch.shortcutRewind10s')],
@@ -12488,7 +12487,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                 ))}
 
                 {/* Volume */}
-                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-red-400 uppercase tracking-wider mt-3 mb-1">{t('watch.volume')}</div>
+                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-accent-400 uppercase tracking-wider mt-3 mb-1">{t('watch.volume')}</div>
                 {[
                   ['↑ / ↓', t('watch.shortcutVolumeAdjust')],
                   ['M', t('watch.shortcutToggleMute')],
@@ -12500,7 +12499,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                 ))}
 
                 {/* Vitesse */}
-                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-red-400 uppercase tracking-wider mt-3 mb-1">{t('watch.speed')}</div>
+                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-accent-400 uppercase tracking-wider mt-3 mb-1">{t('watch.speed')}</div>
                 {[
                   ['Shift + > / <', t('watch.shortcutSpeedAdjust')],
                   ['+ / -', t('watch.shortcutSpeedAdjust')],
@@ -12515,7 +12514,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                 ))}
 
                 {/* Affichage */}
-                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-red-400 uppercase tracking-wider mt-3 mb-1">{t('watch.shortcutsDisplay')}</div>
+                <div className="col-span-1 sm:col-span-2 text-xs font-bold text-accent-400 uppercase tracking-wider mt-3 mb-1">{t('watch.shortcutsDisplay')}</div>
                 {[
                   ['F', t('watch.shortcutToggleFullscreen')],
                   ['P', t('watch.shortcutTogglePip')],

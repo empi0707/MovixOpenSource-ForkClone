@@ -82,8 +82,8 @@ const CSA_INFO: Record<string, { label: string; color: string; desc: string }> =
   'TP': { label: 'Tout public', color: 'bg-green-600', desc: 'Tous âges' },
   '10': { label: '-10 ans', color: 'bg-yellow-500', desc: 'Déconseillé aux moins de 10 ans' },
   '12': { label: '-12 ans', color: 'bg-orange-500', desc: 'Déconseillé aux moins de 12 ans' },
-  '16': { label: '-16 ans', color: 'bg-red-500', desc: 'Déconseillé aux moins de 16 ans' },
-  '18': { label: '-18 ans', color: 'bg-red-700', desc: 'Interdit aux moins de 18 ans' },
+  '16': { label: '-16 ans', color: 'bg-accent-500', desc: 'Déconseillé aux moins de 16 ans' },
+  '18': { label: '-18 ans', color: 'bg-accent-700', desc: 'Interdit aux moins de 18 ans' },
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
@@ -160,7 +160,7 @@ const FranceTVInfo: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#0a0a0f] pt-24 px-4">
         <div className="max-w-2xl mx-auto text-center py-20">
-          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <AlertCircle className="w-16 h-16 text-accent-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">{t('common.error')}</h2>
           <p className="text-zinc-400 mb-6">{error || t('francetv.cannotLoadInfo')}</p>
           <button

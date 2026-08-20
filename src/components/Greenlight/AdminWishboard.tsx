@@ -145,7 +145,7 @@ const statusOptions = [
     { value: 'not_found', label: 'admin.statusNotFound', color: 'text-orange-400' },
     { value: 'searching', label: 'admin.statusSearching', color: 'text-blue-400' },
     { value: 'added', label: 'admin.statusAdded', color: 'text-green-400' },
-    { value: 'rejected', label: 'admin.statusRejected', color: 'text-red-400' },
+    { value: 'rejected', label: 'admin.statusRejected', color: 'text-accent-400' },
 ];
 
 const AdminWishboard: React.FC = () => {
@@ -1091,7 +1091,7 @@ const AdminWishboard: React.FC = () => {
                     { label: 'admin.total', value: stats.total, color: 'text-white' },
                     { label: 'admin.pending', value: stats.pending, color: 'text-amber-400' },
                     { label: 'admin.addedPlural', value: stats.added, color: 'text-green-400' },
-                    { label: 'admin.rejectedPlural', value: stats.rejected, color: 'text-red-400' },
+                    { label: 'admin.rejectedPlural', value: stats.rejected, color: 'text-accent-400' },
                     { label: 'admin.notFoundPlural', value: stats.not_found, color: 'text-orange-400' },
                 ].map((stat) => (
                     <motion.div
@@ -1297,7 +1297,7 @@ const AdminWishboard: React.FC = () => {
                                                     {entry.username}
                                                 </p>
                                                 <Badge variant={entry.role === 'admin' ? 'default' : 'secondary'} className={`text-xs ${
-                                                    entry.role === 'admin' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'
+                                                    entry.role === 'admin' ? 'bg-accent-500/20 text-accent-400' : 'bg-blue-500/20 text-blue-400'
                                                 }`}>
                                                     {entry.role === 'admin' ? 'Admin' : 'Uploader'}
                                                 </Badge>
@@ -1402,7 +1402,7 @@ const AdminWishboard: React.FC = () => {
                     variant="secondary"
                     onClick={clearBatchCache}
                     disabled={loading || batchChecking}
-                    className="bg-red-500/20 hover:bg-red-500/30 text-red-400"
+                    className="bg-accent-500/20 hover:bg-accent-500/30 text-accent-400"
                     title={t('admin.clearCheckCache')}
                 >
                     <Trash2 className="h-4 w-4" />
@@ -1640,10 +1640,10 @@ const AdminWishboard: React.FC = () => {
                                                             setSelectedRequest(request);
                                                             setDeleteModalOpen(true);
                                                         }}
-                                                        className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                                                        className="p-2 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 transition-colors"
                                                         title={t('admin.delete')}
                                                     >
-                                                        <Trash2 className="h-4 w-4 text-red-400" />
+                                                        <Trash2 className="h-4 w-4 text-accent-400" />
                                                     </motion.button>
                                                 </div>
                                             </td>
@@ -1921,7 +1921,7 @@ const AdminWishboard: React.FC = () => {
                                         {result.available ? (
                                             <CheckCircle className="h-5 w-5 text-green-400" />
                                         ) : (
-                                            <XCircle className="h-5 w-5 text-red-400 opacity-50" />
+                                            <XCircle className="h-5 w-5 text-accent-400 opacity-50" />
                                         )}
                                         <span className={result.available ? 'text-white' : 'text-white/50'}>
                                             {result.name}
@@ -1971,7 +1971,7 @@ const AdminWishboard: React.FC = () => {
                                                 {result.available ? (
                                                     <CheckCircle className="h-4 w-4 text-green-400" />
                                                 ) : (
-                                                    <XCircle className="h-4 w-4 text-red-400 opacity-50" />
+                                                    <XCircle className="h-4 w-4 text-accent-400 opacity-50" />
                                                 )}
                                                 <span className={`text-sm ${result.available ? 'text-white' : 'text-white/50'}`}>
                                                     {result.name}
@@ -2056,8 +2056,8 @@ const AdminWishboard: React.FC = () => {
                         <div className="space-y-4">
                             {/* Summary Stats */}
                             <div className="grid grid-cols-3 gap-3">
-                                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-center">
-                                    <p className="text-2xl font-bold text-red-400">
+                                <div className="bg-accent-500/10 border border-accent-500/30 rounded-lg p-3 text-center">
+                                    <p className="text-2xl font-bold text-accent-400">
                                         {batchResults.filter(r => r.availableCategories === 0).length}
                                     </p>
                                     <p className="text-xs text-white/50">{t('admin.noSourceLabel')}</p>
@@ -2081,12 +2081,12 @@ const AdminWishboard: React.FC = () => {
                                 {/* No sources */}
                                 {batchResults.filter(r => r.availableCategories === 0).length > 0 && (
                                     <div className="space-y-2">
-                                        <h4 className="text-red-400 font-medium text-sm flex items-center gap-2">
+                                        <h4 className="text-accent-400 font-medium text-sm flex items-center gap-2">
                                             <XCircle className="h-4 w-4" />
                                             {t('admin.noSourceLabel')} ({batchResults.filter(r => r.availableCategories === 0).length})
                                         </h4>
                                         {batchResults.filter(r => r.availableCategories === 0).map((item) => (
-                                            <div key={item.request.id} className="bg-red-500/10 border border-red-500/20 rounded-lg p-2 flex items-center gap-2">
+                                            <div key={item.request.id} className="bg-accent-500/10 border border-accent-500/20 rounded-lg p-2 flex items-center gap-2">
                                                 {item.request.poster_path && (
                                                     <img src={`https://image.tmdb.org/t/p/w45${item.request.poster_path}`} alt="" className="w-8 h-12 rounded object-cover" />
                                                 )}

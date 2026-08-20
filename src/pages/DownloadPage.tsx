@@ -341,8 +341,8 @@ const SeasonDropdown: React.FC<{
                 }}
                 className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${
                   isDarkiWorld 
-                    ? (selectedDarkiWorldSeason?.id === (season as DarkiWorldSeason).id ? 'bg-red-600/20 text-red-400' : 'text-gray-200 hover:bg-gray-700')
-                    : (selectedSeason === (season as Season).season_number ? 'bg-red-600/20 text-red-400' : 'text-gray-200 hover:bg-gray-700')
+                    ? (selectedDarkiWorldSeason?.id === (season as DarkiWorldSeason).id ? 'bg-accent-600/20 text-accent-400' : 'text-gray-200 hover:bg-gray-700')
+                    : (selectedSeason === (season as Season).season_number ? 'bg-accent-600/20 text-accent-400' : 'text-gray-200 hover:bg-gray-700')
                 }`}
               >
                 {isDarkiWorld
@@ -485,8 +485,8 @@ const EpisodeDropdown: React.FC<{
                 }}
                 className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${
                   isDarkiWorld 
-                    ? (selectedDarkiWorldEpisode?.id === (episode as DarkiWorldEpisode).id ? 'bg-red-600/20 text-red-400' : 'text-gray-200 hover:bg-gray-700')
-                    : (selectedEpisode === (episode as Episode).episode_number ? 'bg-red-600/20 text-red-400' : 'text-gray-200 hover:bg-gray-700')
+                    ? (selectedDarkiWorldEpisode?.id === (episode as DarkiWorldEpisode).id ? 'bg-accent-600/20 text-accent-400' : 'text-gray-200 hover:bg-gray-700')
+                    : (selectedEpisode === (episode as Episode).episode_number ? 'bg-accent-600/20 text-accent-400' : 'text-gray-200 hover:bg-gray-700')
                 }`}
               >
                 {isDarkiWorld
@@ -660,7 +660,7 @@ const LinkSelector: React.FC<{
                       )}
                     </div>
                   ) : error ? (
-                    <div className="flex items-center text-red-400 text-sm sm:text-base">
+                    <div className="flex items-center text-accent-400 text-sm sm:text-base">
                       <div className="flex items-center">
                         <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
                         <span className="break-words">{error}</span>
@@ -1459,7 +1459,7 @@ const DownloadPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-red-500 mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-accent-500 mb-4"></div>
           <p className="text-gray-400 text-center">{t('download.loadingDetails')}</p>
         </div>
       </div>
@@ -1472,7 +1472,7 @@ const DownloadPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-accent-500 mx-auto mb-4" />
           <p className="text-white text-lg">{error}</p>
         </div>
       </div>
@@ -1571,7 +1571,7 @@ const DownloadPage: React.FC = () => {
                             onChange={(e) => setDirectEpisodeInput(e.target.value)}
                             placeholder={t('download.episodePlaceholder')}
                             min="1"
-                            className="w-32 px-3 py-2 pr-8 bg-white/5 border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-red-500/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="w-32 px-3 py-2 pr-8 bg-white/5 border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-accent-500/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             onKeyPress={(e) => {
                               if (e.key === 'Enter') {
                                 handleDirectEpisodeSelect();
@@ -1633,19 +1633,19 @@ const DownloadPage: React.FC = () => {
                   href="https://loadix.fun"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 sm:mt-6 flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-red-500/50 transition-colors cursor-pointer group"
+                  className="mt-4 sm:mt-6 flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-accent-500/50 transition-colors cursor-pointer group"
                 >
-                  <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-600/10 border border-red-500/20 shrink-0">
-                    <Download className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
+                  <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-accent-600/10 border border-accent-500/20 shrink-0">
+                    <Download className="w-5 h-5 sm:w-6 sm:h-6 text-accent-500" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-sm sm:text-base font-semibold text-white group-hover:text-red-400 transition-colors">{t('download.adTitle')}</span>
-                      <span className="px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded bg-red-500/10 text-red-400 border border-red-500/20">{t('download.adTag')}</span>
+                      <span className="text-sm sm:text-base font-semibold text-white group-hover:text-accent-400 transition-colors">{t('download.adTitle')}</span>
+                      <span className="px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded bg-accent-500/10 text-accent-400 border border-accent-500/20">{t('download.adTag')}</span>
                     </div>
                     <p className="text-xs sm:text-sm text-gray-400 leading-relaxed truncate">{t('download.adDescription')}</p>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-red-400 transition-colors shrink-0" />
+                  <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-accent-400 transition-colors shrink-0" />
                 </a>
 
                 {/* Bouton pour récupérer les liens */}
@@ -1653,7 +1653,7 @@ const DownloadPage: React.FC = () => {
                   <button
                     onClick={handleGetLinks}
                     disabled={loadingLinks}
-                    className="w-full flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 rounded-xl transition-colors text-sm sm:text-base"
+                    className="w-full flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-accent-600 hover:bg-accent-700 disabled:bg-gray-600 rounded-xl transition-colors text-sm sm:text-base"
                   >
                     {loadingLinks ? (
                       <Loader className="w-5 h-5 animate-spin" />
@@ -1679,7 +1679,7 @@ const DownloadPage: React.FC = () => {
                       {sortDownloadLinks(downloadLinks).map((link) => (
                         <div
                           key={link.id}
-                          className="p-3 sm:p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 cursor-pointer hover:border-red-500/50 transition-colors duration-200"
+                          className="p-3 sm:p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 cursor-pointer hover:border-accent-500/50 transition-colors duration-200"
                           onClick={() => handleLinkSelect(link)}
                         >
                           <div className="flex items-center justify-between mb-2">
@@ -1751,9 +1751,9 @@ const DownloadPage: React.FC = () => {
                 )}
 
                 {error && (
-                  <div className="mt-4 p-3 sm:p-4 bg-red-900/20 border border-red-500/50 rounded-xl backdrop-blur-sm">
+                  <div className="mt-4 p-3 sm:p-4 bg-accent-900/20 border border-accent-500/50 rounded-xl backdrop-blur-sm">
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2 text-red-400 text-sm sm:text-base">
+                      <div className="flex items-center gap-2 text-accent-400 text-sm sm:text-base">
                         <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                         <span className="break-words">{error}</span>
                       </div>

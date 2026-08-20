@@ -1,6 +1,6 @@
 {
-  "name": "Movix",
-  "short_name": "Movix",
+  "name": "Wiflix",
+  "short_name": "Wiflix",
   "description": "Streaming de films et séries en français gratuit",
   "start_url": "/",
   "display": "standalone",
@@ -9,13 +9,13 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/movix.png",
+      "src": "/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/movix.png",
+      "src": "/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -27,21 +27,21 @@
       "short_name": "Films",
       "description": "Voir les films",
       "url": "/movies",
-      "icons": [{ "src": "/movix.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
     },
     {
       "name": "Séries",
       "short_name": "Séries",
       "description": "Voir les séries",
       "url": "/tv-shows",
-      "icons": [{ "src": "/movix.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
     },
     {
       "name": "Recherche",
       "short_name": "Recherche",
       "description": "Rechercher des films et séries",
       "url": "/search",
-      "icons": [{ "src": "/movix.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [],

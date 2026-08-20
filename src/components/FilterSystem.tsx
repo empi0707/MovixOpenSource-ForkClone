@@ -287,7 +287,7 @@ const FilterSystem: React.FC<FilterSystemProps> = ({
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex items-center gap-1"
+            className="px-3 py-2 bg-accent-600 text-white rounded-lg text-sm font-medium hover:bg-accent-700 transition-colors flex items-center gap-1"
           >
             <X className="w-4 h-4" />
             {t('filter.clear')}

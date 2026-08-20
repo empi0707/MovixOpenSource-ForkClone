@@ -34,7 +34,7 @@ const AvatarButton = memo(({
     whileTap={{ scale: 0.95 }}
     className={`relative w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-22 lg:h-22 rounded-full ring-2 transition-all duration-200 ${isSelected
         ? 'ring-yellow-500'
-        : 'ring-transparent hover:ring-red-600'
+        : 'ring-transparent hover:ring-accent-600'
       }`}
   >
     <img
@@ -161,7 +161,7 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({
                   key={platform}
                   onClick={() => setSelectedPlatform(platform)}
                   className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${selectedPlatform === platform
-                      ? 'bg-red-600 text-white border-red-500'
+                      ? 'bg-accent-600 text-white border-accent-500'
                       : 'bg-gray-800/60 text-gray-300 border-gray-700 hover:bg-gray-800'
                     }`}
                 >

@@ -183,7 +183,7 @@ const AntiSpoilerSettingsModal: React.FC<AntiSpoilerSettingsProps> = ({
       label: t('antiSpoiler.episodeOverviews'),
       description: t('antiSpoiler.episodeOverviewsDesc'),
       icon: FileText,
-      color: 'text-red-400'
+      color: 'text-accent-400'
     },
     {
       key: 'nextEpisodeInfo' as keyof AntiSpoilerSettings,
@@ -232,10 +232,10 @@ const AntiSpoilerSettingsModal: React.FC<AntiSpoilerSettingsProps> = ({
             {/* Content */}
             <div className="overflow-y-auto max-h-[70vh]">
           {/* Master Toggle */}
-          <div className="mb-6 p-4 bg-gradient-to-r from-red-900/20 to-orange-900/20 border border-red-500/30 rounded-xl">
+          <div className="mb-6 p-4 bg-gradient-to-r from-accent-900/20 to-orange-900/20 border border-accent-500/30 rounded-xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-red-400" />
+                <Shield className="w-5 h-5 text-accent-400" />
                 <div>
                   <h4 className="font-semibold text-white">{t('antiSpoiler.masterToggleTitle')}</h4>
                   <p className="text-sm text-gray-400">{t('antiSpoiler.masterToggleDescription')}</p>
@@ -244,7 +244,7 @@ const AntiSpoilerSettingsModal: React.FC<AntiSpoilerSettingsProps> = ({
               <button
                 onClick={() => handleSettingChange('enabled', !settings.enabled)}
                 className={`relative w-14 h-8 rounded-full transition-colors ${
-                  settings.enabled ? 'bg-red-600' : 'bg-gray-600'
+                  settings.enabled ? 'bg-accent-600' : 'bg-gray-600'
                 }`}
               >
                 <div
@@ -294,7 +294,7 @@ const AntiSpoilerSettingsModal: React.FC<AntiSpoilerSettingsProps> = ({
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium"
+                  className="flex-1 px-4 py-3 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors font-medium"
                 >
                   {t('common.save')}
                 </button>

@@ -59,11 +59,11 @@ const statusLabels: Record<string, string> = {
 
 const statusColors: Record<string, string> = {
     pending: 'bg-yellow-500',
-    not_found: 'bg-red-500',
+    not_found: 'bg-accent-500',
     not_found_recent: 'bg-orange-500',
     searching: 'bg-blue-500',
     added: 'bg-green-500',
-    rejected: 'bg-red-500',
+    rejected: 'bg-accent-500',
 };
 
 // ReusableBadge to match user's custom style
@@ -258,9 +258,9 @@ const WishboardDetailsModal: React.FC<WishboardDetailsModalProps> = ({
                     const rejectedHistory = request.statusHistory?.find(h => h.status === 'rejected');
                     const reason = rejectedHistory?.reason || request.notes?.find(n => n.is_public)?.note || request.notes?.[0]?.note;
                     return reason ? (
-                        <div className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 p-4">
-                            <p className="text-sm font-medium text-red-400">{t('greenlight.rejectionReason')}</p>
-                            <p className="mt-1 text-sm text-red-300">
+                        <div className="mt-4 rounded-lg bg-accent-500/10 border border-accent-500/20 p-4">
+                            <p className="text-sm font-medium text-accent-400">{t('greenlight.rejectionReason')}</p>
+                            <p className="mt-1 text-sm text-accent-300">
                                 {reason}
                             </p>
                         </div>
@@ -292,7 +292,7 @@ const WishboardDetailsModal: React.FC<WishboardDetailsModalProps> = ({
                             request.statusHistory.map((step, idx) => (
                                 <div key={idx} className="relative flex items-start gap-3">
                                     <div className={`relative z-10 h-3 w-3 flex-shrink-0 rounded-full mt-1 ${step.status === 'pending' ? 'bg-amber-600' :
-                                        step.status === 'rejected' ? 'bg-red-500' :
+                                        step.status === 'rejected' ? 'bg-accent-500' :
                                             statusColors[step.status] || 'bg-pantone-100'
                                         }`}></div>
                                     <div className="flex-1 min-w-0">

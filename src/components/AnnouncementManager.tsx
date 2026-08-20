@@ -82,7 +82,7 @@ const AnnouncementManager: React.FC = () => {
                     </button>
                 </div>
                 {msgSuccess && <p className="text-green-500 text-center font-medium animate-pulse">{msgSuccess}</p>}
-                {msgError && <p className="text-red-500 text-center font-medium">{msgError}</p>}
+                {msgError && <p className="text-accent-500 text-center font-medium">{msgError}</p>}
             </div>
         </div>
     );

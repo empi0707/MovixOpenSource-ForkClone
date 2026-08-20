@@ -1569,7 +1569,7 @@ const LiveTV: React.FC = () => {
             <Tv className="w-6 h-6 text-white opacity-10" />
             <span className="text-[10px] text-white/30 line-clamp-2 text-center leading-tight">{stream.name}</span>
           </div>
-          <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 bg-red-500 rounded text-[9px] font-bold tracking-wide uppercase">
+          <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 bg-accent-500 rounded text-[9px] font-bold tracking-wide uppercase">
             <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
             {t('liveTV.liveTag')}
           </div>
@@ -1591,7 +1591,7 @@ const LiveTV: React.FC = () => {
         className={cn(
           'group mx-1 flex items-center rounded-xl border pr-1 transition-colors',
           active
-            ? 'bg-red-500/10 border-red-500/20'
+            ? 'bg-accent-500/10 border-accent-500/20'
             : 'border-transparent hover:bg-white/[0.04] hover:border-white/[0.05]'
         )}
       >
@@ -1604,7 +1604,7 @@ const LiveTV: React.FC = () => {
           }}
           className="flex min-w-0 flex-1 items-center px-3 py-2 text-left text-sm"
         >
-          <span className={cn('truncate pr-2', active ? 'text-red-400' : 'text-white/70 group-hover:text-white/90')}>
+          <span className={cn('truncate pr-2', active ? 'text-accent-400' : 'text-white/70 group-hover:text-white/90')}>
             {category.category_name}
           </span>
         </button>
@@ -1872,7 +1872,7 @@ const LiveTV: React.FC = () => {
                 </>
               ) : (
                 <>
-                   <Tv className={cn('w-6 h-6 mb-1', isSosplay ? 'text-emerald-500 opacity-40' : isLivetv ? 'text-amber-500 opacity-40' : isWiflix ? 'text-red-500 opacity-40' : 'text-white opacity-10')} />
+                   <Tv className={cn('w-6 h-6 mb-1', isSosplay ? 'text-emerald-500 opacity-40' : isLivetv ? 'text-amber-500 opacity-40' : isWiflix ? 'text-accent-500 opacity-40' : 'text-white opacity-10')} />
                    <h3 className="text-xs font-medium text-white/60 line-clamp-2 leading-tight">{channel.name}</h3>
                    {isVavoo && channel._vavooVariants && channel._vavooVariants.length > 1 && vavooServers.length > 0 && (
                      <div className="mt-1.5 flex max-w-full items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.03] px-2 py-1 text-[9px] font-medium text-white/35">
@@ -1895,7 +1895,7 @@ const LiveTV: React.FC = () => {
             'absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase',
             isEventCard
               ? isClickableMatch ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/40'
-              : 'bg-red-500 text-white'
+              : 'bg-accent-500 text-white'
           )}>
             <span className={cn('w-1.5 h-1.5 rounded-full', isEventCard && !isClickableMatch ? 'bg-white/30' : 'bg-white animate-pulse')} />
             {eventStatusLabel}
@@ -1927,10 +1927,10 @@ const LiveTV: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="p-2.5 bg-red-500/10 rounded-xl border border-red-500/20">
-                    <Tv className="w-6 h-6 text-red-500" />
+                  <div className="p-2.5 bg-accent-500/10 rounded-xl border border-accent-500/20">
+                    <Tv className="w-6 h-6 text-accent-500" />
                   </div>
-                  <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+                  <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-accent-500 rounded-full animate-pulse" />
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
@@ -1975,7 +1975,7 @@ const LiveTV: React.FC = () => {
                       className={cn(
                         'relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border shrink-0',
                         isActive
-                          ? 'bg-red-500/15 text-red-400 border-red-500/30 shadow-sm shadow-red-500/10'
+                          ? 'bg-accent-500/15 text-accent-400 border-accent-500/30 shadow-sm shadow-accent-500/10'
                           : isLocked
                             ? 'bg-white/[0.02] text-white/25 border-white/[0.04] cursor-not-allowed'
                             : 'bg-white/[0.03] text-white/60 border-white/[0.06] hover:bg-white/[0.06] hover:text-white/90 hover:border-white/10'
@@ -2101,11 +2101,11 @@ const LiveTV: React.FC = () => {
                         className={cn(
                           'flex items-center gap-3 w-full h-10 px-4 rounded-lg text-sm transition-all duration-200 border',
                           iptvCategoryDropdownOpen
-                            ? 'bg-white/[0.06] border-red-500/30 ring-1 ring-red-500/10'
+                            ? 'bg-white/[0.06] border-accent-500/30 ring-1 ring-accent-500/10'
                             : 'bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.05] hover:border-white/10'
                         )}
                       >
-                        <i className="bi bi-globe text-red-400 shrink-0" />
+                        <i className="bi bi-globe text-accent-400 shrink-0" />
                         <span className="truncate flex-1 text-left text-white/80">
                           {selectedIptvCategoryName || t('liveTV.chooseCategory')}
                         </span>
@@ -2217,7 +2217,7 @@ const LiveTV: React.FC = () => {
                     className={cn(
                       'px-3 py-1.5 rounded-full text-xs border transition-all duration-200',
                       active
-                        ? 'bg-red-500/15 text-red-400 border-red-500/30'
+                        ? 'bg-accent-500/15 text-accent-400 border-accent-500/30'
                         : 'bg-white/[0.03] text-white/55 border-white/[0.06] hover:bg-white/[0.05] hover:text-white/85'
                     )}
                   >
@@ -2260,8 +2260,8 @@ const LiveTV: React.FC = () => {
         {/* ── ERROR STATE ── */}
         {error && !loadingCatalogs && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-24 gap-4">
-            <div className="p-4 rounded-2xl bg-red-500/[0.06] border border-red-500/10">
-              <Wifi className="w-8 h-8 text-red-400 opacity-60" />
+            <div className="p-4 rounded-2xl bg-accent-500/[0.06] border border-accent-500/10">
+              <Wifi className="w-8 h-8 text-accent-400 opacity-60" />
             </div>
             <p className="text-white/50 text-sm max-w-xs text-center">{error}</p>
             <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-xs">

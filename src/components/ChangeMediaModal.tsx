@@ -188,7 +188,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
                 value={query}
                 onChange={(e) => handleQueryChange(e.target.value)}
                 placeholder={t('watchParty.searchPlaceholder')}
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-red-500/50 transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-accent-500/50 transition-colors"
                 autoFocus
               />
               {query && (
@@ -200,7 +200,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
 
             {loading && (
               <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 text-red-500 animate-spin" />
+                <Loader2 className="w-6 h-6 text-accent-500 animate-spin" />
               </div>
             )}
 
@@ -213,7 +213,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
                     onClick={() => item.media_type === 'movie' ? selectMovie(item) : selectShow(item)}
-                    className="group relative rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-red-500/40 transition-all text-left"
+                    className="group relative rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-accent-500/40 transition-all text-left"
                   >
                     <img
                       src={`https://image.tmdb.org/t/p/w342${item.poster_path}`}
@@ -253,7 +253,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
           <>
             {loadingSeasons ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 text-red-500 animate-spin" />
+                <Loader2 className="w-6 h-6 text-accent-500 animate-spin" />
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[400px] overflow-y-auto custom-scrollbar">
@@ -264,7 +264,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
                     onClick={() => selectSeason(s.season_number)}
-                    className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-red-500/40 hover:bg-white/10 transition-all text-left"
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-accent-500/40 hover:bg-white/10 transition-all text-left"
                   >
                     <p className="text-sm font-semibold text-white">{s.name}</p>
                     <p className="text-xs text-white/40 mt-1">{s.episode_count} {t('watchParty.episodes')}</p>
@@ -280,7 +280,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
           <>
             {loadingEpisodes ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 text-red-500 animate-spin" />
+                <Loader2 className="w-6 h-6 text-accent-500 animate-spin" />
               </div>
             ) : (
               <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto custom-scrollbar">
@@ -291,7 +291,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.02 }}
                     onClick={() => selectEpisode(ep)}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-red-500/40 hover:bg-white/10 transition-all text-left group"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-accent-500/40 hover:bg-white/10 transition-all text-left group"
                   >
                     {ep.still_path ? (
                       <img
@@ -305,7 +305,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white group-hover:text-red-400 transition-colors">
+                      <p className="text-sm font-medium text-white group-hover:text-accent-400 transition-colors">
                         <span className="text-white/40 mr-1">E{String(ep.episode_number).padStart(2, '0')}</span>
                         {ep.name}
                       </p>
@@ -313,7 +313,7 @@ const ChangeMediaModal: React.FC<ChangeMediaModalProps> = ({ isOpen, onClose, on
                         <p className="text-xs text-white/30 line-clamp-1 mt-0.5">{ep.overview}</p>
                       )}
                     </div>
-                    <ArrowRight className="w-4 h-4 text-white opacity-20 group-hover:text-red-400 group-hover:opacity-100 transition-[color,opacity] flex-shrink-0" />
+                    <ArrowRight className="w-4 h-4 text-white opacity-20 group-hover:text-accent-400 group-hover:opacity-100 transition-[color,opacity] flex-shrink-0" />
                   </motion.button>
                 ))}
               </div>

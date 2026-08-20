@@ -1,3 +1,6 @@
+import colors from 'tailwindcss/colors';
+import { ACCENT } from './src/config/accent.js';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -6,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        accent: colors[ACCENT],
+      },
       animation: {
         fadeIn: 'fadeIn 0.5s ease-in-out',
         fadeOut: 'fadeOut 0.5s ease-in-out'

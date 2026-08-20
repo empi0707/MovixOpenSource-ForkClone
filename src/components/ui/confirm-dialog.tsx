@@ -45,8 +45,8 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             <div className="space-y-5">
                 <div className="flex items-start gap-3">
                     {isDestructive && (
-                        <div className="shrink-0 rounded-full bg-red-500/15 p-2 ring-1 ring-red-500/30">
-                            <AlertTriangle className="h-5 w-5 text-red-400" />
+                        <div className="shrink-0 rounded-full bg-accent-500/15 p-2 ring-1 ring-accent-500/30">
+                            <AlertTriangle className="h-5 w-5 text-accent-400" />
                         </div>
                     )}
                     <div className="flex-1 text-sm text-white/80">{message}</div>

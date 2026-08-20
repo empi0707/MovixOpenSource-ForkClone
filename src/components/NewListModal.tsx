@@ -63,7 +63,7 @@ const NewListModal: React.FC<NewListModalProps> = ({ onClose, onCreateList }) =>
                 value={listName}
                 onChange={(e) => setListName(e.target.value)}
                 placeholder={t('lists.listNamePlaceholder')}
-                className="w-full p-3 bg-gray-700 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 outline-none transition-colors border border-gray-600"
+                className="w-full p-3 bg-gray-700 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 outline-none transition-colors border border-gray-600"
                 autoFocus
               />
               <div className="flex justify-end gap-3">
@@ -76,7 +76,7 @@ const NewListModal: React.FC<NewListModalProps> = ({ onClose, onCreateList }) =>
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors"
+                  className="px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl transition-colors"
                   disabled={!listName.trim()}
                 >
                   {t('lists.create')}

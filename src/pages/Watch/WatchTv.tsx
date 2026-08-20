@@ -5,9 +5,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import HLSPlayer from '../../components/HLSPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAdFreePopup } from '../../context/AdFreePopupContext';
-import AdFreePlayerAds from '../../components/AdFreePlayerAds';
-import { getAdPopupMode } from '../../utils/adPopupMode';
 import { extractM3u8FromEmbed, extractVoeM3u8, extractUqloadFile, extractDarkiboxSources, extractVidzyM3u8, extractFsvidM3u8, extractOneUploadSources, isOneUploadEmbed, isVoeEmbed, extractVidmolyM3u8, extractDoodStreamFile, extractSeekStreamingM3u8, isDoodStreamEmbed, isSeekStreamingEmbed, type M3u8Result } from '../../utils/extractM3u8';
 import { expandSeekStreamingSources, type SeekStreamingHlsSource } from '../../utils/seekStreamingCandidates';
 import { pickAutoSelectedSource, sortHostersByPriority, type SourceAvailability } from '../../utils/sourceAutoSelect';
@@ -19,12 +16,10 @@ import { getTmdbId, encodeId } from '../../utils/idEncoder';
 import { useAntiSpoilerSettings } from '../../hooks/useAntiSpoilerSettings';
 import { generateRivestreamSecretKey } from '../../utils/rivestreamSecretKey';
 import { useWrappedTracker } from '../../hooks/useWrappedTracker';
-import { isUserVip, getVipHeaders } from '../../utils/authUtils';
 import { isExtensionAvailable } from '../../utils/extensionProxy';
 import { RIVESTREAM_PROXIES } from '../../config/rivestreamProxy';
 import { buildProxyUrl } from '../../config/runtime';
 import { getTmdbLanguage } from '../../i18n';
-import { useProfile } from '../../context/ProfileContext';
 import { getClassificationLabel } from '../../utils/certificationUtils';
 import { getCoflixPreferredUrl } from '../../utils/coflix';
 import {
@@ -38,16 +33,8 @@ import type { KisskhSource, KisskhSubtitleTrack } from '../../types/kisskh';
 const MAIN_API = import.meta.env.VITE_MAIN_API;
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 
-// Constante pour contrôler la vérification VIP pour Rivestream
-const ENABLE_RIVESTREAM_VIP_CHECK = false;
-
-// Helper function to check if Rivestream is available (VIP check if enabled)
-const isRivestreamAvailable = (): boolean => {
-  if (!ENABLE_RIVESTREAM_VIP_CHECK) {
-    return true; // Si la vérification VIP est désactivée, Rivestream est toujours disponible
-  }
-  return isUserVip();
-};
+// Rivestream always available (VIP check removed)
+const isRivestreamAvailable = (): boolean => true;
 
 // Helper function to generate proxy URL for fsvid sources
 const getProxyUrl = (url: string): string => {
@@ -484,7 +471,6 @@ const WatchTv: React.FC = () => {
   const { tmdbid: encodedId, season: seasonParam, episode: episodeParam } = useParams<{ tmdbid: string; season: string; episode: string }>();
   const id = encodedId ? getTmdbId(encodedId) : null;
   const navigate = useNavigate(); // Hook for navigation
-  const { currentProfile } = useProfile();
 
   const { t } = useTranslation();
 
@@ -511,7 +497,6 @@ const WatchTv: React.FC = () => {
   const [selectedSource, setSelectedSource] = useState<PlayerSourceType | null>(null);
   const [customSources, setCustomSources] = useState<string[]>([]);
   const [frembedAvailable, setFrembedAvailable] = useState(true);
-  const [adFreeM3u8Url] = useState<string | null>(null); // Keep for potential future use
   const [coflixData, setCoflixData] = useState<CoflixTvEpisodeResponse | null>(null);
   const [omegaData, setOmegaData] = useState<OmegaTvEpisodeResponse | null>(null);
   const [darkinoAvailable, setDarkinoAvailable] = useState(false);
@@ -591,7 +576,7 @@ const WatchTv: React.FC = () => {
 
   // PurStream (Bravo) HLS states
   const [purstreamSources, setPurstreamSources] = useState<{ url: string; label: string }[]>([]);
-  const canUseBravo = isUserVip() || isExtensionAvailable();
+  const canUseBravo = isExtensionAvailable();
 
   // Rivestream VO/VOSTFR HLS states
   const [rivestreamSources, setRivestreamSources] = useState<{ url: string; label: string; quality: number; service: string; category: string }[]>([]);
@@ -788,7 +773,7 @@ const WatchTv: React.FC = () => {
         || mp4Sources[selectedMp4Source]?.url
         || '';
     } else if (selectedSource === 'm3u8') {
-      directSourceUrl = adFreeM3u8Url || videoSource || '';
+      directSourceUrl = videoSource || '';
     } else if (selectedSource === 'rivestream') {
       directSourceUrl = rivestreamSources[selectedRivestreamSource]?.url || '';
     } else if (
@@ -809,7 +794,7 @@ const WatchTv: React.FC = () => {
       resolveRenderedWatchSource(selectedSource, directSourceUrl, embedUrl),
     );
   }, [
-    adFreeM3u8Url,
+   
     autoFallbackGuard,
     darkinoSources,
     embedUrl,
@@ -841,19 +826,6 @@ const WatchTv: React.FC = () => {
 
   // Ne pas afficher le bouton Sources en mode HLS
   const [showSourceButton, setShowSourceButton] = useState(true);
-
-  const {
-    showPopupForPlayer,
-    handlePopupClose,
-    handlePopupAccept,
-    showAdFreePopup, // Added back
-    shouldLoadIframe, // Added back
-    adType // Added back
-  } = useAdFreePopup();
-  const [adPopupTriggered, setAdPopupTriggered] = useState(false);
-  const [adPopupBypass, setAdPopupBypass] = useState(false);
-  // Ajout de l'état pour savoir si l'utilisateur a cliqué sur la pub
-  const [hasClickedAd, setHasClickedAd] = useState(false);
 
   // Movix Wrapped 2026 - Track TV viewing time
   useWrappedTracker({
@@ -1155,7 +1127,7 @@ const WatchTv: React.FC = () => {
       if (
         (selectedSource === 'darkino' && (!darkinoSources || darkinoSources.length === 0)) ||
         (selectedSource === 'mp4' && (!mp4Sources || mp4Sources.length === 0) && !sibnetUrl) ||
-        (selectedSource === 'm3u8' && !adFreeM3u8Url) ||
+        (selectedSource === 'm3u8') ||
         (!selectedSource)
       ) {
         console.log("[Debug] Source selection issue detected, attempting to find valid source");
@@ -1213,14 +1185,14 @@ const WatchTv: React.FC = () => {
       // Reset embed URL if HLS source is available to ensure HLS player is used
       else if ((selectedSource === 'darkino' && darkinoSources.length > 0) ||
         (selectedSource === 'mp4' && (mp4Sources.length > 0 || sibnetUrl)) ||
-        (selectedSource === 'm3u8' && adFreeM3u8Url)) {
+        (false)) {
         setEmbedUrl(null);
         setEmbedType(null);
       }
 
       setIsLoading(false); // Mark loading as complete
     }
-  }, [loadingDarkino, loadingCoflix, loadingOmega, loadingCustom, loadingSibnet, loadingFrembed, loadingFstream, loadingWiflix, loadingJ1f, loadingSwiftflow, loadingExtractions, isLoading, selectedSource, darkinoSources, mp4Sources, sibnetUrl, adFreeM3u8Url, id, seasonNumber, episodeNumber, customSources, frembedAvailable]);
+  }, [loadingDarkino, loadingCoflix, loadingOmega, loadingCustom, loadingSibnet, loadingFrembed, loadingFstream, loadingWiflix, loadingJ1f, loadingSwiftflow, loadingExtractions, isLoading, selectedSource, darkinoSources, mp4Sources, sibnetUrl, id, seasonNumber, episodeNumber, customSources, frembedAvailable]);
 
   // Add effect to hide Sources button in HLS mode
   useEffect(() => {
@@ -1230,7 +1202,7 @@ const WatchTv: React.FC = () => {
       (selectedSource === 'nexus_file' && nexusFileSources.length > 0) ||
       (selectedSource === 'darkino' && darkinoSources.length > 0) ||
       (selectedSource === 'mp4' && (mp4Sources.length > 0 || sibnetUrl)) ||
-      (selectedSource === 'm3u8' && adFreeM3u8Url) ||
+      (false) ||
       (selectedSource === 'bravo' && purstreamSources.length > 0 && canUseBravo) ||
       (selectedSource === 'kisskh' && kisskhSources.length > 0) ||
       (selectedSource === 'rivestream' && rivestreamSources.length > 0) ||
@@ -1239,7 +1211,7 @@ const WatchTv: React.FC = () => {
     } else {
       setShowSourceButton(true);
     }
-  }, [selectedSource, nexusHlsSources, nexusFileSources, darkinoSources, mp4Sources, sibnetUrl, adFreeM3u8Url, purstreamSources, canUseBravo, kisskhSources, rivestreamSources, loadingRivestream]);
+  }, [selectedSource, nexusHlsSources, nexusFileSources, darkinoSources, mp4Sources, sibnetUrl, purstreamSources, canUseBravo, kisskhSources, rivestreamSources, loadingRivestream]);
 
   // Effect to fetch episodes when the selected season changes in the menu
   useEffect(() => {
@@ -1499,8 +1471,7 @@ const WatchTv: React.FC = () => {
         const purstreamPromise = (async () => {
           try {
             const purstreamResponse = await axios.get(`${MAIN_API}/api/purstream/tv/${id}/stream`, {
-              params: { season: seasonNumber, episode: episodeNumber },
-              headers: { ...getVipHeaders() }
+              params: { season: seasonNumber, episode: episodeNumber }
             });
             return purstreamResponse.data;
           } catch (error) {
@@ -1512,10 +1483,7 @@ const WatchTv: React.FC = () => {
         // ========== CHECK FSTREAM SOURCE ==========
         const fstreamPromise = (async () => {
           try {
-            // Envoyer la clé VIP via header pour vérification côté serveur
-            const fstreamResponse = await axios.get(`${MAIN_API}/api/fstream/tv/${id}/season/${seasonNumber}`, {
-              headers: { ...getVipHeaders() }
-            });
+            const fstreamResponse = await axios.get(`${MAIN_API}/api/fstream/tv/${id}/season/${seasonNumber}`);
             return fstreamResponse.data;
           } catch (error) {
             console.error('Error fetching FStream TV sources:', error);
@@ -2053,9 +2021,6 @@ const WatchTv: React.FC = () => {
         const fstreamHlsSources: { url: string; label: string; category: string }[] = [];
         const fsvidSources: { url: string; label: string; category: string }[] = [];
 
-        // Check if user is VIP (déclaré au niveau de la fonction pour être accessible partout)
-        const isVip = localStorage.getItem('is_vip') === 'true';
-
         if (fstreamResult && fstreamResult.success && fstreamResult.episodes) {
 
           // Get the specific episode data
@@ -2134,8 +2099,8 @@ const WatchTv: React.FC = () => {
             });
           }
 
-          // Extraire M3U8 des sources fsvid (VIP ou extension locale)
-          if ((isVip || isExtensionAvailable()) && fsvidSources.length > 0) {
+          // Extraire M3U8 des sources fsvid (extension locale)
+          if (isExtensionAvailable() && fsvidSources.length > 0) {
             console.log(`?? Found ${fsvidSources.length} fsvid sources, extracting M3U8...`);
             fsvidSources.forEach(fsvidSource => {
               fstreamExtractionPromises.push(
@@ -2914,7 +2879,7 @@ const WatchTv: React.FC = () => {
         console.log('MP4 sources count:', fetchedMp4Sources.length);
         console.log('Viper sources count:', viperProcessedSources.length);
         console.log('FStream sources count:', fstreamProcessedSources.length);
-        console.log('AdFree M3U8 URL:', adFreeM3u8Url);
+        console.log('AdFree M3U8 URL:');
         console.log('Custom sources available:', customLinksResult.customLinks?.length || 0);
 
         // Vérifier si un lien embedseek existe dans les custom sources.
@@ -3412,7 +3377,7 @@ const WatchTv: React.FC = () => {
             });
           case 'm3u8':
             return resolveAcceptedWatchSource({
-              requestedSource: url || adFreeM3u8Url,
+              requestedSource: url,
             });
           case 'sibnet':
             return resolveAcceptedWatchSource({
@@ -3751,7 +3716,7 @@ const WatchTv: React.FC = () => {
       window.removeEventListener('sourceChange', handleSourceChangeFromMenu as EventListener);
     };
   }, [
-    nexusHlsSources, nexusFileSources, darkinoSources, mp4Sources, adFreeM3u8Url, sibnetUrl, darkinoAvailable, fstreamSources, rivestreamSources, viperSources, voxSources, purstreamSources, kisskhSources, sortedFstream, sortedWiflix, sortedJ1f, j1fSources, sortedSwiftflow, swiftflowSources, canUseBravo, // Data sources
+    nexusHlsSources, nexusFileSources, darkinoSources, mp4Sources, sibnetUrl, darkinoAvailable, fstreamSources, rivestreamSources, viperSources, voxSources, purstreamSources, kisskhSources, sortedFstream, sortedWiflix, sortedJ1f, j1fSources, sortedSwiftflow, swiftflowSources, canUseBravo, // Data sources
     setOnlyVostfrAvailable, setShowEmbedQuality, // State setters for visibility
     setEmbedUrl, setEmbedType, setSelectedSource, // General source setters
     setSelectedNexusHlsSource, setSelectedNexusFileSource, setSelectedDarkinoSource, setSelectedMp4Source, setSelectedFstreamSource, setVideoSource, setSelectedViperSource, // HLS specific setters
@@ -3793,8 +3758,8 @@ const WatchTv: React.FC = () => {
         }
       }
     }
-  } else if (selectedSource === 'm3u8' && adFreeM3u8Url) {
-    hlsSrc = adFreeM3u8Url;
+  } else if (false) {
+    hlsSrc = null;
   } else if (selectedSource === 'rivestream' && rivestreamSources.length > selectedRivestreamSource) {
     hlsSrc = rivestreamSources[selectedRivestreamSource]?.url || '';
     if (!hlsSrc) {
@@ -3827,7 +3792,7 @@ const WatchTv: React.FC = () => {
     console.info('mp4Sources:', mp4Sources);
     console.info('sibnetUrl:', sibnetUrl);
     console.info('videoSource:', videoSource);
-    console.info('adFreeM3u8Url:', adFreeM3u8Url);
+    
   }
 
   // Determine the poster for HLSPlayer
@@ -3895,9 +3860,9 @@ const WatchTv: React.FC = () => {
         }
         break;
       case 'm3u8':
-        if (adFreeM3u8Url) {
+        if (null) {
           setSelectedSource('m3u8');
-          setVideoSource(adFreeM3u8Url);
+          setVideoSource(null);
           currentSourceRef.current = 'm3u8';
         } else {
           console.error(`[WatchTv] M3U8 URL not available`);
@@ -4011,7 +3976,7 @@ const WatchTv: React.FC = () => {
         console.warn(`[WatchTv] Unknown source type in handleSourceChange: ${type}`);
     }
 
-  }, [nexusHlsSources, nexusFileSources, darkinoSources, mp4Sources, adFreeM3u8Url, customSources, omegaData, sortedFstream, rivestreamSources, sibnetUrl, viperSources, voxSources, seasonNumber, episodeNumber]); // Include all dependencies
+  }, [nexusHlsSources, nexusFileSources, darkinoSources, mp4Sources, customSources, omegaData, sortedFstream, rivestreamSources, sibnetUrl, viperSources, voxSources, seasonNumber, episodeNumber]); // Include all dependencies
 
   // Memoize callback functions for HLSPlayer
   const handleHlsError = useCallback(() => {
@@ -4287,133 +4252,6 @@ const WatchTv: React.FC = () => {
   //   }
   // }, [omegaData]);
 
-  useEffect(() => {
-    // On ne fait rien si VIP activé
-    if (import.meta.env.is_vip === 'true' || import.meta.env.is_vip === true || localStorage.getItem('is_vip') === 'true') {
-      console.log('?? VIP activé, popup désactivée');
-      return;
-    }
-    // On ne fait rien si déjà passé le popup ou si popup déjà affiché
-    if (adPopupTriggered || adPopupBypass) {
-      console.log('?? Popup déjà déclenchée ou bypass activé:', { adPopupTriggered, adPopupBypass });
-      return;
-    }
-    // Quand tous les chargements sont terminés
-    if (!loadingDarkino && !loadingCoflix && !loadingOmega && !loadingCustom && !loadingSibnet && !loadingFrembed && !loadingFstream && !loadingWiflix && !loadingVox) {
-      console.log('?? Vérification popup pour source:', selectedSource);
-
-      // NOUVEAU: Déclencher le popup pour TOUS les lecteurs dès qu'une source est sélectionnée
-      if (selectedSource && !adPopupTriggered) {
-        console.log('?? Déclenchement popup pour source TV:', selectedSource);
-
-        // Vérifier s'il n'y a que des sources VO/VOSTFR disponibles
-        const hasVfSources = darkinoSources.length > 0 ||
-          (mp4Sources.length > 0 && !mp4Sources.every(source =>
-            source.language === 'VOSTFR' || source.language === 'VO'
-          )) ||
-          sibnetUrl ||
-          adFreeM3u8Url ||
-          (omegaData && extractOmegaPlayers(omegaData, seasonNumber, episodeNumber).length > 0) ||
-          (coflixData?.player_links && coflixData.player_links.length > 0) ||
-          (fstreamSources.length > 0 && fstreamSources.some(source =>
-            source.category === 'VF' || source.category === 'VFQ'
-          )) ||
-          (wiflixSources.length > 0 && wiflixSources.some(source =>
-            source.category === 'VF'
-          )) ||
-          (j1fSources.length > 0 && j1fSources.some(source =>
-            source.category === 'VF'
-          )) ||
-          (swiftflowSources.length > 0 && swiftflowSources.some(source =>
-            source.category === 'VF'
-          )) ||
-          (viperSources.length > 0 && viperSources.some(source =>
-            source.language === 'VF'
-          )) ||
-          (voxSources.length > 0); // Assuming Vox is mostly VF/VOSTFR, consider generic check
-
-        const isVoVostfrOnly = !hasVfSources;
-
-        // Déclencher le popup avec le type de lecteur approprié
-        let playerType = selectedSource;
-        let additionalInfo: any = { isVoVostfrOnly };
-
-        // Mapper les types de sources aux types de lecteurs pour le popup
-        switch (selectedSource) {
-          case 'nexus_hls':
-          case 'nexus_file':
-            playerType = 'nexus_' + selectedSource.split('_')[1];
-            break;
-          case 'darkino':
-          case 'mp4':
-          case 'm3u8':
-            playerType = 'darkino';
-            break;
-          case 'omega':
-            playerType = 'omega';
-            const extractedPlayers = extractOmegaPlayers(omegaData, seasonNumber, episodeNumber);
-            additionalInfo = {
-              omegaData: {
-                player_links: extractedPlayers.map((p: { player: string; link: string; is_hd?: boolean; label?: string; lang?: string }) => ({ player: p.player, link: p.link }))
-              },
-              isVoVostfrOnly
-            };
-            break;
-          case 'coflix':
-            playerType = 'multi';
-            additionalInfo = { coflixData, isVoVostfrOnly };
-            break;
-          case 'fstream':
-            playerType = 'fstream';
-            break;
-          case 'wiflix':
-            playerType = 'wiflix';
-            break;
-          case 'j1f':
-            playerType = 'j1f';
-            break;
-          case 'swiftflow':
-            playerType = 'swiftflow';
-            break;
-          case 'viper':
-            playerType = 'viper';
-            break;
-          case 'vox':
-            playerType = 'vox';
-            break;
-          case 'frembed':
-            playerType = 'frembed';
-            break;
-          case 'custom':
-            playerType = 'adfree'; // Type générique pour les liens custom
-            break;
-          default:
-            // Pour les autres types (embed URLs, etc.)
-            if (typeof selectedSource === 'string') {
-              playerType = 'adfree'; // Type générique
-            } else {
-              playerType = 'adfree'; // Type par défaut
-            }
-            break;
-        }
-
-        console.log(`?? Popup déclenché pour ${playerType} (source TV: ${selectedSource})`);
-        showPopupForPlayer(playerType, additionalInfo);
-        setAdPopupTriggered(true);
-        return;
-      }
-    }
-  }, [loadingDarkino, loadingCoflix, loadingOmega, loadingCustom, loadingSibnet, loadingFrembed, loadingFstream, loadingWiflix, loadingVox, selectedSource, darkinoSources, mp4Sources, sibnetUrl, adFreeM3u8Url, omegaData, coflixData, fstreamSources, wiflixSources, voxSources, adPopupTriggered, adPopupBypass, showPopupForPlayer, seasonNumber, episodeNumber]);
-
-  // Si on ferme le popup (croix), on bloque définitivement l'accès au lecteur (pas de bypass)
-  useEffect(() => {
-    // Si on ferme le popup (croix) ET qu'on n'a PAS cliqué sur la pub, on bloque l'accès au lecteur
-    if (!showAdFreePopup && adPopupTriggered && !shouldLoadIframe && !hasClickedAd) {
-      setAdPopupBypass(true); // On bloque l'accès au lecteur
-    }
-    // Si on ferme le popup (croix) ET qu'on a cliqué sur la pub, on laisse passer (pas de blocage)
-  }, [showAdFreePopup, adPopupTriggered, shouldLoadIframe, hasClickedAd]);
-
   // All useEffect and hooks must be here, before any return
 
   useEffect(() => {
@@ -4438,48 +4276,23 @@ const WatchTv: React.FC = () => {
     };
   }, []);
 
-  // Now, after all hooks, you can do conditional returns:
-  // Normal/auto replace the whole view with the popup (dialog/auto over the gated
-  // black screen). Click-anywhere falls through so the player loads behind the
-  // transparent catcher, which is rendered as an overlay in the main return.
-  if (showAdFreePopup && adPopupTriggered && !adPopupBypass && getAdPopupMode() !== 'click-anywhere') {
-    return <AdFreePlayerAds onClose={handlePopupClose} onAccept={handlePopupAccept} adType={adType} onAdClick={() => setHasClickedAd(true)} />;
-  }
-  if (adPopupBypass) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full bg-black">
-        <div className="text-white text-2xl font-bold mb-4">{t('watch.mustWatchAd')}</div>
-        <div className="text-gray-400 text-lg">{t('watch.reloadToRetry')}</div>
-      </div>
-    );
-  }
-  // Si la popup doit être affichée mais n'est pas encore montrée, attendre
-  if (adPopupTriggered && !shouldLoadIframe && !hasClickedAd) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full bg-black">
-        <div className="text-white text-2xl font-bold mb-4">{t('watch.loading')}</div>
-        <div className="text-gray-400 text-lg">{t('watch.pleaseWait')}</div>
-      </div>
-    );
-  }
-
   // Age restriction blocking screen
   if (isBlocked) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 bg-accent-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">{t('details.contentBlocked')}</h2>
           <p className="text-gray-400 mb-6">
-            {t('details.contentBlockedDesc', { rating: getClassificationLabel(contentCert, t), age: currentProfile?.ageRestriction ?? 0 })}
+            {t('details.contentBlockedDesc', { rating: getClassificationLabel(contentCert, t), age: 0 })}
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+            className="px-6 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
           >
             {t('details.goBack')}
           </button>
@@ -4672,7 +4485,7 @@ const WatchTv: React.FC = () => {
                 </button>
                 <button
                   onClick={handleLoadVostfr}
-                  className="px-6 py-3 bg-red-800 hover:bg-red-700 text-white rounded-lg transition-all duration-200 shadow-lg"
+                  className="px-6 py-3 bg-accent-800 hover:bg-accent-700 text-white rounded-lg transition-all duration-200 shadow-lg"
                 >
                   {t('watch.chooseVostfrPlayer')}
                 </button>
@@ -4696,7 +4509,7 @@ const WatchTv: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -4734,7 +4547,7 @@ const WatchTv: React.FC = () => {
                       rivestreamCaptions={isRivestreamAvailable() ? rivestreamCaptions : []}
                       loadingRivestream={isRivestreamAvailable() ? loadingRivestream : false}
                       purstreamSources={purstreamSources}
-                      adFreeM3u8Url={adFreeM3u8Url}
+                      null={null}
                       autoPlay={false}
                       onlyQualityMenu={true}
                       embedType={selectedSource === 'frembed' ? 'frembed' : (embedType || undefined)}
@@ -4894,7 +4707,7 @@ const WatchTv: React.FC = () => {
                                 setShowSeasonDropdown(false);
                               }}
                               className={`w-full text-left px-4 py-3 text-sm transition-colors duration-150 ${selectedSeasonNumber === season.season_number
-                                ? 'bg-red-800/50 text-red-100 font-semibold'
+                                ? 'bg-accent-800/50 text-accent-100 font-semibold'
                                 : 'text-gray-200 hover:bg-gray-700/50'
                                 }`}
                             >
@@ -4953,7 +4766,7 @@ const WatchTv: React.FC = () => {
                           setShowEpisodesMenu(false);
                         }}
                         className={`flex items-start gap-3 p-2 rounded-lg transition-colors ${episodeNumber === episode.episode_number && seasonNumber === selectedSeasonNumber
-                          ? 'bg-red-900/30 border border-red-800/50'
+                          ? 'bg-accent-900/30 border border-accent-800/50'
                           : 'hover:bg-gray-800/50'
                           }`}
                       >
@@ -5047,7 +4860,7 @@ const WatchTv: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -5088,7 +4901,7 @@ const WatchTv: React.FC = () => {
                       rivestreamCaptions={isRivestreamAvailable() ? rivestreamCaptions : []}
                       loadingRivestream={isRivestreamAvailable() ? loadingRivestream : false}
                       purstreamSources={purstreamSources}
-                      adFreeM3u8Url={adFreeM3u8Url}
+                      null={null}
                       autoPlay={false}
                       onlyQualityMenu={true}
                       embedType={selectedSource === 'frembed' ? 'frembed' : (embedType || undefined)}
@@ -5100,7 +4913,7 @@ const WatchTv: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      ) : (hlsSrc && hlsSrc.trim() !== '' || loadingRivestream) && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? ( // Only render HLS Player if hlsSrc is valid OR if loading Rivestream sources
+      ) : (hlsSrc && hlsSrc.trim() !== '' || loadingRivestream) ? ( // Only render HLS Player if hlsSrc is valid OR if loading Rivestream sources
         <div className="w-full h-full flex items-center justify-center">
           <HLSPlayer
             priorityCategory="moviesTv"
@@ -5147,7 +4960,7 @@ const WatchTv: React.FC = () => {
             rivestreamCaptions={isRivestreamAvailable() ? rivestreamCaptions : []}
             loadingRivestream={isRivestreamAvailable() ? loadingRivestream : false}
             purstreamSources={purstreamSources}
-            adFreeM3u8Url={adFreeM3u8Url}
+            null={null}
             // Pass TV show context for UI/progress saving
             tvShow={hlsTvShowProp}
             initialTime={watchProgress} // Add initialTime prop
@@ -5177,7 +4990,7 @@ const WatchTv: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -5216,7 +5029,7 @@ const WatchTv: React.FC = () => {
                       rivestreamCaptions={isRivestreamAvailable() ? rivestreamCaptions : []}
                       loadingRivestream={isRivestreamAvailable() ? loadingRivestream : false}
                       purstreamSources={purstreamSources}
-                      adFreeM3u8Url={adFreeM3u8Url}
+                      null={null}
                       autoPlay={false}
                       onlyQualityMenu={true}
                       embedType={selectedSource === 'frembed' ? 'frembed' : (embedType || undefined)}
@@ -5264,7 +5077,7 @@ const WatchTv: React.FC = () => {
             rivestreamCaptions={isRivestreamAvailable() ? rivestreamCaptions : []}
             loadingRivestream={isRivestreamAvailable() ? loadingRivestream : false}
             purstreamSources={purstreamSources}
-            adFreeM3u8Url={adFreeM3u8Url}
+            null={null}
             autoPlay={false}
             onlyQualityMenu={true}
             embedType={selectedSource === 'frembed' ? 'frembed' : (embedType || undefined)}
@@ -5296,18 +5109,12 @@ const WatchTv: React.FC = () => {
             onClick={() => setShowEmbedQuality(true)}
             className="flex items-center gap-1 sm:gap-2 px-3 py-2 rounded-lg bg-black/70 hover:bg-black/90 text-white shadow-lg transition-all duration-200"
           >
-            <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
             <span className="hidden sm:inline">{t('watch.sources')}</span>
           </button>
         </div>
       )}
 
-      {/* Click-anywhere: transparent catcher overlaid on the preloaded player.
-          Normal/auto already returned the popup above, so this renders only for
-          click-anywhere. */}
-      {showAdFreePopup && adPopupTriggered && !adPopupBypass && (
-        <AdFreePlayerAds onClose={handlePopupClose} onAccept={handlePopupAccept} adType={adType} onAdClick={() => setHasClickedAd(true)} />
-      )}
     </div>
   );
 };

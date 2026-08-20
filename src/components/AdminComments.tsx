@@ -699,11 +699,11 @@ const AdminComments: React.FC = () => {
                 </td>
                 <td className="p-4">
                     {ban.expires_at ? (
-                        <span className={`text-xs ${isExpired ? 'text-red-400' : 'text-amber-400'}`}>
+                        <span className={`text-xs ${isExpired ? 'text-accent-400' : 'text-amber-400'}`}>
                             {formatDate(ban.expires_at)}
                         </span>
                     ) : (
-                        <Badge variant="rejected" className="text-[10px] bg-red-500/20 text-red-400 border-red-500/30">
+                        <Badge variant="rejected" className="text-[10px] bg-accent-500/20 text-accent-400 border-accent-500/30">
                             {t('admin.permanentBan')}
                         </Badge>
                     )}
@@ -776,7 +776,7 @@ const AdminComments: React.FC = () => {
                             <div className="flex items-center gap-1">
                                 <p className="font-medium text-white">{comment.username}</p>
                                 {!!comment.is_vip && <span title={t('admin.vipLabel')} className="text-amber-400 text-[10px] font-semibold">{t('admin.vipLabel')}</span>}
-                                {!!comment.is_admin && <span title={t('admin.adminLabel')} className="text-red-500 text-[10px] font-semibold">{t('admin.adminLabel')}</span>}
+                                {!!comment.is_admin && <span title={t('admin.adminLabel')} className="text-accent-500 text-[10px] font-semibold">{t('admin.adminLabel')}</span>}
                             </div>
                             <p className="text-[10px] text-white/30 truncate max-w-[100px]" title={comment.user_id}>
                                 {t('admin.idLabel')}: {comment.user_id.substring(0, 8)}...
@@ -813,7 +813,7 @@ const AdminComments: React.FC = () => {
                         {activeTab === 'moderated' && comment.moderation_reason && (
                             <div className="flex flex-col gap-1 mb-2">
                                 <div className="flex items-center gap-2">
-                                    <Badge variant="rejected" className="bg-red-500/20 text-red-400 border-red-500/30">
+                                    <Badge variant="rejected" className="bg-accent-500/20 text-accent-400 border-accent-500/30">
                                         {comment.moderation_reason}
                                     </Badge>
                                     <span className="text-[10px] text-white/40">{t('admin.generatedByGemini')}</span>
@@ -890,11 +890,11 @@ const AdminComments: React.FC = () => {
                                 <AdminIconButton
                                     compact={shouldUseCompactCommentRows}
                                     onClick={() => handlePermanentDelete(comment)}
-                                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                                    className="p-2 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 transition-colors"
                                     title={t('admin.deletePermanently')}
                                     disabled={submitting}
                                 >
-                                    <Trash2 className="h-4 w-4 text-red-400" />
+                                    <Trash2 className="h-4 w-4 text-accent-400" />
                                 </AdminIconButton>
                             </>
                         ) : (
@@ -904,10 +904,10 @@ const AdminComments: React.FC = () => {
                                     setSelectedComment(comment);
                                     setDeleteModalOpen(true);
                                 }}
-                                className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                                className="p-2 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 transition-colors"
                                 title={t('admin.delete')}
                             >
-                                <Trash2 className="h-4 w-4 text-red-400" />
+                                <Trash2 className="h-4 w-4 text-accent-400" />
                             </AdminIconButton>
                         )}
                         <AdminIconButton
@@ -964,7 +964,7 @@ const AdminComments: React.FC = () => {
                     { label: t('admin.totalComments'), value: stats?.total ?? 0, color: 'text-white' },
                     { label: t('admin.movies'), value: stats?.movies ?? 0, color: 'text-blue-400' },
                     { label: t('admin.tvShows'), value: stats?.tv ?? 0, color: 'text-purple-400' },
-                    { label: t('admin.reports'), value: stats?.reports ?? 0, color: 'text-red-400' },
+                    { label: t('admin.reports'), value: stats?.reports ?? 0, color: 'text-accent-400' },
                     { label: t('admin.autoModeration'), value: stats?.moderated ?? 0, color: 'text-amber-400' },
                 ].map((stat) => (
                     <motion.div
@@ -1012,7 +1012,7 @@ const AdminComments: React.FC = () => {
                 <button
                     onClick={() => setActiveTab('bans')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'bans'
-                        ? 'bg-red-600 text-white shadow-lg'
+                        ? 'bg-accent-600 text-white shadow-lg'
                         : 'text-white/60 hover:text-white hover:bg-white/5'
                         }`}
                 >
@@ -1116,7 +1116,7 @@ const AdminComments: React.FC = () => {
                 >
                     {bansLoading ? (
                         <div className="flex items-center justify-center py-20">
-                            <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+                            <Loader2 className="h-8 w-8 animate-spin text-accent-500" />
                         </div>
                     ) : bans.length === 0 ? (
                         <div className="text-center py-20">
@@ -1232,7 +1232,7 @@ const AdminComments: React.FC = () => {
                                                             <div className="flex items-center gap-1">
                                                                 <p className="font-medium text-white">{comment.username}</p>
                                                                 {!!comment.is_vip && <span title={t('admin.vipLabel')} className="text-amber-400 text-xs">⭐</span>}
-                                                                {!!comment.is_admin && <span title={t('admin.adminLabel')} className="text-red-500 text-xs">🛡️</span>}
+                                                                {!!comment.is_admin && <span title={t('admin.adminLabel')} className="text-accent-500 text-xs">🛡️</span>}
                                                             </div>
                                                             <p className="text-[10px] text-white/30 truncate max-w-[100px]" title={comment.user_id}>
                                                                 {t('admin.idLabel')}: {comment.user_id.substring(0, 8)}...
@@ -1269,7 +1269,7 @@ const AdminComments: React.FC = () => {
                                                         {activeTab === 'moderated' && comment.moderation_reason && (
                                                             <div className="flex flex-col gap-1 mb-2">
                                                                 <div className="flex items-center gap-2">
-                                                                    <Badge variant="rejected" className="bg-red-500/20 text-red-400 border-red-500/30">
+                                                                    <Badge variant="rejected" className="bg-accent-500/20 text-accent-400 border-accent-500/30">
                                                                         {comment.moderation_reason}
                                                                     </Badge>
                                                                     <span className="text-[10px] text-white/40">{t('admin.generatedByGemini')}</span>
@@ -1348,11 +1348,11 @@ const AdminComments: React.FC = () => {
                                                                     whileHover={{ scale: 1.1 }}
                                                                     whileTap={{ scale: 0.9 }}
                                                                     onClick={() => handlePermanentDelete(comment)}
-                                                                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                                                                    className="p-2 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 transition-colors"
                                                                     title={t('admin.deletePermanently')}
                                                                     disabled={submitting}
                                                                 >
-                                                                    <Trash2 className="h-4 w-4 text-red-400" />
+                                                                    <Trash2 className="h-4 w-4 text-accent-400" />
                                                                 </motion.button>
                                                             </>
                                                         ) : (
@@ -1363,10 +1363,10 @@ const AdminComments: React.FC = () => {
                                                                     setSelectedComment(comment);
                                                                     setDeleteModalOpen(true);
                                                                 }}
-                                                                className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-colors"
+                                                                className="p-2 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 transition-colors"
                                                                 title={t('admin.delete')}
                                                             >
-                                                                <Trash2 className="h-4 w-4 text-red-400" />
+                                                                <Trash2 className="h-4 w-4 text-accent-400" />
                                                             </motion.button>
                                                         )}
                                                         {/* Ban button */}
@@ -1440,11 +1440,11 @@ const AdminComments: React.FC = () => {
                 title={t('admin.deleteComment')}
             >
                 <div className="space-y-6">
-                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
-                        <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                    <div className="p-4 bg-accent-500/10 border border-accent-500/20 rounded-lg flex items-start gap-3">
+                        <AlertCircle className="h-5 w-5 text-accent-400 shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-sm text-red-200 font-medium">{t('admin.irreversibleAction')}</p>
-                            <p className="text-xs text-red-100/70">
+                            <p className="text-sm text-accent-200 font-medium">{t('admin.irreversibleAction')}</p>
+                            <p className="text-xs text-accent-100/70">
                                 {t('admin.deleteCommentWarning')}
                             </p>
                         </div>
@@ -1501,7 +1501,7 @@ const AdminComments: React.FC = () => {
                             <button
                                 onClick={() => setBanType('user')}
                                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all border ${banType === 'user'
-                                    ? 'bg-red-500/20 border-red-500/30 text-red-300'
+                                    ? 'bg-accent-500/20 border-accent-500/30 text-accent-300'
                                     : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10'
                                     }`}
                             >
@@ -1512,7 +1512,7 @@ const AdminComments: React.FC = () => {
                                 onClick={() => setBanType('ip')}
                                 disabled={!banTarget?.ip_address}
                                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all border ${banType === 'ip'
-                                    ? 'bg-red-500/20 border-red-500/30 text-red-300'
+                                    ? 'bg-accent-500/20 border-accent-500/30 text-accent-300'
                                     : !banTarget?.ip_address
                                         ? 'bg-white/5 border-white/10 text-white/20 cursor-not-allowed'
                                         : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10'
@@ -1540,7 +1540,7 @@ const AdminComments: React.FC = () => {
                                     key={value}
                                     onClick={() => setBanDuration(value)}
                                     className={`px-3 py-2 rounded-lg text-xs font-medium transition-all border ${banDuration === value
-                                        ? value === 'permanent' ? 'bg-red-500/30 border-red-500/40 text-red-300' : 'bg-amber-500/20 border-amber-500/30 text-amber-300'
+                                        ? value === 'permanent' ? 'bg-accent-500/30 border-accent-500/40 text-accent-300' : 'bg-amber-500/20 border-amber-500/30 text-amber-300'
                                         : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10'
                                         }`}
                                 >
@@ -1757,9 +1757,9 @@ const AdminComments: React.FC = () => {
 
                         {/* Moderation info */}
                         {viewComment.moderation_reason && (
-                            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 space-y-2">
+                            <div className="p-3 rounded-lg bg-accent-500/10 border border-accent-500/20 space-y-2">
                                 <div className="flex items-center gap-2">
-                                    <Badge variant="rejected" className="bg-red-500/20 text-red-400 border-red-500/30">
+                                    <Badge variant="rejected" className="bg-accent-500/20 text-accent-400 border-accent-500/30">
                                         {viewComment.moderation_reason}
                                     </Badge>
                                     <span className="text-[10px] text-white/40">{t('admin.generatedByGemini')}</span>

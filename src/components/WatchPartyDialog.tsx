@@ -70,7 +70,7 @@ const WatchPartyDialog: React.FC<WatchPartyDialogProps> = ({ open, onClose, onSt
             />
           </>
         )}
-        {error && <div className="text-red-400 mb-2">{error}</div>}
+        {error && <div className="text-accent-400 mb-2">{error}</div>}
         <div className="flex justify-end gap-2">
           <button className="px-4 py-2 bg-gray-700 rounded text-white" onClick={onClose}>{t('common.cancel')}</button>
           {isHost ? (

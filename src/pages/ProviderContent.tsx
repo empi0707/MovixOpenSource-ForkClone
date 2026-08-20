@@ -71,11 +71,11 @@ const sliderStyles = `
 }
 
 .section-title:hover {
-  background: linear-gradient(90deg, #ff3333, #ff9999);
+  background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
   -webkit-background-clip: text;
   background-clip: text;
   transform: translateY(-2px);
-  text-shadow: 0px 4px 8px rgba(255, 51, 51, 0.4);
+  text-shadow: 0px 4px 8px color-mix(in srgb, var(--accent-500) 40%, transparent);
 }
 
 @keyframes fadeInTitle {
@@ -90,7 +90,7 @@ const sliderStyles = `
   bottom: 0;
   width: 40px;
   height: 3px;
-  background: linear-gradient(90deg, #f11 0%, #f66 100%);
+  background: linear-gradient(90deg, var(--accent-600) 0%, var(--accent-400) 100%);
   border-radius: 3px;
   animation: expandWidth 0.6s ease-out forwards 0.3s;
   transform-origin: left;
@@ -99,7 +99,7 @@ const sliderStyles = `
 
 .section-title:hover::after {
   width: 100%;
-  background: linear-gradient(90deg, #ff3333, #ff9999);
+  background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
 }
 
 @keyframes expandWidth {
@@ -1125,7 +1125,7 @@ const ProviderContent: React.FC = () => {
   }, [hoveredCategoryItemsMap]);
 
   const trendingTitle = useMemo(
-    () => <CarouselTitle icon="🔥" iconClass="text-red-600" label={t('providerCatalog.todayTrends')} />,
+    () => <CarouselTitle icon="🔥" iconClass="text-accent-600" label={t('providerCatalog.todayTrends')} />,
     [t]
   );
 
@@ -1136,10 +1136,10 @@ const ProviderContent: React.FC = () => {
 
         {loading ? (
           <div className="flex justify-center items-center h-screen">
-            <Loader className="animate-spin text-red-600" size={48} />
+            <Loader className="animate-spin text-accent-600" size={48} />
           </div>
         ) : error ? (
-          <div className="text-center text-red-500 mt-24 pt-16">{error}</div>
+          <div className="text-center text-accent-500 mt-24 pt-16">{error}</div>
         ) : (
           <div className="pb-12 -mt-8">
             {/* Featured Content/Hero Banner */}

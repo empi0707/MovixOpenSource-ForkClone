@@ -96,8 +96,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, currentIma
       <div
         className={`relative w-full h-64 border-2 border-dashed rounded-xl transition-all duration-300 ${
           isDragging 
-            ? 'border-red-500 bg-red-500/10' 
-            : 'border-gray-600 hover:border-red-500'
+            ? 'border-accent-500 bg-accent-500/10' 
+            : 'border-gray-600 hover:border-accent-500'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -123,7 +123,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, currentIma
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isHovered ? 1 : 0 }}
               >
-                <label className="p-2 bg-red-600 rounded-full text-white hover:bg-red-700 transition-colors cursor-pointer">
+                <label className="p-2 bg-accent-600 rounded-full text-white hover:bg-accent-700 transition-colors cursor-pointer">
                   <Camera className="w-5 h-5" />
                   <input
                     type="file"
@@ -155,7 +155,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, currentIma
               <Upload className="w-12 h-12 text-gray-400 mb-4" />
               <p className="text-gray-400 text-center px-4">
                 {t('admin.dragImageHereOr')}{' '}
-                <label className="text-red-500 cursor-pointer hover:text-red-600">
+                <label className="text-accent-500 cursor-pointer hover:text-accent-600">
                   {t('admin.browse')}
                   <input
                     type="file"
@@ -182,7 +182,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, currentIma
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
         </motion.div>
       )}
     </motion.div>

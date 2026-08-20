@@ -385,7 +385,7 @@ const HeroSliderInner: React.FC<HeroSliderProps> = ({ items }) => {
                               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                                 <Link
                                   to={`/${item.media_type}/${encodeId(item.id)}`}
-                                  className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-4 sm:px-6 md:px-7 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold transition-colors shadow-lg shadow-red-600/30"
+                                  className="inline-flex items-center gap-2 bg-accent-600 hover:bg-accent-500 text-white px-4 sm:px-6 md:px-7 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold transition-colors shadow-lg shadow-accent-600/30"
                                 >
                                   <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                                   {t('home.hero.play')}
@@ -438,7 +438,7 @@ const HeroSliderInner: React.FC<HeroSliderProps> = ({ items }) => {
             <div className="w-12 sm:w-20 h-1 bg-white/15 rounded-full overflow-hidden">
               <div
                 key={selectedIndex}
-                className={`h-full w-full bg-red-500 rounded-full hero-progress-fill ${frozen ? 'is-paused' : ''}`}
+                className={`h-full w-full bg-accent-500 rounded-full hero-progress-fill ${frozen ? 'is-paused' : ''}`}
                 style={{ ['--hero-duration' as string]: `${AUTO_SLIDE_MS}ms` } as React.CSSProperties}
               />
             </div>

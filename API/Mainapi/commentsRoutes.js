@@ -3602,15 +3602,13 @@ router.get("/:contentType/:contentId", async (req, res) => {
         FROM comments c
         WHERE c.content_type = ? AND c.content_id = ? AND c.deleted = 0
         ORDER BY (SELECT COUNT(*) FROM comment_reactions WHERE target_type = 'comment' AND target_id = c.id) DESC, c.created_at DESC
-        LIMIT ? OFFSET ?`;
+        LIMIT ${safeLimit} OFFSET ${offset}`;
       commentsParams = [
         currentUser.userId,
         currentUser.userType,
         profileId,
         contentType,
         contentId,
-        safeLimit,
-        offset,
       ];
     } else {
       commentsQuery = `
@@ -3620,12 +3618,10 @@ router.get("/:contentType/:contentId", async (req, res) => {
         FROM comments c
         WHERE c.content_type = ? AND c.content_id = ? AND c.deleted = 0
         ORDER BY (SELECT COUNT(*) FROM comment_reactions WHERE target_type = 'comment' AND target_id = c.id) DESC, c.created_at DESC
-        LIMIT ? OFFSET ?`;
+        LIMIT ${safeLimit} OFFSET ${offset}`;
       commentsParams = [
         contentType,
         contentId,
-        safeLimit,
-        offset,
       ];
     }
 

@@ -193,7 +193,7 @@ const LoginBip39: React.FC<LoginBip39Props> = ({ mode = 'login' }) => {
             <ArrowLeft className="w-5 h-5" />
           </motion.button>
 
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-400 to-accent-600 bg-clip-text text-transparent mb-2">
             {isLinkMode
               ? t('auth.bip39.linkTitle', 'Lier un compte BIP39')
               : t('auth.secureLogin')}
@@ -230,7 +230,7 @@ const LoginBip39: React.FC<LoginBip39Props> = ({ mode = 'login' }) => {
                   value={mnemonic}
                   onChange={(e) => setMnemonic(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleLogin(); } }}
-                  className="w-full bg-gray-800/70 text-white px-4 py-3 pr-12 rounded-xl border border-gray-700 focus:ring-2 focus:ring-red-500 outline-none transition-all duration-300 resize-none"
+                  className="w-full bg-gray-800/70 text-white px-4 py-3 pr-12 rounded-xl border border-gray-700 focus:ring-2 focus:ring-accent-500 outline-none transition-all duration-300 resize-none"
                   placeholder={t('auth.bip39.phrasePlaceholder')}
                   rows={3}
                 />
@@ -247,9 +247,9 @@ const LoginBip39: React.FC<LoginBip39Props> = ({ mode = 'login' }) => {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg"
+                className="mt-4 p-3 bg-accent-500/10 border border-accent-500/30 rounded-lg"
               >
-                <p className="text-red-400 text-sm">{error}</p>
+                <p className="text-accent-400 text-sm">{error}</p>
               </motion.div>
             )}
           </div>
@@ -266,7 +266,7 @@ const LoginBip39: React.FC<LoginBip39Props> = ({ mode = 'login' }) => {
               whileTap={{ scale: 0.98 }}
               onClick={handleLogin}
               disabled={!mnemonic.trim() || isLoading || (isTurnstileEnabled && !turnstileToken) || (isLinkMode && !hasLinkSession)}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 rounded-xl font-medium hover:from-red-700 hover:to-red-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-accent-600 to-accent-700 text-white py-3 rounded-xl font-medium hover:from-accent-700 hover:to-accent-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>

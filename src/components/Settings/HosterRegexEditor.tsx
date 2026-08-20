@@ -192,7 +192,7 @@ const PatternRow: React.FC<PatternRowProps> = ({ pattern, canDelete, onSave, onD
               if (e.key === 'Enter') { e.preventDefault(); save(); }
               if (e.key === 'Escape') { e.preventDefault(); cancel(); }
             }}
-            className={localError ? 'border-red-500' : ''}
+            className={localError ? 'border-accent-500' : ''}
           />
           <Button size="sm" onClick={save} disabled={!!localError || !draft.trim()}>
             {t('settings.sourcePriority.confirmOk')}
@@ -201,7 +201,7 @@ const PatternRow: React.FC<PatternRowProps> = ({ pattern, canDelete, onSave, onD
             {t('settings.sourcePriority.confirmCancel')}
           </Button>
         </div>
-        {localError && <p className="text-xs text-red-400">{localError}</p>}
+        {localError && <p className="text-xs text-accent-400">{localError}</p>}
       </div>
     );
   }
@@ -687,7 +687,7 @@ export const HosterRegexEditor: React.FC = () => {
                                 if (e.key === 'Escape') { e.preventDefault(); resetAddPatternUI(); }
                               }}
                               placeholder={t('settings.sourcePriority.patternPlaceholder')}
-                              className={newPatternError ? 'border-red-500' : ''}
+                              className={newPatternError ? 'border-accent-500' : ''}
                             />
                             <Button
                               size="sm"
@@ -701,7 +701,7 @@ export const HosterRegexEditor: React.FC = () => {
                             </Button>
                           </div>
                           {newPatternError && (
-                            <p className="text-xs text-red-400">{regexErrorMessage(newPatternError)}</p>
+                            <p className="text-xs text-accent-400">{regexErrorMessage(newPatternError)}</p>
                           )}
                         </div>
                       ) : (
@@ -807,7 +807,7 @@ export const HosterRegexEditor: React.FC = () => {
                                 if (e.key === 'Escape') { e.preventDefault(); resetAddPatternUI(); }
                               }}
                               placeholder={t('settings.sourcePriority.customHosterPatternPlaceholder')}
-                              className={newPatternError ? 'border-red-500' : ''}
+                              className={newPatternError ? 'border-accent-500' : ''}
                             />
                             <Button
                               size="sm"
@@ -821,7 +821,7 @@ export const HosterRegexEditor: React.FC = () => {
                             </Button>
                           </div>
                           {newPatternError && (
-                            <p className="text-xs text-red-400">{regexErrorMessage(newPatternError)}</p>
+                            <p className="text-xs text-accent-400">{regexErrorMessage(newPatternError)}</p>
                           )}
                         </div>
                       ) : (
@@ -886,9 +886,9 @@ export const HosterRegexEditor: React.FC = () => {
               const err = validateRegexError(e.target.value);
               setCustomError(err ? { kind: 'regex', err } : null);
             }}
-            className={customError && customError.kind !== 'nameRequired' ? 'border-red-500' : ''}
+            className={customError && customError.kind !== 'nameRequired' ? 'border-accent-500' : ''}
           />
-          {customError && <p className="text-xs text-red-400">{customErrorMessage(customError)}</p>}
+          {customError && <p className="text-xs text-accent-400">{customErrorMessage(customError)}</p>}
           <p className="text-xs text-amber-400/80">
             {t('settings.sourcePriority.customHosterWarning')}
           </p>

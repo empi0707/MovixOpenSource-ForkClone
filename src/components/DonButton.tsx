@@ -71,7 +71,7 @@ const DonButton: React.FC = () => {
         onClick={() => setShowModal(true)}
         className="flex flex-row items-center gap-3 text-gray-50 font-medium opacity-75 transition-all hover:opacity-100"
       >
-        <Heart className="size-5 text-red-400" />
+        <Heart className="size-5 text-accent-400" />
         {t('donate.makeADonation')}
       </motion.button>
     );
@@ -139,7 +139,7 @@ const DonButton: React.FC = () => {
               </motion.button>
             
             <div className="text-center">
-              <Heart className="w-12 h-12 text-red-400 mx-auto mb-4" />
+              <Heart className="w-12 h-12 text-accent-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-4">
                 {t('donate.supportMovix')}
               </h3>

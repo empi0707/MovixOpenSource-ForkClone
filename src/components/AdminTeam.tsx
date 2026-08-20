@@ -576,7 +576,7 @@ const HistoryRow: React.FC<HistoryRowProps> = ({ entry }) => {
           className={`mt-0.5 shrink-0 rounded-full p-1.5 ${
             isAdded
               ? 'bg-green-500/15 text-green-400 ring-1 ring-green-500/30'
-              : 'bg-red-500/15 text-red-400 ring-1 ring-red-500/30'
+              : 'bg-accent-500/15 text-accent-400 ring-1 ring-accent-500/30'
           }`}
         >
           {isAdded ? <Plus className="h-3.5 w-3.5" /> : <Minus className="h-3.5 w-3.5" />}

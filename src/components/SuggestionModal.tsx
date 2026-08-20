@@ -211,7 +211,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
                       onChange={(e) => setDiscordUsername(e.target.value)}
                       placeholder={t('suggestions.discordPlaceholder')}
                       className={`w-full bg-gray-800 text-white rounded-lg pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-                        !discordUsername.trim() && error ? 'border-2 border-red-500' : ''
+                        !discordUsername.trim() && error ? 'border-2 border-accent-500' : ''
                       }`}
                     />
                   </div>
@@ -230,14 +230,14 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
                     placeholder={t('suggestions.descriptionPlaceholder')}
                     className={`w-full bg-gray-800 text-white rounded-lg px-3 py-2 h-32 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none ${
                       !suggestionText.trim() && error
-                        ? 'border-2 border-red-500'
+                        ? 'border-2 border-accent-500'
                         : ''
                     }`}
                   />
                 </div>
 
                 {error && (
-                  <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 text-accent-500 bg-accent-500/10 p-3 rounded-lg">
                     <AlertCircle className="w-5 h-5" />
                     <p className="text-sm">{error}</p>
                   </div>

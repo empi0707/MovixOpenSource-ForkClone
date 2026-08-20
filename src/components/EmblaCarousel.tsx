@@ -243,7 +243,7 @@ const CarouselCard = React.memo<{
 
         {/* Episode badge for history TV items */}
         {isHistory && 'currentEpisode' in item && item.currentEpisode && item.media_type === 'tv' && (
-          <span className="absolute top-9 left-2 z-10 px-2 py-1 rounded-lg bg-red-600 text-[10px] font-semibold tracking-wider text-white">
+          <span className="absolute top-9 left-2 z-10 px-2 py-1 rounded-lg bg-accent-600 text-[10px] font-semibold tracking-wider text-white">
             S{item.currentEpisode.season}:E{item.currentEpisode.episode}
           </span>
         )}
@@ -261,7 +261,7 @@ const CarouselCard = React.memo<{
             }}
             title={t('common.deleteAll')}
             aria-label={t('common.deleteAll')}
-            className="absolute top-2 right-2 z-20 p-2 rounded-full bg-red-600/95 hover:bg-red-600 active:scale-[0.85] text-white transition-[colors,transform] duration-150"
+            className="absolute top-2 right-2 z-20 p-2 rounded-full bg-accent-600/95 hover:bg-accent-600 active:scale-[0.85] text-white transition-[colors,transform] duration-150"
           >
             <Trash className="w-3.5 h-3.5" />
           </button>
@@ -349,7 +349,7 @@ const CarouselCard = React.memo<{
         {isHistory && progressData.percentage > 0 && (
           <div className="absolute left-0 right-0 bottom-0 h-1 bg-black/50 overflow-hidden rounded-b-xl z-10">
             <div
-              className="h-full bg-red-600"
+              className="h-full bg-accent-600"
               style={{ width: `${progressData.percentage}%` }}
             />
           </div>
@@ -746,7 +746,7 @@ const EmblaCarousel: React.FC<EmblaCarouselProps> = ({
           {isHistory && onRemoveAll && items.length > 0 && (
             <button
               onClick={onRemoveAll}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-red-700/80 hover:bg-red-700 text-white text-xs font-medium rounded-full transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-accent-700/80 hover:bg-accent-700 text-white text-xs font-medium rounded-full transition-colors"
               aria-label="Supprimer tout"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -809,7 +809,7 @@ const EmblaCarousel: React.FC<EmblaCarouselProps> = ({
             className={`hidden md:flex absolute left-6 md:left-8 top-1/2 z-[950]
                      w-12 h-32 rounded-2xl items-center justify-center text-white/90 hover:text-white
                      bg-gradient-to-b from-neutral-900/95 via-black/95 to-neutral-900/95
-                     ring-1 ring-white/10 hover:ring-red-500/40
+                     ring-1 ring-white/10 hover:ring-accent-500/40
                      shadow-2xl shadow-black/70
                      transition-all duration-300 ease-out
                      -translate-y-1/2
@@ -827,7 +827,7 @@ const EmblaCarousel: React.FC<EmblaCarouselProps> = ({
             className={`hidden md:flex absolute right-6 md:right-8 top-1/2 z-[950]
                      w-12 h-32 rounded-2xl items-center justify-center text-white/90 hover:text-white
                      bg-gradient-to-b from-neutral-900/95 via-black/95 to-neutral-900/95
-                     ring-1 ring-white/10 hover:ring-red-500/40
+                     ring-1 ring-white/10 hover:ring-accent-500/40
                      shadow-2xl shadow-black/70
                      transition-all duration-300 ease-out
                      -translate-y-1/2

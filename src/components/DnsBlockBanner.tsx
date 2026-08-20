@@ -36,10 +36,10 @@ const DnsBlockBanner: React.FC = () => {
             // select-none on wrapper so touchdown doesn't start a text
             // selection, which cancels Sonner's swipe-to-dismiss. The tooltip
             // trigger re-enables select via its own styling when needed.
-            className="w-[min(92vw,420px)] flex gap-3 p-4 rounded-xl border border-red-500/50 bg-red-950/95 backdrop-blur-md shadow-2xl text-red-50 select-none"
+            className="w-[min(92vw,420px)] flex gap-3 p-4 rounded-xl border border-accent-500/50 bg-accent-950/95 backdrop-blur-md shadow-2xl text-accent-50 select-none"
           >
             <ShieldAlert
-              className="w-5 h-5 text-red-300 shrink-0 mt-0.5"
+              className="w-5 h-5 text-accent-300 shrink-0 mt-0.5"
               aria-hidden="true"
             />
             <div className="flex-1 min-w-0">
@@ -54,16 +54,16 @@ const DnsBlockBanner: React.FC = () => {
                   type="button"
                   onClick={() => dismiss(id)}
                   aria-label={t('dnsBlock.closeAria')}
-                  className="shrink-0 -mr-1 -mt-1 p-1 rounded text-red-200/70 hover:text-red-50 hover:bg-red-900/50 transition-colors"
+                  className="shrink-0 -mr-1 -mt-1 p-1 rounded text-accent-200/70 hover:text-accent-50 hover:bg-accent-900/50 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-xs text-red-100/80 leading-relaxed mb-2">
+              <p className="text-xs text-accent-100/80 leading-relaxed mb-2">
                 {t('dnsBlock.body')}
               </p>
               {wasSwitched && (
-                <p className="text-xs text-red-200/90 italic leading-relaxed mb-3">
+                <p className="text-xs text-accent-200/90 italic leading-relaxed mb-3">
                   {t('dnsBlock.autoSwitched')}
                 </p>
               )}
@@ -74,7 +74,7 @@ const DnsBlockBanner: React.FC = () => {
                     window.open(DOWNLOAD_URL, '_blank', 'noopener,noreferrer');
                     dismiss(id);
                   }}
-                  className="flex-1 px-3 py-2 rounded-md bg-red-500 hover:bg-red-400 text-white font-semibold text-xs transition-colors"
+                  className="flex-1 px-3 py-2 rounded-md bg-accent-500 hover:bg-accent-400 text-white font-semibold text-xs transition-colors"
                 >
                   {t('dnsBlock.downloadCta')}
                 </button>

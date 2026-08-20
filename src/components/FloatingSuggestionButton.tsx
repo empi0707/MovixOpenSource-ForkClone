@@ -38,7 +38,7 @@ const FloatingSuggestionButton: React.FC = () => {
       {visible && (
         <motion.button
           onClick={handleClick}
-          className={`fixed right-6 bottom-20 md:right-8 md:bottom-8 z-50 bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white font-bold py-3 ${collapsed ? 'px-3' : 'px-5'} rounded-full shadow-lg flex items-center overflow-hidden`}
+          className={`fixed right-6 bottom-20 md:right-8 md:bottom-8 z-50 bg-gradient-to-r from-accent-600 to-purple-600 hover:from-accent-700 hover:to-purple-700 text-white font-bold py-3 ${collapsed ? 'px-3' : 'px-5'} rounded-full shadow-lg flex items-center overflow-hidden`}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}

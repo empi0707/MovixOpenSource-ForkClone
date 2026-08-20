@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BRANDING } from '@/config/branding';
 import { PrefetchLink as Link } from '@/routing/PrefetchLink';
 import { ArrowLeft, Search, Clapperboard, Drama, RotateCcw, EyeOff, Ticket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,7 @@ const NotFound = () => {
   const Icon = VARIANT_ICONS[variant - 1];
 
   useEffect(() => {
-    document.title = '404 - Movix';
+    document.title = `404 - ${BRANDING.siteName}`;
   }, []);
 
   return (
@@ -31,7 +32,7 @@ const NotFound = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           >
-            <h1 className="text-[10rem] sm:text-[12rem] font-black leading-none tracking-tighter bg-gradient-to-b from-red-500 to-red-900/50 bg-clip-text text-transparent select-none">
+            <h1 className="text-[10rem] sm:text-[12rem] font-black leading-none tracking-tighter bg-gradient-to-b from-accent-500 to-accent-900/50 bg-clip-text text-transparent select-none">
               404
             </h1>
           </motion.div>
@@ -65,8 +66,8 @@ const NotFound = () => {
             transition={{ delay: 0.45, duration: 0.5 }}
             className="mb-10"
           >
-            <div className="w-20 h-20 mx-auto bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center">
-              <Icon className="w-10 h-10 text-red-500 opacity-60" />
+            <div className="w-20 h-20 mx-auto bg-accent-500/10 border border-accent-500/20 rounded-2xl flex items-center justify-center">
+              <Icon className="w-10 h-10 text-accent-500 opacity-60" />
             </div>
           </motion.div>
 
@@ -78,14 +79,14 @@ const NotFound = () => {
             className="flex flex-col sm:flex-row justify-center gap-3"
           >
             <Link to="/">
-              <Button className="bg-red-600 hover:bg-red-500 text-white h-11 px-6 gap-2 w-full sm:w-auto">
+              <Button className="bg-accent-600 hover:bg-accent-500 text-white h-11 px-6 gap-2 w-full sm:w-auto">
                 <ArrowLeft className="w-4 h-4" />
                 {t('notFound.backHome')}
               </Button>
             </Link>
 
             <Link to="/search">
-              <Button variant="outline" className="border-white/20 hover:border-red-500/40 hover:bg-red-500/10 text-white h-11 px-6 gap-2 w-full sm:w-auto">
+              <Button variant="outline" className="border-white/20 hover:border-accent-500/40 hover:bg-accent-500/10 text-white h-11 px-6 gap-2 w-full sm:w-auto">
                 <Search className="w-4 h-4" />
                 {t('notFound.searchMovie')}
               </Button>

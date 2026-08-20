@@ -368,14 +368,14 @@ const AdminLinkSubmissions: React.FC = () => {
                     )}
                 </div>
                 {sub.rejection_reason && (
-                    <p className="text-[10px] text-red-400 mt-0.5">{t('admin.rejectionPrefix')} {sub.rejection_reason}</p>
+                    <p className="text-[10px] text-accent-400 mt-0.5">{t('admin.rejectionPrefix')} {sub.rejection_reason}</p>
                 )}
             </div>
             {/* Status */}
             <div className="flex-shrink-0">
                 {sub.status === 'pending' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400">{t('admin.pending')}</span>}
                 {sub.status === 'approved' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-400">{t('admin.approvedLabel')}</span>}
-                {sub.status === 'rejected' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400">{t('admin.rejectedLabel')}</span>}
+                {sub.status === 'rejected' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent-500/10 text-accent-400">{t('admin.rejectedLabel')}</span>}
             </div>
             {/* Actions */}
             <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -392,7 +392,7 @@ const AdminLinkSubmissions: React.FC = () => {
                 <Button size="sm" variant="ghost" onClick={() => window.open(sub.url, '_blank')} className="h-6 w-6 p-0 text-white/20 hover:text-white" title={t('admin.open')}>
                     <ExternalLink className="w-3 h-3" />
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => handleDelete(sub.id)} className="h-6 w-6 p-0 text-white/20 hover:text-red-400" title={t('admin.delete')}>
+                <Button size="sm" variant="ghost" onClick={() => handleDelete(sub.id)} className="h-6 w-6 p-0 text-white/20 hover:text-accent-400" title={t('admin.delete')}>
                     <Trash2 className="w-3 h-3" />
                 </Button>
             </div>
@@ -407,7 +407,7 @@ const AdminLinkSubmissions: React.FC = () => {
                     { label: 'admin.total', value: stats.total, color: 'text-white' },
                     { label: 'admin.pending', value: stats.pending, color: 'text-yellow-400' },
                     { label: 'admin.approvedPlural', value: stats.approved, color: 'text-green-400' },
-                    { label: 'admin.rejectedPlural', value: stats.rejected, color: 'text-red-400' },
+                    { label: 'admin.rejectedPlural', value: stats.rejected, color: 'text-accent-400' },
                 ].map((stat) => (
                     <div key={stat.label} className="bg-white/5 rounded-lg p-3 text-center">
                         <p className="text-xs text-white/40">{t(stat.label)}</p>

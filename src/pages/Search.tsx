@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { BRANDING } from '@/config/branding';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Search as SearchIcon, Loader, Filter, Star, Calendar, User, Film, Award, X, LayoutGrid, List, ExternalLink, Globe, Tag, Sparkles, Tv, ArrowUpDown, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +45,7 @@ const PaginationBar = ({ currentPage, maxPages, onSelect }: { currentPage: numbe
     return (
         <div className="flex justify-center items-center gap-1.5 flex-wrap my-6">
             <motion.button whileTap={{ scale: 0.92 }} onClick={() => onSelect(1)} disabled={activePage <= 1}
-                className={`min-w-[40px] h-10 rounded-full text-sm font-medium transition-all ${activePage === 1 ? 'bg-red-600 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'} disabled:opacity-30`}>
+                className={`min-w-[40px] h-10 rounded-full text-sm font-medium transition-all ${activePage === 1 ? 'bg-accent-600 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'} disabled:opacity-30`}>
                 1
             </motion.button>
             {activePage > 3 && <span className="text-white/20 px-1">...</span>}
@@ -52,7 +53,7 @@ const PaginationBar = ({ currentPage, maxPages, onSelect }: { currentPage: numbe
                 const p = Math.max(2, activePage - 2) + i;
                 return p > 1 && p < maxPages ? (
                     <motion.button key={p} whileTap={{ scale: 0.92 }} onClick={() => onSelect(p)}
-                        className={`min-w-[40px] h-10 rounded-full text-sm font-medium transition-all ${p === activePage ? 'bg-red-600 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'}`}>
+                        className={`min-w-[40px] h-10 rounded-full text-sm font-medium transition-all ${p === activePage ? 'bg-accent-600 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'}`}>
                         {p}
                     </motion.button>
                 ) : null;
@@ -60,7 +61,7 @@ const PaginationBar = ({ currentPage, maxPages, onSelect }: { currentPage: numbe
             {activePage < maxPages - 3 && <span className="text-white/20 px-1">...</span>}
             {maxPages > 1 && (
                 <motion.button whileTap={{ scale: 0.92 }} onClick={() => onSelect(maxPages)} disabled={activePage >= maxPages}
-                    className={`min-w-[40px] h-10 rounded-full text-sm font-medium transition-all ${activePage === maxPages ? 'bg-red-600 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'} disabled:opacity-30`}>
+                    className={`min-w-[40px] h-10 rounded-full text-sm font-medium transition-all ${activePage === maxPages ? 'bg-accent-600 text-white' : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'} disabled:opacity-30`}>
                     {maxPages}
                 </motion.button>
             )}
@@ -556,7 +557,7 @@ const Search: React.FC = () => {
 
     // Set simple title
     React.useEffect(() => {
-        document.title = `${t('search.title')} - Movix`;
+        document.title = `${t('search.title')} - ${BRANDING.siteName}`;
     }, []);
 
     const filtersActive = showFilters || selectedGenres.length > 0 || director || actor || year || selectedKeywords.length > 0 || selectedLanguage || selectedCountry || selectedProviders.length > 0;
@@ -629,7 +630,7 @@ const Search: React.FC = () => {
                                             onClick={() => setShowFilters(!showFilters)}
                                             aria-label="Filters"
                                             className={`px-4 transition-all border-l shrink-0 ${filtersActive
-                                                ? 'bg-red-600 border-red-500 text-white hover:bg-red-500'
+                                                ? 'bg-accent-600 border-accent-500 text-white hover:bg-accent-500'
                                                 : 'border-white/10 text-white/70 hover:text-white hover:bg-white/5'
                                                 }`}
                                         >
@@ -787,7 +788,7 @@ const Search: React.FC = () => {
                                             <CustomCheckbox
                                                 checked={filterUnreleased}
                                                 onChange={setFilterUnreleased}
-                                                icon={<Calendar className="w-4 h-4 text-red-400" />}
+                                                icon={<Calendar className="w-4 h-4 text-accent-400" />}
                                                 label={t('search.hideUnreleased')}
                                                 className="w-full md:w-auto"
                                             />
@@ -816,7 +817,7 @@ const Search: React.FC = () => {
                                                         type="button"
                                                         onClick={() => applyPreset(preset)}
                                                         className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${activePreset === preset.id
-                                                            ? 'bg-red-600 text-white'
+                                                            ? 'bg-accent-600 text-white'
                                                             : 'bg-white/5 border border-white/10 text-white/60 hover:text-white hover:border-white/30'
                                                             }`}
                                                     >
@@ -864,7 +865,7 @@ const Search: React.FC = () => {
                                                                     type="button"
                                                                     onClick={() => toggleProvider(provider.provider_id)}
                                                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedProviders.includes(provider.provider_id)
-                                                                        ? 'bg-red-600 text-white ring-1 ring-red-500'
+                                                                        ? 'bg-accent-600 text-white ring-1 ring-accent-500'
                                                                         : 'bg-white/5 border border-white/10 text-white/60 hover:text-white hover:border-white/30'
                                                                         }`}
                                                                 >
@@ -909,7 +910,7 @@ const Search: React.FC = () => {
                                                     onChange={handleKeywordChange}
                                                     onFocus={() => keywordQuery.length >= 2 && setShowKeywordSuggestions(true)}
                                                     placeholder={t('search.keywordPlaceholder')}
-                                                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-red-500/50 transition-colors pr-10"
+                                                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-accent-500/50 transition-colors pr-10"
                                                 />
                                                 {keywordQuery && (
                                                     <button
@@ -970,7 +971,7 @@ const Search: React.FC = () => {
                                                             key={keyword.id}
                                                             type="button"
                                                             onClick={() => removeKeyword(keyword.id)}
-                                                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-600/15 border border-red-500/30 text-sm text-white hover:bg-red-600/25 transition-colors"
+                                                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-600/15 border border-accent-500/30 text-sm text-white hover:bg-accent-600/25 transition-colors"
                                                         >
                                                             <span>{keyword.name}</span>
                                                             <X size={14} />
@@ -999,7 +1000,7 @@ const Search: React.FC = () => {
                                                         onChange={handleDirectorChange}
                                                         onFocus={() => director.length >= 2 && setShowDirectorSuggestions(true)}
                                                         placeholder={t('search.directorPlaceholder')}
-                                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-red-500/50 transition-colors pr-10"
+                                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-accent-500/50 transition-colors pr-10"
                                                     />
                                                     {director && (
                                                         <button
@@ -1077,7 +1078,7 @@ const Search: React.FC = () => {
                                                         onChange={handleActorChange}
                                                         onFocus={() => actor.length >= 2 && setShowActorSuggestions(true)}
                                                         placeholder={t('search.actorPlaceholder')}
-                                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-red-500/50 transition-colors pr-10"
+                                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-accent-500/50 transition-colors pr-10"
                                                     />
                                                     {actor && (
                                                         <button
@@ -1154,7 +1155,7 @@ const Search: React.FC = () => {
                                                         onChange={(e) => setYear(e.target.value.replace(/[^0-9]/g, ''))}
                                                         placeholder={t('search.yearPlaceholder')}
                                                         maxLength={4}
-                                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-red-500/50 transition-colors pr-10"
+                                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-accent-500/50 transition-colors pr-10"
                                                     />
                                                     {year && (
                                                         <button
@@ -1194,7 +1195,7 @@ const Search: React.FC = () => {
                                                             type="button"
                                                             onClick={() => toggleGenre(genre.id)}
                                                             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedGenres.includes(genre.id)
-                                                                ? 'bg-red-600 text-white'
+                                                                ? 'bg-accent-600 text-white'
                                                                 : 'bg-white/5 border border-white/10 text-white/60 hover:text-white hover:border-white/30'
                                                                 }`}
                                                         >
@@ -1211,7 +1212,7 @@ const Search: React.FC = () => {
                                                 type="submit"
                                                 whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
-                                                className="w-full max-w-sm mx-auto py-3 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
+                                                className="w-full max-w-sm mx-auto py-3 rounded-2xl bg-accent-600 hover:bg-accent-500 text-white font-semibold flex items-center justify-center gap-2 transition-colors"
                                             >
                                                 <SearchIcon size={20} />
                                                 <span>{t('search.applyCriteria')}</span>

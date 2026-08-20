@@ -271,19 +271,7 @@ app.use(jsonParseErrorHandler);
 
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
-// 8. Serve uploaded OAuth app icons (`public/oauth-icons/<filename>`).
-//    Le panel admin upload ici, OAuthAuthorizePage lit `/oauth-icons/<filename>`.
-const { ICON_DIR: OAUTH_ICON_DIR } = require('./utils/oauthClientsDb');
-app.use(
-  '/oauth-icons',
-  express.static(OAUTH_ICON_DIR, {
-    fallthrough: false,
-    maxAge: '7d',
-    setHeaders: (res) => {
-      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    },
-  }),
-);
+// OAuth icons removed — OAuthAuthorizePage removed
 
 // ==========================================================================
 // Configure route modules with dependencies from extracted utilities
@@ -466,20 +454,17 @@ francetvRouter.configure({
   saveToCache,
 });
 
-const { router: vipDonationsRouter } = require('./routes/vipDonations');
-const { router: vipPayblisRouter } = require('./routes/vipPayblis');
-const oauthRouter = require('./routes/oauth');
+// vipDonations, vipPayblis, oauth routes removed
 
 // ==========================================================================
 // Mount all route modules
 // ==========================================================================
 
-// Pre-existing routes (already extracted before this modularization)
-const sharedListsRouter = require("./sharedListsRoutes");
+// Pre-existing routes
 app.use("/api/comments", require("./commentsRoutes"));
 app.use("/api/likes", require("./likesRoutes"));
-app.use("/api/shared-lists", sharedListsRouter);
 app.use("/api/livetv", require("./liveTvRoutes"));
+// sharedListsRoutes removed
 
 // New modular routes
 app.use('/api/cpasmal', cpasmalRouter);
@@ -491,17 +476,10 @@ app.use('/api/fstream', require('./routes/fstream'));
 app.use('/api/wiflix', require('./routes/wiflix'));
 app.use('/api/j1f', require('./routes/j1f'));
 app.use('/api/swiftflow', require('./routes/swiftflow'));
-app.use('/api', require('./routes/sync'));
-app.use('/api/profiles', require('./routes/profiles'));
-app.use('/api/help', require('./routes/helpFeedback'));
+// sync, profiles, helpFeedback, oauth, adminOauthApps, debrid, vipDonations, vipPayblis removed
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/oauth', oauthRouter);
-app.use('/api/admin/oauth-apps', require('./routes/adminOauthApps'));
 app.use('/api/sessions', require('./routes/sessions'));
-app.use('/api', require('./routes/debrid'));
 app.use('/api', require('./routes/admin'));
-app.use('/api', vipDonationsRouter);
-app.use('/api', vipPayblisRouter);
 app.use('/api/darkiworld', darkiworldRouter);
 app.use('/api/drama', voirdramaRouter);
 app.use('/api/kisskh', kisskhRouter);
@@ -532,39 +510,12 @@ const appReady = (async () => {
     const pool = await initPool();
     console.log("MySQL unified pool initialized successfully");
 
-    // Hydrate only the worker-local cache. Schema setup is handled explicitly
-    // with `npm run db:init`, never as a side effect of starting the API.
-    const oauthClientsDb = require('./utils/oauthClientsDb');
-    await oauthClientsDb.reloadCache();
-    oauthClientsDb.startClientsCacheSubscriber();
-    console.log('OAuth clients cache initialized successfully');
-
-    // Initialize Wishboard routes
-    const { createWishboardRouter } = require("./wishboardRoutes");
-    const wishboardRouter = createWishboardRouter(pool, redis);
-    app.use("/api/wishboard", wishboardRouter);
-    app.use("/api/admin/wishboard", wishboardRouter);
-    console.log("Wishboard routes initialized successfully");
-
-    // Initialize Link Submissions routes (user-submitted streaming links)
-    const {
-      createLinkSubmissionsRouter,
-    } = require("./linkSubmissionsRoutes");
-    const linkSubmissionsRouter = createLinkSubmissionsRouter(pool, redis);
-    app.use("/api/link-submissions", linkSubmissionsRouter);
-    console.log("Link Submissions routes initialized successfully");
-
     // Initialize Top 10 routes (public ranking)
     const { router: top10Router, initTop10Routes } = require("./top10Routes");
     initTop10Routes(pool, redis);
     app.use("/api/top10", top10Router);
     console.log("Top 10 routes initialized successfully");
-
-    // Initialize Wrapped routes (Movix Wrapped 2026 data collection)
-    const { router: wrappedRouter, initWrappedRoutes } = require("./wrappedRoutes");
-    initWrappedRoutes(pool, redis);
-    app.use("/api/wrapped", wrappedRouter);
-    console.log("Wrapped routes initialized successfully");
+    // oauthClientsDb, wishboard, linkSubmissions, wrapped removed
   } catch (error) {
     console.error("MySQL connection error:", error.message);
     throw error;

@@ -235,7 +235,7 @@ const SpinningReel: React.FC<{
   return (
     <div ref={containerRef} className="relative w-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm" style={{ height: CONTAINER_HEIGHT }}>
       {/* Center marker */}
-      <div className="absolute left-1/2 top-2 bottom-2 z-20 pointer-events-none border-2 border-red-500 rounded-xl shadow-[0_0_30px_rgba(239,68,68,0.3)]"
+      <div className="absolute left-1/2 top-2 bottom-2 z-20 pointer-events-none border-2 border-accent-500 rounded-xl shadow-[0_0_30px_rgba(239,68,68,0.3)]"
         style={{ width: CARD_WIDTH + 8, transform: 'translateX(-50%)' }} />
       {/* Gradient fades */}
       <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
@@ -327,7 +327,7 @@ const VerticalReel: React.FC<{
       style={{ width: posterW + 12, height: visibleHeight }}
     >
       <div
-        className="absolute left-1 right-1 z-20 pointer-events-none border-2 border-red-500 rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.4)]"
+        className="absolute left-1 right-1 z-20 pointer-events-none border-2 border-accent-500 rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.4)]"
         style={{ height: posterH + 6, top: (visibleHeight - posterH - 6) / 2 }}
       />
       <div className="absolute left-0 right-0 top-0 h-16 bg-gradient-to-b from-black via-black/70 to-transparent z-10 pointer-events-none" />
@@ -523,13 +523,13 @@ const InlineSlotMachine: React.FC<{
       {/* Indicateur de tour */}
       {reelsVisible && (
         <div className="flex items-center justify-center gap-3 mb-3">
-          <Dices className="w-5 h-5 text-red-500 animate-spin" />
+          <Dices className="w-5 h-5 text-accent-500 animate-spin" />
           <span className="text-sm font-semibold text-white/70">
             {t('roulette.roundProgress', { round })}
           </span>
           <div className="flex gap-1.5">
-            <div className={`w-2 h-2 rounded-full transition-colors ${isRound1Done ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} />
-            <div className={`w-2 h-2 rounded-full transition-colors ${round === 2 ? 'bg-red-500 animate-pulse' : 'bg-white/20'}`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${isRound1Done ? 'bg-green-500' : 'bg-accent-500 animate-pulse'}`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${round === 2 ? 'bg-accent-500 animate-pulse' : 'bg-white/20'}`} />
           </div>
         </div>
       )}
@@ -567,7 +567,7 @@ const InlineSlotMachine: React.FC<{
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="relative overflow-hidden rounded-lg border-2 border-red-500/50"
+                className="relative overflow-hidden rounded-lg border-2 border-accent-500/50"
                 style={{ width: dims.posterW, height: dims.posterH, flexShrink: 0 }}
               >
                 <img
@@ -598,7 +598,7 @@ const InlineSlotMachine: React.FC<{
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="relative overflow-hidden rounded-lg border-2 border-red-500/50"
+                className="relative overflow-hidden rounded-lg border-2 border-accent-500/50"
                 style={{ width: dims.posterW, height: dims.posterH, flexShrink: 0 }}
               >
                 <img
@@ -931,11 +931,11 @@ const RoulettePage: React.FC = () => {
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-2">
-              <Dices className="w-8 h-8 text-red-500" />
+              <Dices className="w-8 h-8 text-accent-500" />
               <h1 className="text-3xl md:text-4xl font-bold">
                 <ShinyText text={t('roulette.title')} speed={4} />
               </h1>
-              <Dices className="w-8 h-8 text-red-500" />
+              <Dices className="w-8 h-8 text-accent-500" />
             </div>
             <p className="text-white/50 text-sm">{t('roulette.subtitle')}</p>
           </motion.div>
@@ -945,8 +945,8 @@ const RoulettePage: React.FC = () => {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`mx-auto flex items-center gap-2 px-5 py-2.5 rounded-2xl transition-all ${showFilters
-                ? 'bg-red-600 border border-red-500 hover:bg-red-500'
-                : 'bg-white/5 backdrop-blur-md border border-white/10 hover:border-red-500/40 hover:bg-red-500/10'}`}
+                ? 'bg-accent-600 border border-accent-500 hover:bg-accent-500'
+                : 'bg-white/5 backdrop-blur-md border border-white/10 hover:border-accent-500/40 hover:bg-accent-500/10'}`}
             >
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-medium">{t('roulette.filters')}</span>
@@ -973,7 +973,7 @@ const RoulettePage: React.FC = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setMediaFilter(type)}
                       className={`px-5 py-2 rounded-xl text-sm font-medium transition-all ${mediaFilter === type
-                        ? 'bg-red-600 text-white'
+                        ? 'bg-accent-600 text-white'
                         : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10'}`}
                     >
                       {type === 'all' ? t('roulette.all') : type === 'movie' ? t('filter.movies') : t('filter.series')}
@@ -998,7 +998,7 @@ const RoulettePage: React.FC = () => {
                         {selectedGenres.map(id => (
                           <motion.button key={id} initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
                             onClick={() => toggleMulti(selectedGenres, id, setSelectedGenres)}
-                            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 text-xs hover:bg-red-500/30 transition-colors">
+                            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-accent-500/20 border border-accent-500/30 text-accent-300 text-xs hover:bg-accent-500/30 transition-colors">
                             {getLabel(genreOptions, id)} <X className="w-3 h-3" />
                           </motion.button>
                         ))}
@@ -1092,7 +1092,7 @@ const RoulettePage: React.FC = () => {
                     key={n}
                     onClick={() => setSpinCount(n)}
                     className={`px-3 py-2 text-sm font-medium transition-all ${spinCount === n
-                      ? 'bg-red-600 text-white'
+                      ? 'bg-accent-600 text-white'
                       : 'text-white/50 hover:text-white hover:bg-white/10'}`}
                   >
                     {n}x
@@ -1107,7 +1107,7 @@ const RoulettePage: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               onClick={spin}
               disabled={spinning || loading || slotMachineRunning}
-              className="relative px-10 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-bold text-lg shadow-lg shadow-red-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-3"
+              className="relative px-10 py-4 rounded-2xl bg-gradient-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-accent-400 text-white font-bold text-lg shadow-lg shadow-accent-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-3"
             >
               {loading ? (
                 <><motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}><Dices className="w-6 h-6" /></motion.div>{t('roulette.loading')}</>
@@ -1147,7 +1147,7 @@ const RoulettePage: React.FC = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={skipAll}
-                    className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-red-500/20 hover:border-red-500/30 text-white/50 hover:text-white text-sm transition-all flex items-center gap-2"
+                    className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-accent-500/20 hover:border-accent-500/30 text-white/50 hover:text-white text-sm transition-all flex items-center gap-2"
                   >
                     <ChevronDown className="w-4 h-4" />
                     <ChevronDown className="w-4 h-4 -ml-3" />
@@ -1164,7 +1164,7 @@ const RoulettePage: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={skipAll}
-                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-red-500/20 hover:border-red-500/30 text-white/50 hover:text-white text-sm transition-all flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-accent-500/20 hover:border-accent-500/30 text-white/50 hover:text-white text-sm transition-all flex items-center gap-2"
                 >
                   <ChevronDown className="w-4 h-4" />
                   <ChevronDown className="w-4 h-4 -ml-3" />
@@ -1222,7 +1222,7 @@ const RoulettePage: React.FC = () => {
                     <div className="flex items-center gap-3 mt-auto">
                       <Link to={`/${winner.media_type}/${encodeId(winner.id)}`}>
                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-medium transition-colors">
+                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 hover:bg-accent-500 text-white font-medium transition-colors">
                           <Info className="w-4 h-4" /> {t('roulette.viewDetails')}
                         </motion.button>
                       </Link>

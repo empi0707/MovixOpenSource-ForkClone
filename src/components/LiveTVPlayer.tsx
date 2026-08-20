@@ -2044,7 +2044,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                             className="w-full max-w-2xl rounded-3xl border border-white/10 bg-neutral-950/95 p-5 shadow-2xl"
                         >
                         <div className="mb-4">
-                            <p className="text-xs uppercase tracking-[0.22em] text-red-400">{t('liveTV.title')}</p>
+                            <p className="text-xs uppercase tracking-[0.22em] text-accent-400">{t('liveTV.title')}</p>
                             <h3 className="mt-2 text-xl font-semibold text-white">{t('liveTV.chooseSourceTitle')}</h3>
                             <p className="mt-1 text-sm text-gray-400">{t('liveTV.sourceSelectionHint')}</p>
                         </div>
@@ -2060,7 +2060,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                         whileHover={{ scale: 1.01, y: -1 }}
                                         whileTap={{ scale: 0.99 }}
                                         transition={{ duration: 0.16, ease: 'easeOut' }}
-                                        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left transition-colors hover:border-red-500/40 hover:bg-red-500/10"
+                                        className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-left transition-colors hover:border-accent-500/40 hover:bg-accent-500/10"
                                     >
                                         <div className="flex items-center justify-between gap-3">
                                             <span className="text-sm font-medium text-white">
@@ -2098,7 +2098,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                             transition={{ type: 'spring', stiffness: 320, damping: 24 }}
                             className="pointer-events-auto flex flex-col items-center gap-3 rounded-[30px] border border-white/15 bg-black/80 px-6 py-5 shadow-2xl"
                         >
-                            <div className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em] text-red-300">
+                            <div className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em] text-accent-300">
                                 {t('watch.paused')}
                             </div>
                             <motion.button
@@ -2134,7 +2134,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                             className="rounded-[26px] border border-white/10 bg-black/80 px-6 py-5 shadow-2xl"
                         >
-                            <Loader2 size={48} className="animate-spin text-red-500" />
+                            <Loader2 size={48} className="animate-spin text-accent-500" />
                         </motion.div>
                     </motion.div>
                 )}
@@ -2198,7 +2198,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                         onClick={() => handleLiveTvSourceSelect(source.index)}
                                         className={`px-3 py-1 text-sm rounded border transition-colors ${
                                             source.index === selectedSourceIndex
-                                                ? 'bg-red-600 border-red-600 text-white cursor-default'
+                                                ? 'bg-accent-600 border-accent-600 text-white cursor-default'
                                                 : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500'
                                         }`}
                                     >
@@ -2224,7 +2224,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                         }}
                                         className={`px-3 py-1 text-sm rounded border transition-colors ${
                                             index === currentStreamIndex 
-                                                ? 'bg-red-600 border-red-600 text-white cursor-default' 
+                                                ? 'bg-accent-600 border-accent-600 text-white cursor-default' 
                                                 : 'border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500'
                                         }`}
                                     >
@@ -2298,7 +2298,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                             }
                                         }
                                     }}
-                                    className="flex items-center gap-1.5 px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs font-bold transition-colors cursor-pointer text-white"
+                                    className="flex items-center gap-1.5 px-2 py-1 bg-accent-600 hover:bg-accent-700 rounded text-xs font-bold transition-colors cursor-pointer text-white"
                                     title={t('liveTV.backToLive')}
                                 >
                                     <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
@@ -2327,9 +2327,9 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                                     value={volume}
                                                     onChange={(e) => { e.stopPropagation(); setVolume(parseFloat(e.target.value)); }}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="w-full accent-red-600 appearance-none h-1 rounded-full cursor-pointer"
+                                                    className="w-full accent-accent-600 appearance-none h-1 rounded-full cursor-pointer"
                                                     style={{
-                                                        background: `linear-gradient(to right, #dc2626 ${volume * 100}%, rgba(255, 255, 255, 0.2) ${volume * 100}%)`
+                                                        background: `linear-gradient(to right, var(--accent-600) ${volume * 100}%, rgba(255, 255, 255, 0.2) ${volume * 100}%)`
                                                     }}
                                                 />
                                             </div>
@@ -2359,7 +2359,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
 
                             {/* Cast button (Chromecast) - Always visible */}
                             <motion.div
-                                animate={{ color: isCasting ? '#dc2626' : '#ffffff' }}
+                                animate={{ color: isCasting ? 'var(--accent-600)' : '#ffffff' }}
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -2376,7 +2376,7 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                             {/* AirPlay button */}
                             {airplayState.isAvailable && (
                                 <motion.div
-                                    animate={{ color: airplayState.isConnected ? '#dc2626' : '#ffffff' }}
+                                    animate={{ color: airplayState.isConnected ? 'var(--accent-600)' : '#ffffff' }}
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -2448,19 +2448,19 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                                     key={variant.id}
                                                     onClick={() => handleVavooVariantSelect(variant.id)}
                                                     className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
-                                                        isActive ? 'bg-red-600/20 text-red-400' : 'text-gray-300 hover:bg-white/5'
+                                                        isActive ? 'bg-accent-600/20 text-accent-400' : 'text-gray-300 hover:bg-white/5'
                                                     }`}
                                                 >
                                                     <div className="flex items-center gap-2">
                                                         {isActive && (
-                                                            <span className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
+                                                            <span className="w-2 h-2 bg-accent-500 rounded-full flex-shrink-0" />
                                                         )}
                                                         <span className={isActive ? '' : 'ml-4'}>
                                                             {formatVavooVariantLabel(variant)}
                                                         </span>
-                                                        {isActive && <span className="ml-auto text-red-400">✓</span>}
+                                                        {isActive && <span className="ml-auto text-accent-400">✓</span>}
                                                     </div>
-                                                    <p className={`mt-1 text-xs ${isActive ? 'text-red-300/80' : 'text-gray-500'} ${isActive ? '' : 'ml-4'}`}>
+                                                    <p className={`mt-1 text-xs ${isActive ? 'text-accent-300/80' : 'text-gray-500'} ${isActive ? '' : 'ml-4'}`}>
                                                         {variant.originalName}
                                                     </p>
                                                 </button>
@@ -2482,19 +2482,19 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                                     key={source.index}
                                                     onClick={() => handleLiveTvSourceSelect(source.index)}
                                                     className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
-                                                        source.index === selectedSourceIndex ? 'bg-red-600/20 text-red-400' : 'text-gray-300 hover:bg-white/5'
+                                                        source.index === selectedSourceIndex ? 'bg-accent-600/20 text-accent-400' : 'text-gray-300 hover:bg-white/5'
                                                     }`}
                                                 >
                                                     <div className="flex items-center gap-2">
                                                         {source.index === selectedSourceIndex && (
-                                                            <span className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
+                                                            <span className="w-2 h-2 bg-accent-500 rounded-full flex-shrink-0" />
                                                         )}
                                                         <span className={source.index === selectedSourceIndex ? '' : 'ml-4'}>
                                                             {formatSourceOptionLabel(source)}
                                                         </span>
                                                     </div>
                                                     {meta && (
-                                                        <p className={`mt-1 text-xs ${source.index === selectedSourceIndex ? 'text-red-300/80' : 'text-gray-500'}`}>
+                                                        <p className={`mt-1 text-xs ${source.index === selectedSourceIndex ? 'text-accent-300/80' : 'text-gray-500'}`}>
                                                             {meta}
                                                         </p>
                                                     )}
@@ -2516,14 +2516,14 @@ const LiveTVPlayer: React.FC<LiveTVPlayerProps> = ({
                                     key={index}
                                     onClick={() => handleServerChange(index)}
                                     className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer flex items-center gap-2 ${
-                                        index === currentStreamIndex ? 'bg-red-600/20 text-red-400' : 'text-gray-300 hover:bg-white/5'
+                                        index === currentStreamIndex ? 'bg-accent-600/20 text-accent-400' : 'text-gray-300 hover:bg-white/5'
                                     }`}
                                 >
                                     {index === currentStreamIndex && (
-                                        <span className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
+                                        <span className="w-2 h-2 bg-accent-500 rounded-full flex-shrink-0" />
                                     )}
                                     <span className={index === currentStreamIndex ? '' : 'ml-4'}>{stream.title || `${t('watch.source')} ${index + 1}`}</span>
-                                    {index === currentStreamIndex && <span className="ml-auto text-red-400">✓</span>}
+                                    {index === currentStreamIndex && <span className="ml-auto text-accent-400">✓</span>}
                                 </button>
                             ))}
                                     </div>

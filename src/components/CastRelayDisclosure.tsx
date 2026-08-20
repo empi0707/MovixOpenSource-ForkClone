@@ -62,7 +62,7 @@ export function CastRelayDisclosure({
           onPointerDownOutside={(event) => event.preventDefault()}
         >
           <div className="flex items-start gap-3">
-            <div className="rounded-lg bg-red-500/15 p-2.5 text-red-300">
+            <div className="rounded-lg bg-accent-500/15 p-2.5 text-accent-300">
               <Wifi className="h-5 w-5" aria-hidden="true" />
             </div>
             <div className="min-w-0">

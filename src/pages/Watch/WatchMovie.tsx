@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import HLSPlayer from '../../components/HLSPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAdFreePopup } from '../../context/AdFreePopupContext';
-import AdFreePlayerAds from '../../components/AdFreePlayerAds';
 import { extractM3u8FromEmbed, extractVoeM3u8, extractUqloadFile, extractVidzyM3u8, extractFsvidM3u8, extractOneUploadSources, isOneUploadEmbed, isVoeEmbed, extractDoodStreamFile, extractSeekStreamingM3u8, isDoodStreamEmbed, isSeekStreamingEmbed, isDoodStreamExtractionEnabled, isSeekStreamingExtractionEnabled, type M3u8Result } from '../../utils/extractM3u8';
 import { expandSeekStreamingSources, type SeekStreamingHlsSource } from '../../utils/seekStreamingCandidates';
 import { pickAutoSelectedSource, sortHostersByPriority, type SourceAvailability } from '../../utils/sourceAutoSelect';
@@ -17,12 +15,10 @@ import { setLastPlayer } from '../../utils/lastPlayerPref';
 import { getTmdbId } from '../../utils/idEncoder';
 import { generateRivestreamSecretKey } from '../../utils/rivestreamSecretKey';
 import { useWrappedTracker } from '../../hooks/useWrappedTracker';
-import { isUserVip, getVipHeaders } from '../../utils/authUtils';
 import { isExtensionAvailable } from '../../utils/extensionProxy';
 import { RIVESTREAM_PROXIES } from '../../config/rivestreamProxy';
 import { buildProxyUrl } from '../../config/runtime';
 import { getTmdbLanguage } from '../../i18n';
-import { useProfile } from '../../context/ProfileContext';
 import { isContentAllowed, getClassificationLabel } from '../../utils/certificationUtils';
 import { getCoflixPreferredUrl } from '../../utils/coflix';
 import { KisskhServiceError, resolveKisskhMovie } from '../../services/kisskhService';
@@ -36,16 +32,8 @@ import {
 const MAIN_API = import.meta.env.VITE_MAIN_API;
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 
-// Constante pour contrôler la vérification VIP pour Rivestream
-const ENABLE_RIVESTREAM_VIP_CHECK = false;
-
-// Helper function to check if Rivestream is available (VIP check if enabled)
-const isRivestreamAvailable = (): boolean => {
-  if (!ENABLE_RIVESTREAM_VIP_CHECK) {
-    return true; // Si la vérification VIP est désactivée, Rivestream est toujours disponible
-  }
-  return isUserVip();
-};
+// Rivestream always available (VIP check removed)
+const isRivestreamAvailable = (): boolean => true;
 
 // Helper function to generate proxy URL for fsvid sources
 const getProxyUrl = (url: string): string => {
@@ -373,8 +361,6 @@ const WatchMovie: React.FC = () => {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { currentProfile } = useProfile();
-
   const id = encodedId ? getTmdbId(encodedId) : null;
   const autoFallbackGuard = useMemo(() => createHlsAutoFallbackGuard(2), [id]);
   const [isLoading, setIsLoading] = useState(true);
@@ -462,7 +448,7 @@ const WatchMovie: React.FC = () => {
 
   // PurStream (Bravo) HLS states
   const [purstreamSources, setPurstreamSources] = useState<{ url: string; label: string }[]>([]);
-  const canUseBravo = isUserVip() || isExtensionAvailable();
+  const canUseBravo = isExtensionAvailable();
 
   // Rivestream VO/VOSTFR HLS states
   const [rivestreamSources, setRivestreamSources] = useState<{ url: string; label: string; quality: number; service: string; category: string }[]>([]);
@@ -668,20 +654,6 @@ const WatchMovie: React.FC = () => {
     videoSource,
   ]);
 
-  const {
-    showAdFreePopup,
-    adType,
-    shouldLoadIframe,
-    showPopupForPlayer,
-    handlePopupClose,
-    handlePopupAccept
-  } = useAdFreePopup();
-  const [adPopupTriggered, setAdPopupTriggered] = useState(false);
-  const [adPopupBypass, setAdPopupBypass] = useState(false);
-
-  // Ajout de l'état pour savoir si l'utilisateur a cliqué sur la pub
-  const [hasClickedAd, setHasClickedAd] = useState(false);
-
   // Movix Wrapped 2026 - Track movie viewing time
   useWrappedTracker({
     mode: 'viewing',
@@ -818,8 +790,8 @@ const WatchMovie: React.FC = () => {
       setBackdropPath(tmdbResponse.data.backdrop_path);
       setPosterPath(tmdbResponse.data.poster_path);
 
-      // Age restriction check
-      const profileAge = currentProfile?.ageRestriction ?? 0;
+      // Age restriction check (profile system removed — always 0)
+      const profileAge = 0;
       if (profileAge > 0) {
         try {
           const certResponse = await axios.get(`https://api.themoviedb.org/3/movie/${id}/release_dates`, {
@@ -943,9 +915,7 @@ const WatchMovie: React.FC = () => {
       // =========== CHECK PURSTREAM (BRAVO) SOURCE ==========
       const purstreamPromise = (async () => {
         try {
-          const purstreamResponse = await axios.get(`${MAIN_API}/api/purstream/movie/${id}/stream`, {
-            headers: { ...getVipHeaders() }
-          });
+          const purstreamResponse = await axios.get(`${MAIN_API}/api/purstream/movie/${id}/stream`);
           return purstreamResponse.data;
         } catch (error) {
           console.error('Error fetching PurStream movie sources:', error);
@@ -956,10 +926,7 @@ const WatchMovie: React.FC = () => {
       // =========== CHECK FSTREAM SOURCE ==========
       const fstreamPromise = (async () => {
         try {
-          // Envoyer la clé VIP via header pour vérification côté serveur
-          const fstreamResponse = await axios.get(`${MAIN_API}/api/fstream/movie/${id}`, {
-            headers: { ...getVipHeaders() }
-          });
+          const fstreamResponse = await axios.get(`${MAIN_API}/api/fstream/movie/${id}`);
           return fstreamResponse.data;
         } catch (error) {
           console.error('Error fetching FStream movie sources:', error);
@@ -1464,9 +1431,6 @@ const WatchMovie: React.FC = () => {
       const fstreamHlsSources: { url: string; label: string; category: string }[] = [];
       const fsvidSources: { url: string; label: string; category: string }[] = [];
 
-      // Check if user is VIP or connected (utilise isUserVip pour inclure les utilisateurs connectés)
-      const isVip = isUserVip();
-
       if (fstreamResult && fstreamResult.success && fstreamResult.players) {
         console.log('🎬 Processing FStream result:', fstreamResult);
         setFstreamData(fstreamResult);
@@ -1528,8 +1492,8 @@ const WatchMovie: React.FC = () => {
           });
         }
 
-        // Extraire M3U8 des sources fsvid (VIP ou extension locale)
-        if ((isVip || isExtensionAvailable()) && fsvidSources.length > 0) {
+        // Extraire M3U8 des sources fsvid (extension locale)
+        if (isExtensionAvailable() && fsvidSources.length > 0) {
           console.log(`🎬 Found ${fsvidSources.length} fsvid sources, extracting M3U8...`);
           fsvidSources.forEach(fsvidSource => {
             fstreamExtractionPromises.push(
@@ -3201,144 +3165,6 @@ const WatchMovie: React.FC = () => {
   ]);
 
   useEffect(() => {
-    // On ne fait rien si VIP activé
-    if (import.meta.env.is_vip === 'true' || import.meta.env.is_vip === true || localStorage.getItem('is_vip') === 'true') {
-      console.log('🚫 VIP activé - popup ads désactivé');
-      return;
-    }
-    // On ne fait rien si déjà passé le popup ou si popup déjà affiché
-    if (adPopupTriggered || adPopupBypass) {
-      console.log('🚫 Popup déjà déclenché ou bypassé:', { adPopupTriggered, adPopupBypass });
-      return;
-    }
-
-    console.log('🔍 États de chargement:', {
-      loadingDarkino,
-      loadingCoflix,
-      loadingOmega,
-      loadingFrembed,
-      loadingFstream,
-      loadingExtractions
-    });
-
-    // Quand tous les chargements sont terminés (y compris les extractions)
-    if (!loadingDarkino && !loadingCoflix && !loadingOmega && !loadingFrembed && !loadingFstream && !loadingExtractions) {
-      console.log('✅ Tous les chargements terminés - vérification des sources pour popup ads');
-      console.log('📊 Sources disponibles:', {
-        selectedSource,
-        nexusHlsSources: nexusHlsSources.length,
-        nexusFileSources: nexusFileSources.length,
-        darkinoSources: darkinoSources.length,
-        mp4Sources: mp4Sources.length,
-        omegaData: omegaData?.player_links?.length || 0,
-        coflixData: coflixData?.player_links?.length || 0,
-        fstreamSources: fstreamSources.length,
-        wiflixSources: wiflixSources.length,
-        embedUrl
-      });
-
-      // NOUVEAU: Déclencher le popup pour TOUS les lecteurs dès qu'une source est sélectionnée
-      if (selectedSource && !adPopupTriggered) {
-        console.log('🎭 Déclenchement popup pour source:', selectedSource);
-
-        // Vérifier s'il n'y a que des sources VO/VOSTFR disponibles
-        const hasVfSources = darkinoSources.length > 0 || mp4Sources.length > 0 ||
-          (omegaData?.player_links && omegaData.player_links.length > 0) ||
-          (coflixData?.player_links && coflixData.player_links.length > 0) ||
-          (fstreamSources.length > 0 && fstreamSources.some(source =>
-            source.category === 'VF' || source.category === 'VFQ'
-          )) ||
-          (wiflixSources.length > 0 && wiflixSources.some(source =>
-            source.category === 'VF' || source.category === 'VFQ'
-          )) ||
-          (j1fSources.length > 0 && j1fSources.some(source =>
-            source.category === 'VF' || source.category === 'VFQ'
-          )) ||
-          (swiftflowSources.length > 0 && swiftflowSources.some(source =>
-            source.category === 'VF' || source.category === 'VFQ'
-          )) ||
-          (viperSources.length > 0 && viperSources.some(source =>
-            source.language === 'VF'
-          ));
-
-        const isVoVostfrOnly = !hasVfSources;
-
-        // Déclencher le popup avec le type de lecteur approprié
-        let playerType = selectedSource;
-        let additionalInfo: any = { isVoVostfrOnly };
-
-        // Mapper les types de sources aux types de lecteurs pour le popup
-        switch (selectedSource) {
-          case 'nexus_hls':
-          case 'nexus_file':
-            playerType = 'nexus_' + selectedSource.split('_')[1];
-            break;
-          case 'darkino':
-          case 'mp4':
-            playerType = 'darkino';
-            break;
-          case 'omega':
-            playerType = 'omega';
-            additionalInfo = { omegaData, isVoVostfrOnly };
-            break;
-          case 'coflix':
-            playerType = 'multi';
-            additionalInfo = { coflixData, isVoVostfrOnly };
-            break;
-          case 'fstream':
-            playerType = 'fstream';
-            break;
-          case 'wiflix':
-            playerType = 'wiflix';
-            break;
-          case 'j1f':
-            playerType = 'j1f';
-            break;
-          case 'swiftflow':
-            playerType = 'swiftflow';
-            break;
-          case 'viper':
-            playerType = 'viper';
-            break;
-          case 'frembed':
-            playerType = 'frembed';
-            break;
-          default:
-            // Pour les autres types (custom, embed URLs, etc.)
-            if (embedUrl) {
-              if (embedUrl.toLowerCase().includes('vidmoly')) {
-                playerType = 'vidmoly';
-              } else if (embedUrl.toLowerCase().includes('dropload')) {
-                playerType = 'dropload';
-              } else {
-                playerType = 'adfree'; // Type générique pour les embeds
-              }
-            } else {
-              playerType = 'adfree'; // Type par défaut
-            }
-            break;
-        }
-
-        console.log(`🎭 Popup déclenché pour ${playerType} (source: ${selectedSource})`);
-        showPopupForPlayer(String(playerType), additionalInfo);
-        setAdPopupTriggered(true);
-        return;
-      }
-
-      console.log('⚠️ Aucune source sélectionnée ou popup déjà déclenché');
-    } else {
-      console.log('⏳ Chargements en cours - popup ads en attente');
-    }
-  }, [loadingDarkino, loadingCoflix, loadingOmega, loadingFrembed, loadingFstream, loadingWiflix, loadingExtractions, selectedSource, darkinoSources, mp4Sources, omegaData, coflixData, fstreamSources, wiflixSources, j1fSources, swiftflowSources, embedUrl, adPopupTriggered, adPopupBypass, showPopupForPlayer]);
-
-  // Si on ferme le popup (croix) ET qu'on n'a PAS cliqué sur la pub, on bloque l'accès au lecteur
-  useEffect(() => {
-    if (!showAdFreePopup && adPopupTriggered && !shouldLoadIframe && !hasClickedAd) {
-      setAdPopupBypass(true); // On bloque l'accès au lecteur
-    }
-  }, [showAdFreePopup, adPopupTriggered, shouldLoadIframe, hasClickedAd]);
-
-  useEffect(() => {
     const setVh = () => {
       document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
     };
@@ -3365,18 +3191,18 @@ const WatchMovie: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 bg-accent-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">{t('details.contentBlocked')}</h2>
           <p className="text-gray-400 mb-6">
-            {t('details.contentBlockedDesc', { rating: getClassificationLabel(contentCert, t), age: currentProfile?.ageRestriction ?? 0 })}
+            {t('details.contentBlockedDesc', { rating: getClassificationLabel(contentCert, t), age: 0 })}
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+            className="px-6 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
           >
             {t('details.goBack')}
           </button>
@@ -3413,7 +3239,6 @@ const WatchMovie: React.FC = () => {
         return formatPremidSourceDetail(
           source?.label || (source ? `Source ${selectedMp4Source + 1}` : undefined),
           source?.language,
-          source?.isVip ? 'VIP' : undefined,
         );
       }
       case 'fstream': {
@@ -3536,16 +3361,6 @@ const WatchMovie: React.FC = () => {
           </div>
           <div className="text-white text-xl font-medium mt-6">{loadingText}</div>
         </div>
-      ) : adPopupBypass ? (
-        <div className="flex flex-col items-center justify-center h-full bg-black">
-          <div className="text-white text-2xl font-bold mb-4">{t('watch.mustWatchAd')}</div>
-          <div className="text-gray-400 text-lg">{t('watch.reloadToRetry')}</div>
-        </div>
-      ) : adPopupTriggered && !shouldLoadIframe && !hasClickedAd ? (
-        <div className="flex flex-col items-center justify-center h-full bg-black">
-          <div className="text-white text-2xl font-bold mb-4">{t('watch.loading')}</div>
-          <div className="text-gray-400 text-lg">{t('watch.pleaseWait')}</div>
-        </div>
       ) : onlyVostfrAvailable ? (
         <div className="h-full bg-black text-white flex flex-col items-center justify-center p-4">
           <div className="max-w-2xl w-full bg-gray-900/95 rounded-xl p-8 text-center shadow-2xl border border-gray-800 relative">
@@ -3569,7 +3384,7 @@ const WatchMovie: React.FC = () => {
                 </button>
                 <button
                   onClick={() => { setShowEmbedQuality(true); setOnlyVostfrAvailable(true); }}
-                  className="px-6 py-3 bg-red-800 hover:bg-red-700 text-white rounded-lg transition-all duration-200 shadow-lg"
+                  className="px-6 py-3 bg-accent-800 hover:bg-accent-700 text-white rounded-lg transition-all duration-200 shadow-lg"
                 >
                   {t('watch.chooseVostfrPlayer')}
                 </button>
@@ -3592,7 +3407,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -3639,7 +3454,7 @@ const WatchMovie: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      ) : selectedSource === 'fstream' && fstreamSources.length > 0 && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? (
+      ) : selectedSource === 'fstream' && fstreamSources.length > 0 ? (
         <div className="w-full h-full flex items-center justify-center">
           {/* Back to Info Button */}
           <button
@@ -3670,7 +3485,7 @@ const WatchMovie: React.FC = () => {
               onClick={() => setShowEmbedQuality(true)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/90 border border-gray-700 hover:bg-gray-800/80 text-white font-medium text-sm transition-all duration-200"
             >
-              <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+              <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
               <span className="hidden sm:inline">{t('watch.sources')}</span>
             </button>
           </div>
@@ -3702,7 +3517,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -3749,7 +3564,7 @@ const WatchMovie: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      ) : selectedSource === 'darkino' && darkinoSources.length > 0 && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? (
+      ) : selectedSource === 'darkino' && darkinoSources.length > 0 ? (
         <div className="w-full h-full flex items-center justify-center">
           <HLSPlayer
             priorityCategory="moviesTv"
@@ -3860,7 +3675,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -3907,7 +3722,7 @@ const WatchMovie: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      ) : selectedSource === 'mp4' && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? (
+      ) : selectedSource === 'mp4' ? (
         <div className="w-full h-full flex items-center justify-center">
           <HLSPlayer
             priorityCategory="moviesTv"
@@ -3977,7 +3792,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -4018,7 +3833,7 @@ const WatchMovie: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      ) : ((selectedSource === 'nexus_hls' && nexusHlsSources.length > 0) || (selectedSource === 'bravo' && purstreamSources.length > 0 && canUseBravo) || (selectedSource === 'kisskh' && kisskhSources.length > 0)) && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? (
+      ) : ((selectedSource === 'nexus_hls' && nexusHlsSources.length > 0) || (selectedSource === 'bravo' && purstreamSources.length > 0 && canUseBravo) || (selectedSource === 'kisskh' && kisskhSources.length > 0)) ? (
         <div className="w-full h-full flex items-center justify-center">
           <HLSPlayer
             priorityCategory="moviesTv"
@@ -4088,7 +3903,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -4135,7 +3950,7 @@ const WatchMovie: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      ) : selectedSource === 'nexus_file' && nexusFileSources.length > 0 && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? (
+      ) : selectedSource === 'nexus_file' && nexusFileSources.length > 0 ? (
         <div className="w-full h-full flex items-center justify-center">
           <HLSPlayer
             priorityCategory="moviesTv"
@@ -4205,7 +4020,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -4252,7 +4067,7 @@ const WatchMovie: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      ) : selectedSource === 'rivestream_hls' && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? (
+      ) : selectedSource === 'rivestream_hls' ? (
         <div className="w-full h-full flex items-center justify-center">
           {loadingRivestream ? (
             <div className="flex flex-col items-center justify-center h-full bg-black">
@@ -4336,7 +4151,7 @@ const WatchMovie: React.FC = () => {
                         <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                         <button
                           onClick={() => setShowEmbedQuality(false)}
-                          className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                          className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                         >
                           ×
                         </button>
@@ -4415,7 +4230,7 @@ const WatchMovie: React.FC = () => {
             </div>
           )}
         </div>
-      ) : selectedSource === 'darkino' && darkinoSources.length > 0 && (!adPopupTriggered || shouldLoadIframe || hasClickedAd) ? (
+      ) : selectedSource === 'darkino' && darkinoSources.length > 0 ? (
         <div className="w-full h-full flex items-center justify-center">
           <HLSPlayer
             priorityCategory="moviesTv"
@@ -4489,7 +4304,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -4561,7 +4376,7 @@ const WatchMovie: React.FC = () => {
               onClick={() => setShowEmbedQuality(true)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/90 border border-gray-700 hover:bg-gray-800/80 text-white font-medium text-sm transition-all duration-200"
             >
-              <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+              <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
               <span className="hidden sm:inline">{t('watch.sources')}</span>
             </button>
           </div>
@@ -4611,7 +4426,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -4690,7 +4505,7 @@ const WatchMovie: React.FC = () => {
               onClick={() => setShowEmbedQuality(true)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/90 border border-gray-700 hover:bg-gray-800/80 text-white font-medium text-sm transition-all duration-200"
             >
-              <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+              <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
               <span className="hidden sm:inline">{t('watch.sources')}</span>
             </button>
           </div>
@@ -4718,7 +4533,7 @@ const WatchMovie: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">{t('watch.changeSource')}</h3>
                     <button
                       onClick={() => setShowEmbedQuality(false)}
-                      className="text-gray-400 hover:text-red-500 transition-colors text-2xl font-bold focus:outline-none"
+                      className="text-gray-400 hover:text-accent-500 transition-colors text-2xl font-bold focus:outline-none"
                     >
                       ×
                     </button>
@@ -4767,13 +4582,6 @@ const WatchMovie: React.FC = () => {
         </div>
       )}
 
-      {/* Ad popup rendered as an overlay (not in the player/loading branch) so
-          click-anywhere mode keeps the preloaded player visible behind the
-          transparent catcher. Normal mode's dialog still covers the gated
-          (black) loading state below it. */}
-      {showAdFreePopup && adPopupTriggered && !adPopupBypass && (
-        <AdFreePlayerAds onClose={handlePopupClose} onAccept={handlePopupAccept} adType={adType} onAdClick={() => setHasClickedAd(true)} />
-      )}
     </div>
   );
 };

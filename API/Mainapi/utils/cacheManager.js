@@ -4,6 +4,26 @@
  */
 
 const fsp = require('fs').promises;
+
+// Supprime les références circulaires avant JSON.stringify (Socket HTTP, parsers, etc.)
+function safeSerialize(obj) {
+  const seen = new WeakSet();
+  return JSON.parse(JSON.stringify(obj, (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) return undefined;
+      seen.add(value);
+    }
+    // Élimine les objets Socket/net/http internes qui polluent les résultats axios
+    if (value && typeof value === 'object' && typeof value.constructor === 'function') {
+      const name = value.constructor.name;
+      if (name === 'Socket' || name === 'TLSSocket' || name === 'ClientRequest' ||
+          name === 'IncomingMessage' || name === 'HTTPParser') {
+        return undefined;
+      }
+    }
+    return value;
+  }));
+}
 const path = require('path');
 const crypto = require('crypto');
 const writeFileAtomic = require('write-file-atomic');
@@ -189,9 +209,9 @@ setInterval(() => {
 const saveFStreamToCache = async (cacheKey, data) => {
   try {
     const cacheFilePath = path.join(CACHE_DIR.FSTREAM, `${cacheKey}.json`);
-    const cacheData = {
-      data: data
-    };
+    // safeSerialize \u00e9limine les r\u00e9f\u00e9rences circulaires (Socket/HTTPParser) avant d'\u00e9crire
+    const safeData = safeSerialize(data);
+    const cacheData = { data: safeData };
 
     // Utiliser l'\u00e9criture atomique pour les fichiers de cache FStream
     await writeFileAtomic(cacheFilePath, JSON.stringify(cacheData), 'utf8');
@@ -427,6 +447,7 @@ const shouldUpdateCache48h = async (cacheDir, cacheKey) => {
 };
 
 module.exports = {
+  safeSerialize,
   CACHE_DIR,
   ANIME_SAMA_CACHE_DIR,
   generateCacheKey,

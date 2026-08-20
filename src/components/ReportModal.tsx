@@ -272,7 +272,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         <select
                           value={selectedSeason}
                           onChange={(e) => setSelectedSeason(Number(e.target.value))}
-                          className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                          className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-accent-500 focus:outline-none"
                         >
                           {[...Array(totalSeasons)].map((_, i) => (
                             <option key={i + 1} value={i + 1}>
@@ -288,7 +288,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         </label>
                         {isLoadingEpisodes ? (
                           <div className="flex items-center justify-center py-4">
-                            <svg className="animate-spin h-5 w-5 text-red-500" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-5 w-5 text-accent-500" viewBox="0 0 24 24">
                               <circle
                                 className="opacity-25"
                                 cx="12"
@@ -315,7 +315,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                                 onClick={() => setSelectedEpisode(episode.episode_number)}
                                 className={`p-2 rounded-lg text-center transition-colors ${
                                   selectedEpisode === episode.episode_number
-                                    ? 'bg-red-600 text-white'
+                                    ? 'bg-accent-600 text-white'
                                     : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                                 }`}
                               >
@@ -350,7 +350,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         onClick={() => setSelectedOption(option.id)}
                         className={`flex items-start gap-3 p-3 rounded-lg text-left transition-colors ${
                           selectedOption === option.id
-                            ? 'bg-red-600 text-white'
+                            ? 'bg-accent-600 text-white'
                             : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                         }`}
                       >
@@ -377,8 +377,8 @@ const ReportModal: React.FC<ReportModalProps> = ({
                       value={discordUsername}
                       onChange={(e) => setDiscordUsername(e.target.value)}
                       placeholder={t('report.discordUsernamePlaceholder')}
-                      className={`w-full bg-gray-800 text-white rounded-lg pl-10 pr-3 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none ${
-                        !discordUsername.trim() && error ? 'border-2 border-red-500' : ''
+                      className={`w-full bg-gray-800 text-white rounded-lg pl-10 pr-3 py-2 focus:ring-2 focus:ring-accent-500 focus:outline-none ${
+                        !discordUsername.trim() && error ? 'border-2 border-accent-500' : ''
                       }`}
                     />
                   </div>
@@ -399,21 +399,21 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         ? t('report.otherDescPlaceholder')
                         : t('report.descPlaceholder')
                     }
-                    className={`w-full bg-gray-800 text-white rounded-lg px-3 py-2 h-24 focus:ring-2 focus:ring-red-500 focus:outline-none resize-none ${
+                    className={`w-full bg-gray-800 text-white rounded-lg px-3 py-2 h-24 focus:ring-2 focus:ring-accent-500 focus:outline-none resize-none ${
                       selectedOption === 'other' && !reportReason.trim()
-                        ? 'border-2 border-red-500'
+                        ? 'border-2 border-accent-500'
                         : ''
                     }`}
                   />
                   {selectedOption === 'other' && !reportReason.trim() && (
-                    <p className="mt-1 text-sm text-red-500">
+                    <p className="mt-1 text-sm text-accent-500">
                       {t('report.detailedDescRequired')}
                     </p>
                   )}
                 </div>
 
                 {error && (
-                  <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 text-accent-500 bg-accent-500/10 p-3 rounded-lg">
                     <AlertCircle className="w-5 h-5" />
                     <p className="text-sm">{error}</p>
                   </div>
@@ -426,7 +426,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                   className={`w-full py-3 rounded-lg font-medium transition-colors ${
                     isSubmitting
                       ? 'bg-gray-600 cursor-not-allowed'
-                      : 'bg-red-600 hover:bg-red-700'
+                      : 'bg-accent-600 hover:bg-accent-700'
                   }`}
                 >
                   {isSubmitting ? (

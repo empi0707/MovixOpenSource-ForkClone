@@ -20,7 +20,9 @@ interface SearchResult {
     overview?: string;
 }
 
-const POSTER_FALLBACK = `data:image/svg+xml,${encodeURIComponent('<svg width="500" height="750" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#111"/><text x="50%" y="50%" fill="#444" font-size="36" font-family="sans-serif" text-anchor="middle" dy=".3em">MOVIX</text></svg>')}`;
+import { BRANDING as _BRANDING } from '../config/branding';
+const POSTER_FALLBACK = `data:image/svg+xml,${encodeURIComponent(`<svg width="500" height="750" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#111"/><text x="50%" y="50%" fill="#444" font-size="36" font-family="sans-serif" text-anchor="middle" dy=".3em">${_BRANDING.siteName}</text></svg>`)}`;
+
 
 // Module-level watchlist id cache, keyed by media_type. Previously each
 // SearchGridCard / SearchListCard ran `JSON.parse(localStorage[...])` inside
@@ -241,7 +243,7 @@ export const SearchListCard: React.FC<ListCardProps> = React.memo(({ item, index
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                        <h3 className="font-semibold text-white line-clamp-1 group-hover:text-red-400 transition-colors">
+                        <h3 className="font-semibold text-white line-clamp-1 group-hover:text-accent-400 transition-colors">
                             {item.title || item.name}
                         </h3>
                         <div className="flex items-center gap-3 text-sm text-white/50 mt-1">

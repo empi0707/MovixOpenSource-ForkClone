@@ -10,10 +10,9 @@ import {
   Zap, RefreshCw, ChevronDown, ListOrdered, Gauge, Megaphone, Square
 } from 'lucide-react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+// AuthContext removed — VIP access code feature disabled
 
-import { discordAuth } from '../services/discordAuth';
-import { googleAuth } from '../services/googleAuth';
+// discordAuth and googleAuth services removed
 import {
   getExtractionPrefs,
   setExtractionPrefs,
@@ -30,7 +29,8 @@ import {
 } from '../utils/extractionPrefs';
 import { isExtensionAvailable, fetchFromExtension } from '../utils/extensionProxy';
 import { isUserVip } from '../utils/authUtils';
-import { unsubscribeFromPush } from '../services/pushNotificationService';
+// pushNotificationService removed
+const unsubscribeFromPush = async () => {};
 import { clearStoredAuthSession, getResolvedAccountContext, setPendingAuthLink } from '../utils/accountAuth';
 import {
   formatStorageBytes,
@@ -162,14 +162,6 @@ const SECTIONS = [
   { id: 'appearance', labelKey: 'settings.sections.appearance', icon: Palette },
   { id: 'performance', labelKey: 'settings.sections.performance', icon: Gauge },
   { id: 'language', labelKey: 'settings.sections.language', icon: Globe },
-  { id: 'vip', labelKey: 'settings.sections.vip', icon: Crown },
-  { id: 'sessions', labelKey: 'settings.sections.sessions', icon: Monitor },
-  { id: 'accounts', labelKey: 'settings.sections.accounts', icon: Link2 },
-  { id: 'privacy', labelKey: 'settings.sections.privacy', icon: Shield },
-  { id: 'source-priority', labelKey: 'settings.sections.sourcePriority', icon: ListOrdered },
-  { id: 'intermission', labelKey: 'settings.sections.adPopup', icon: Megaphone },
-  { id: 'extractions', labelKey: 'settings.sections.extractions', icon: Zap },
-  { id: 'data', labelKey: 'settings.sections.data', icon: Database },
 ] as const;
 
 // ─── Polled subcomponents ────────────────────────────────────────────────────
@@ -338,7 +330,7 @@ const ExtensionCacheStatsBlock: React.FC<ExtensionCacheStatsBlockProps> = ({ ext
         <button
           onClick={handleClearCache}
           disabled={!extensionPresent}
-          className="text-sm text-red-400 hover:text-red-300 disabled:text-gray-600 flex items-center gap-1.5"
+          className="text-sm text-accent-400 hover:text-accent-300 disabled:text-gray-600 flex items-center gap-1.5"
         >
           <Trash2 className="w-4 h-4" /> {t('settings.extractions.cache.clearAll')}
         </button>
@@ -547,7 +539,10 @@ const SettingsPage: React.FC = () => {
   const [vipKeyError, setVipKeyError] = useState<string | null>(null);
   const [isActivatingKey, setIsActivatingKey] = useState(false);
   const [isVipKeyHovered, setIsVipKeyHovered] = useState(false);
-  const { checkAccessCode, error: authError, lastAttempt } = useAuth();
+  // VIP access code feature removed
+  const checkAccessCode = async (_code: string, _alreadyAuth?: boolean) => false;
+  const authError: string | null = null;
+  const lastAttempt: number | null = null;
 
   // ─── Sessions state ──────────────────────────────────────────────────────
 
@@ -640,10 +635,7 @@ const SettingsPage: React.FC = () => {
   const [livetvSectionExpanded, setLivetvSectionExpanded] = useState(false);
   const extensionPresent = isExtensionAvailable();
 
-  const visibleSections = React.useMemo(() => {
-    if (isAuthenticated) return SECTIONS;
-    return SECTIONS.filter(s => !['sessions', 'accounts', 'privacy', 'data'].includes(s.id));
-  }, [isAuthenticated]);
+  const visibleSections = React.useMemo(() => SECTIONS, []);
 
 
 
@@ -1294,13 +1286,10 @@ const SettingsPage: React.FC = () => {
 
     try {
       if (linkModal.action === 'link') {
-        if (linkModal.provider === 'google') {
-          googleAuth.login({ mode: 'link', returnTo: '/settings#accounts' });
-          return;
-        }
-
-        if (linkModal.provider === 'discord') {
-          discordAuth.login({ mode: 'link', returnTo: '/settings#accounts' });
+        // OAuth link removed — Google/Discord auth disabled
+        if (linkModal.provider === 'google' || linkModal.provider === 'discord') {
+          setLinkActionError('OAuth authentication is disabled');
+          setIsSubmittingLinkAction(false);
           return;
         }
 
@@ -1610,7 +1599,7 @@ const SettingsPage: React.FC = () => {
   // ─── Render helpers ──────────────────────────────────────────────────────
 
   const renderToggle = (value: boolean, onToggle: () => void, color: string = 'red') => {
-    const bgActive = color === 'blue' ? 'bg-blue-500' : color === 'purple' ? 'bg-purple-500' : color === 'green' ? 'bg-green-500' : color === 'indigo' ? 'bg-indigo-500' : 'bg-red-600';
+    const bgActive = color === 'blue' ? 'bg-blue-500' : color === 'purple' ? 'bg-purple-500' : color === 'green' ? 'bg-green-500' : color === 'indigo' ? 'bg-indigo-500' : 'bg-accent-600';
     return (
       <button
         onClick={onToggle}
@@ -1667,15 +1656,9 @@ const SettingsPage: React.FC = () => {
     <SquareBackground mode={bgMode} borderColor={bgBorderColor} squareSize={bgSquareSize} className="min-h-screen bg-[#0a0a0f] text-white">
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center gap-4 p-4 border-b border-gray-800/60 bg-[#0a0a0f]">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-lg hover:bg-gray-800/60 transition-colors text-gray-400 hover:text-white"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-red-600/20 to-orange-600/20 border border-red-500/20">
-            <Settings className="w-5 h-5 text-red-400" />
+          <div className="p-2 rounded-xl bg-gradient-to-br from-accent-600/20 to-orange-600/20 border border-accent-500/20">
+            <Settings className="w-5 h-5 text-accent-400" />
           </div>
           <h1 className="text-lg font-semibold text-white">{t('settings.title')}</h1>
         </div>
@@ -1689,14 +1672,8 @@ const SettingsPage: React.FC = () => {
           <nav className="hidden lg:flex lg:flex-col fixed left-0 top-16 md:top-20 bottom-0 w-64 z-40 bg-[#0a0a0f] border-r border-gray-800/60 px-4 py-6 overflow-y-auto">
             {/* Settings Header in Sidebar */}
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-800/40">
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 rounded-lg hover:bg-gray-800/60 transition-colors text-gray-400 hover:text-white"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div className="p-2 rounded-xl bg-gradient-to-br from-red-600/20 to-orange-600/20 border border-red-500/20">
-                <Settings className="w-5 h-5 text-red-400" />
+              <div className="p-2 rounded-xl bg-gradient-to-br from-accent-600/20 to-orange-600/20 border border-accent-500/20">
+                <Settings className="w-5 h-5 text-accent-400" />
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-white">{t('settings.title')}</h1>
@@ -1712,7 +1689,7 @@ const SettingsPage: React.FC = () => {
                     <button
                       onClick={() => scrollToSection(id)}
                       className={`relative w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 border focus:outline-none ${isActive
-                        ? 'text-red-400 border-transparent'
+                        ? 'text-accent-400 border-transparent'
                         : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-gray-800/40'
                         }`}
                     >
@@ -1723,11 +1700,11 @@ const SettingsPage: React.FC = () => {
                       {isActive && (
                         <motion.div
                           layoutId="settings-sidebar-indicator"
-                          className="absolute inset-0 bg-red-600/15 border border-red-500/20 rounded-xl shadow-sm shadow-red-600/5 pointer-events-none"
+                          className="absolute inset-0 bg-accent-600/15 border border-accent-500/20 rounded-xl shadow-sm shadow-accent-600/5 pointer-events-none"
                           transition={{ type: 'spring', bounce: 0.18, duration: 0.45 }}
                         />
                       )}
-                      <Icon className={`relative z-10 w-4 h-4 flex-shrink-0 ${isActive ? 'text-red-400' : 'text-gray-500'}`} />
+                      <Icon className={`relative z-10 w-4 h-4 flex-shrink-0 ${isActive ? 'text-accent-400' : 'text-gray-500'}`} />
                       <span className="relative z-10">{t(labelKey)}</span>
                     </button>
                   </li>
@@ -1765,7 +1742,7 @@ const SettingsPage: React.FC = () => {
                       <button
                         key={id}
                         onClick={() => scrollToSection(id)}
-                        className={`flex w-[92px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-center transition-colors ${isActive ? 'text-red-400' : 'text-gray-500'
+                        className={`flex w-[92px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-center transition-colors ${isActive ? 'text-accent-400' : 'text-gray-500'
                           }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -1973,7 +1950,7 @@ const SettingsPage: React.FC = () => {
                 >
                   <div className="mb-3">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <Activity className="w-3.5 h-3.5 text-red-400" />
+                      <Activity className="w-3.5 h-3.5 text-accent-400" />
                       <h4 className="font-medium text-white text-sm">{t('settings.backgroundStyle')}</h4>
                     </div>
                     <p className="text-xs text-gray-500 leading-relaxed">
@@ -1990,7 +1967,7 @@ const SettingsPage: React.FC = () => {
                         key={opt.value}
                         onClick={() => handleBgModeChange(opt.value)}
                         className={`flex-1 min-w-[100px] p-3 rounded-xl text-left transition-colors border ${bgMode === opt.value
-                          ? 'bg-red-600/10 border-red-500/30 text-white'
+                          ? 'bg-accent-600/10 border-accent-500/30 text-white'
                           : 'bg-gray-700/20 border-gray-700/40 text-gray-400 hover:bg-gray-700/40 hover:text-white'
                         }`}
                       >
@@ -2195,7 +2172,7 @@ const SettingsPage: React.FC = () => {
                                   key={opt.value}
                                   onClick={() => handleScreensaverTimeoutChange(opt.value)}
                                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${screensaverTimeout === opt.value
-                                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/20'
+                                    ? 'bg-accent-600 text-white shadow-lg shadow-accent-600/20'
                                     : 'bg-gray-700/40 text-gray-400 hover:bg-gray-700 hover:text-white'
                                     }`}
                                 >
@@ -2217,7 +2194,7 @@ const SettingsPage: React.FC = () => {
                                   key={opt.value}
                                   onClick={() => handleScreensaverModeChange(opt.value)}
                                   className={`flex-1 min-w-[140px] p-3 rounded-xl text-left transition-colors border ${screensaverMode === opt.value
-                                    ? 'bg-red-600/10 border-red-500/30 text-white'
+                                    ? 'bg-accent-600/10 border-accent-500/30 text-white'
                                     : 'bg-gray-700/20 border-gray-700/40 text-gray-400 hover:bg-gray-700/40 hover:text-white'
                                     }`}
                                 >
@@ -2499,979 +2476,6 @@ const SettingsPage: React.FC = () => {
               </motion.div>
             </section>
 
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* SECTION: VIP                                            */}
-            {/* ════════════════════════════════════════════════════════ */}
-            <section id="vip" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-yellow-600/20 to-amber-600/20 border border-yellow-500/20">
-                  <Crown className="w-5 h-5 text-yellow-400" />
-                </div>
-                <div>
-            <h2 className="text-xl font-semibold text-white">{t('vip.title')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.vipDesc')}</p>
-                </div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-gray-800/30 rounded-xl border border-gray-700/40 p-6"
-              >
-                {!vipStatus.isVip ? (
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3 p-4 bg-yellow-500/5 rounded-xl border border-yellow-500/10">
-                      <Key className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <h4 className="text-sm font-medium text-yellow-300">{t('settings.activateVipKey')}</h4>
-                        <p className="text-xs text-gray-400 mt-1">{t('settings.activateVipKeyDesc')}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-3">
-                      <input
-                        className="flex h-11 w-full rounded-lg pr-3 pl-4 py-2 text-sm bg-gray-900/60 border border-gray-700/50 focus:border-yellow-500/50 focus:bg-gray-900/80 text-white placeholder:text-gray-600 outline-none transition-colors"
-                        placeholder={t('settings.enterVipKey')}
-                        value={premiumKey}
-                        onChange={(e) => setPremiumKey(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleActivatePremiumKey()}
-                      />
-                      <button
-                        className={`flex items-center justify-center font-medium h-11 text-sm px-6 rounded-lg bg-yellow-500 text-black hover:bg-yellow-400 transition-colors whitespace-nowrap flex-shrink-0 ${!premiumKey.trim() || isActivatingKey ? 'opacity-30 pointer-events-none' : ''
-                          }`}
-                        onClick={handleActivatePremiumKey}
-                        disabled={!premiumKey.trim() || isActivatingKey}
-                      >
-                        {isActivatingKey ? t('settings.activating') : t('settings.activate')}
-                      </button>
-                    </div>
-                    {vipKeyError && (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-red-400 text-xs bg-red-500/10 p-3 rounded-lg border border-red-500/20"
-                      >
-                        {vipKeyError}
-                      </motion.p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
-                      <Crown className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                      <div>
-                        <h4 className="text-sm font-semibold text-yellow-300">{t('settings.youAreVip')}</h4>
-                        <p className="text-xs text-gray-400 mt-0.5">{t('settings.vipDescription')}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-4 bg-gray-800/30 rounded-xl border border-gray-700/40">
-                      <CalendarClock className="w-4 h-4 text-yellow-400 flex-shrink-0" />
-                      <div>
-                        <span className="text-xs text-gray-500">{t('settings.vipExpiresOn')}</span>
-                        <p className="text-sm text-white font-medium">
-                          {vipStatus.expiresAt
-                            ? (() => {
-                                const d = new Date(isNaN(Number(vipStatus.expiresAt)) ? vipStatus.expiresAt : Number(vipStatus.expiresAt));
-                                return isNaN(d.getTime()) ? t('settings.vipNoExpiration') : d.toLocaleDateString(i18n.language, { year: 'numeric', month: 'long', day: 'numeric' });
-                              })()
-                            : t('settings.vipNoExpiration')
-                          }
-                        </p>
-                      </div>
-                    </div>
-
-                    <div
-                      className="flex flex-col gap-2 border border-gray-700/40 rounded-xl px-4 pt-4 pb-3 cursor-pointer hover:border-gray-600/50 transition-colors"
-                      onMouseEnter={() => setIsVipKeyHovered(true)}
-                      onMouseLeave={() => setIsVipKeyHovered(false)}
-                    >
-                      <span className="text-xs text-gray-500">{t('settings.yourVipKey')}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white text-sm font-mono transition-opacity duration-200" style={{ opacity: isVipKeyHovered ? 0 : 1, display: isVipKeyHovered ? 'none' : 'block' }}>
-                          {localStorage.getItem('access_code')?.replace(/./g, '•') || '••••••••••••'}
-                        </span>
-                        <span className="text-white text-sm font-mono transition-opacity duration-200" style={{ opacity: isVipKeyHovered ? 1 : 0, display: isVipKeyHovered ? 'block' : 'none' }}>
-                          {localStorage.getItem('access_code') || ''}
-                        </span>
-                        <button onClick={copyPremiumKey} className="ml-auto p-1.5 rounded-lg hover:bg-gray-700/50 text-gray-500 hover:text-white transition-colors">
-                          <Copy className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <button
-                      className="text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 px-4 py-2 rounded-lg transition-colors"
-                      onClick={handleRemovePremiumKey}
-                    >
-                      {t('settings.removeVipKey')}
-                    </button>
-                  </div>
-                )}
-              </motion.div>
-            </section>
-
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* SECTION: Sessions                                       */}
-            {/* ════════════════════════════════════════════════════════ */}
-            {isAuthenticated && (
-            <section id="sessions" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-green-600/20 to-emerald-600/20 border border-green-500/20">
-                  <Monitor className="w-5 h-5 text-green-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{t('settings.activeSessions')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.sessionsDesc')}</p>
-                </div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                {(() => {
-                  const userInfo = getUserInfo();
-                  if (!isAuthenticated || !userInfo || !['oauth', 'bip39'].includes(userInfo.type)) {
-                    return (
-                      <div className="text-center py-12 bg-gray-800/20 rounded-xl border border-gray-700/30">
-                        <div className="p-3 bg-gray-800/50 rounded-full w-14 h-14 mx-auto mb-4 flex items-center justify-center">
-                          <Lock className="w-6 h-6 text-gray-500" />
-                        </div>
-                        <h3 className="text-sm font-medium text-gray-400 mb-1">{t('settings.sessionsNotAvailable')}</h3>
-                        <p className="text-xs text-gray-600 max-w-sm mx-auto">
-                          {t('settings.sessionsNotAvailableDesc')}
-                        </p>
-                      </div>
-                    );
-                  }
-
-                  if (sessions.length === 0) {
-                    return (
-                      <div className="text-center py-12 bg-gray-800/20 rounded-xl border border-gray-700/30">
-                        <div className="p-3 bg-gray-800/50 rounded-full w-14 h-14 mx-auto mb-4 flex items-center justify-center">
-                          <Monitor className="w-6 h-6 text-gray-500" />
-                        </div>
-                        <h3 className="text-sm font-medium text-gray-400 mb-1">{t('settings.noActiveSessions')}</h3>
-                        <p className="text-xs text-gray-600">{t('settings.noActiveSessionsDesc')}</p>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className="space-y-3">
-                      <AnimatePresence>
-                        {sessions.map((session) => {
-                          const isCurrentSession = session.id === currentSessionId;
-                          return (
-                            <motion.div
-                              key={session.id}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              className={`bg-gray-800/30 rounded-xl p-4 border transition-colors ${isCurrentSession
-                                ? 'border-green-500/30 bg-green-900/10'
-                                : 'border-gray-700/40 hover:border-gray-600/50'
-                                }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-4">
-                                  <div className={`p-2.5 rounded-xl ${isCurrentSession ? 'bg-green-500/15 text-green-400' : 'bg-gray-700/40 text-gray-400'}`}>
-                                    {getDeviceIcon(session.userAgent)}
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-medium text-white text-sm">
-                                        {session.userAgent.includes('Chrome') ? 'Chrome' :
-                                          session.userAgent.includes('Firefox') ? 'Firefox' :
-                                            session.userAgent.includes('Safari') ? 'Safari' :
-                                              session.userAgent.includes('Edge') ? 'Edge' : t('common.unknown')}
-                                      </h4>
-                                      {isCurrentSession && (
-                                        <span className="px-2 py-0.5 text-[10px] bg-green-500/15 text-green-400 rounded-full font-medium">
-                                          {t('settings.currentSession')}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <div className="text-xs text-gray-500 mt-1 space-y-0.5">
-                                      <p>{t('settings.createdOn')} {new Date(session.createdAt).toLocaleDateString(i18n.language)} {t('common.at')} {new Date(session.createdAt).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })}</p>
-                                      <p>{t('settings.lastActivity')}: {formatDate(session.accessedAt)}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                                {!isCurrentSession && (
-                                  <motion.button
-                                    onClick={() => deleteSession(session.id)}
-                                    className="p-2 hover:bg-red-500/15 rounded-lg transition-colors text-gray-500 hover:text-red-400"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
-                                    title={t('auth.disconnectSession')}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </motion.button>
-                                )}
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })()}
-              </motion.div>
-            </section>
-            )}
-
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* SECTION: Confidentialité                                */}
-            {/* ════════════════════════════════════════════════════════ */}
-            {isAuthenticated && (
-            <section id="accounts" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-600/20 to-blue-600/20 border border-indigo-500/20">
-                  <Link2 className="w-5 h-5 text-indigo-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{t('settings.linkedAccountsTitle', 'Comptes liés')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.linkedAccountsDesc', 'Choisissez quels moyens de connexion doivent ouvrir ce compte Movix.')}</p>
-                </div>
-              </div>
-
-              {(() => {
-                const account = getResolvedAccountContext();
-                const currentAccountProvider = linkedAccountsMeta.accountProvider || account.accountProvider;
-                const accountProviderLabel = currentAccountProvider ? getProviderLabel(currentAccountProvider) : null;
-                const authMethodLabel = currentAuthMethod ? getProviderLabel(currentAuthMethod) : null;
-
-                if (!accountProviderLabel) return null;
-
-                return (
-                  <div className="mb-4 rounded-xl border border-indigo-500/20 bg-indigo-500/10 px-4 py-3">
-                    <p className="text-sm font-medium text-white">
-                      {t('settings.linkedAccountsCurrentAccount', {
-                        provider: accountProviderLabel,
-                        defaultValue: `Compte actuel : ${accountProviderLabel}`,
-                      })}
-                    </p>
-                    <p className="mt-1 text-xs leading-relaxed text-indigo-100/80">
-                      {currentAuthMethod && currentAuthMethod !== currentAccountProvider
-                        ? currentAuthMethodLinked
-                          ? t('settings.linkedAccountsRedirectSummary', {
-                            method: authMethodLabel,
-                            provider: accountProviderLabel,
-                            defaultValue: `Vous êtes connecté avec ${authMethodLabel}, mais Movix vous a redirigé vers ce compte ${accountProviderLabel}.`,
-                          })
-                          : t('settings.linkedAccountsSessionNoLongerLinkedSummary', {
-                              method: authMethodLabel,
-                              defaultValue: `Vous êtes connecté avec ${authMethodLabel} pour cette session, mais aucune redirection ${authMethodLabel} n'est active actuellement. Une prochaine connexion ${authMethodLabel} rouvrira son propre compte Movix.`,
-                            })
-                        : t('settings.linkedAccountsDirectSummary', {
-                            provider: accountProviderLabel,
-                            defaultValue: `Les connexions ${accountProviderLabel} arrivent déjà ici sans redirection.`,
-                          })}
-                    </p>
-                  </div>
-                );
-              })()}
-
-              {!canManageLinkedAccounts && currentManagementProvider && (
-                <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3">
-                  <p className="text-xs leading-relaxed text-amber-100/90">
-                    {t('settings.linkedAccountsManageHint', {
-                      provider: getProviderLabel(currentManagementProvider),
-                      defaultValue: `Pour modifier les liaisons de ce compte, reconnectez-vous avec ${getProviderLabel(currentManagementProvider)}.`,
-                    })}
-                  </p>
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {(['discord', 'google', 'bip39'] as LinkProvider[]).map((provider, index) => {
-                  const status = linkedAccounts[provider];
-                  const providerLabel = getProviderLabel(provider);
-                  const isCurrentMethod = currentAuthMethod === provider;
-                  const isCurrentAccount = currentAccountProvider === provider;
-                  const currentAuthLabel = currentAuthMethod ? getProviderLabel(currentAuthMethod) : providerLabel;
-                  const isActionDisabled = isLoadingLinks || !canManageLinkedAccounts;
-                  const accentClass =
-                    provider === 'discord'
-                      ? 'from-[#5865F2]/15 to-[#5865F2]/5 border-[#5865F2]/20'
-                      : provider === 'google'
-                        ? 'from-white/10 to-white/5 border-white/10'
-                        : 'from-emerald-500/15 to-emerald-500/5 border-emerald-500/20';
-                  const cardDescription = isCurrentAccount
-                    ? isCurrentMethod
-                      ? t('settings.linkedAccountsTargetDirectDescription', {
-                          provider: providerLabel,
-                          defaultValue: `C'est le compte Movix ${providerLabel} actuellement ouvert. Les connexions ${providerLabel} arrivent déjà ici sans redirection.`,
-                        })
-                      : t('settings.linkedAccountsTargetRedirectedDescription', {
-                          provider: providerLabel,
-                          method: currentAuthLabel,
-                          defaultValue: `C'est le compte Movix ${providerLabel} actuellement ouvert. Vous êtes arrivé ici via ${currentAuthLabel}, car ce moyen est redirigé vers ce compte.`,
-                        })
-                    : status.linked
-                      ? isCurrentMethod
-                        ? t('settings.linkedAccountsCurrentMethodRedirectDescription', {
-                            provider: providerLabel,
-                            defaultValue: `Vous êtes connecté avec ${providerLabel}. Comme il est lié à ce compte, Movix vous a redirigé ici.`,
-                          })
-                        : t('settings.linkedAccountsLinkedDescription', {
-                            provider: providerLabel,
-                            defaultValue: `Quand vous vous connecterez avec ${providerLabel}, Movix vous redirigera vers ce compte.`,
-                          })
-                      : isCurrentMethod
-                        ? t('settings.linkedAccountsCurrentMethodInactiveDescription', {
-                            provider: providerLabel,
-                            defaultValue: `Vous êtes connecté avec ${providerLabel} pour cette session, mais aucune redirection n'est active actuellement. Une prochaine connexion ${providerLabel} rouvrira son propre compte Movix.`,
-                          })
-                        : t('settings.linkedAccountsInactiveDescription', {
-                          provider: providerLabel,
-                          defaultValue: `Aucune redirection active. Vous pouvez lier ${providerLabel} à ce compte pour que les prochaines connexions arrivent ici.`,
-                        });
-                  const linkedProviderId = status.providerUserId
-                    ? t('settings.linkedAccountsLinkedId', {
-                        id: status.providerUserId,
-                        defaultValue: `ID lié : ${status.providerUserId}`,
-                      })
-                    : null;
-
-                  return (
-                    <motion.div
-                      key={provider}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.05 * (index + 1) }}
-                      className={`p-4 rounded-xl border bg-gradient-to-br ${accentClass}`}
-                    >
-                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <h4 className="font-medium text-white text-sm">{providerLabel}</h4>
-                            {isCurrentAccount && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] bg-indigo-500/15 text-indigo-200 border border-indigo-500/20">
-                                {t('settings.linkedAccountsTargetBadge', 'Compte actuel')}
-                              </span>
-                            )}
-                            {status.linked && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] bg-green-500/15 text-green-300 border border-green-500/20">
-                                {t('settings.linkedAccountsActive', 'Redirection active')}
-                              </span>
-                            )}
-                            {isCurrentMethod && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] bg-blue-500/15 text-blue-300 border border-blue-500/20">
-                                {t('settings.linkedAccountsCurrentMethod', 'Connexion actuelle')}
-                              </span>
-                            )}
-                            {!isCurrentAccount && !status.linked && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] bg-gray-700/40 text-gray-400 border border-gray-700/50">
-                                {t('settings.linkedAccountsInactive', 'Non lié')}
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-400 leading-relaxed">{cardDescription}</p>
-                          {linkedProviderId && (
-                            <p className="mt-2 break-all font-mono text-[11px] text-gray-500">
-                              {linkedProviderId}
-                            </p>
-                          )}
-                        </div>
-
-                        {isCurrentAccount ? (
-                          <div className="px-4 py-2.5 rounded-xl text-sm font-medium md:min-w-[180px] bg-gray-700/30 text-gray-500 border border-gray-700/40 text-center opacity-70">
-                            {t('settings.linkedAccountsTargetButton', 'Compte actuel')}
-                          </div>
-                        ) : (
-                        <button
-                          onClick={() => openLinkModal(provider, status.linked ? 'unlink' : 'link')}
-                          disabled={isActionDisabled}
-                          className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors md:min-w-[180px] ${
-                            status.linked
-                              ? 'bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/15'
-                              : 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/15'
-                          } ${isActionDisabled ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
-                        >
-                          {status.linked
-                            ? t('settings.unlinkAccountButton', 'Désactiver la redirection')
-                            : t('settings.linkAccountButton', 'Lier à ce compte')}
-                        </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </section>
-            )}
-
-            {isAuthenticated && (
-            <section id="privacy" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border border-blue-500/20">
-                  <Shield className="w-5 h-5 text-blue-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{t('settings.privacy')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.privacyDesc')}</p>
-                </div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="space-y-3"
-              >
-                <div className="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 transition-colors">
-                  <div className="flex-1 mr-4">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <Activity className="w-3.5 h-3.5 text-blue-400" />
-                      <h4 className="font-medium text-white text-sm">{t('settings.analyticsCollection')}</h4>
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      {t('settings.analyticsCollectionDesc')}
-                    </p>
-                  </div>
-                  {renderToggle(dataCollection, handleDataCollectionToggle, 'blue')}
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 transition-colors">
-                  <div className="flex-1 mr-4">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <History className="w-3.5 h-3.5 text-blue-400" />
-                      <h4 className="font-medium text-white text-sm">{t('settings.disableHistory')}</h4>
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      {t('settings.disableHistoryDesc')}
-                    </p>
-                  </div>
-                  {renderToggle(historyDisabled, handleHistoryToggle, 'blue')}
-                </div>
-
-                {isAuthenticated && (
-                  <div className="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 transition-colors">
-                    <div className="flex-1 mr-4">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <BellOff className="w-3.5 h-3.5 text-blue-400" />
-                        <h4 className="font-medium text-white text-sm">{t('settings.disableNotifications')}</h4>
-                      </div>
-                      <p className="text-xs text-gray-500 leading-relaxed">
-                        {t('settings.disableNotificationsDesc')}
-                      </p>
-                    </div>
-                    {renderToggle(notificationsDisabled, handleNotificationsToggle, 'blue')}
-                  </div>
-                )}
-
-                <div className={`flex items-center justify-between p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 transition-colors ${!dataCollection ? 'opacity-50 pointer-events-none' : 'hover:border-gray-600/50'}`}>
-                  <div className="flex-1 mr-4">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-                      <h4 className="font-medium text-white text-sm">{t('settings.personalizedRecommendations')}</h4>
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                      {t('settings.personalizedRecommendationsDesc')}
-                    </p>
-                  </div>
-                  {renderToggle(!recommendationsDisabled, handleRecommendationsToggle, 'blue')}
-                </div>
-
-              </motion.div>
-
-              {/* Confirmation modal for disabling history */}
-              <AnimatePresence>
-                {showHistoryConfirm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm"
-                    onClick={() => setShowHistoryConfirm(false)}
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                      className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
-                          <AlertTriangle className="w-5 h-5 text-red-400" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-white">{t('settings.disableHistoryConfirmTitle')}</h3>
-                      </div>
-                      <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-                        {t('settings.disableHistoryConfirmDesc')}
-                      </p>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => setShowHistoryConfirm(false)}
-                          className="flex-1 px-4 py-2.5 rounded-xl bg-gray-800 text-gray-300 hover:bg-gray-700 transition-colors text-sm font-medium"
-                        >
-                          {t('settings.disableHistoryCancel')}
-                        </button>
-                        <button
-                          onClick={confirmDisableHistory}
-                          className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-500 transition-colors text-sm font-medium"
-                        >
-                          {t('settings.disableHistoryConfirm')}
-                        </button>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Confirmation modal for disabling data collection */}
-              <AnimatePresence>
-                {showDataCollectionConfirm && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm"
-                    onClick={() => setShowDataCollectionConfirm(false)}
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                      className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
-                          <AlertTriangle className="w-5 h-5 text-red-400" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-white">{t('settings.disableDataConfirmTitle')}</h3>
-                      </div>
-                      <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-                        {t('settings.disableDataConfirmDesc')}
-                      </p>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => setShowDataCollectionConfirm(false)}
-                          className="flex-1 px-4 py-2.5 rounded-xl bg-gray-800 text-gray-300 hover:bg-gray-700 transition-colors text-sm font-medium"
-                        >
-                          {t('settings.disableDataCancel')}
-                        </button>
-                        <button
-                          onClick={confirmDisableDataCollection}
-                          className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white hover:bg-red-500 transition-colors text-sm font-medium"
-                        >
-                          {t('settings.disableDataConfirm')}
-                        </button>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </section>
-            )}
-
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* SECTION: Priorité des sources (Milestone 5)            */}
-            {/* ════════════════════════════════════════════════════════ */}
-            <section id="source-priority" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-600/20 to-violet-600/20 border border-indigo-500/20">
-                  <ListOrdered className="w-5 h-5 text-indigo-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{t('settings.sourcePriority.title')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.sourcePriority.description')}</p>
-                </div>
-              </div>
-              {/* M11 — Toggle "se souvenir du dernier lecteur choisi" */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between p-4 mb-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 transition-colors group"
-              >
-                <div className="flex-1 mr-4">
-                  <h4 className="font-medium text-white mb-0.5 text-sm">{t('settings.sourcePriority.rememberLastPlayerTitle')}</h4>
-                  <p className="text-xs text-gray-500 leading-relaxed">{t('settings.sourcePriority.rememberLastPlayerDesc')}</p>
-                </div>
-                {renderToggle(rememberLastPlayer, handleRememberLastPlayerToggle, 'indigo')}
-              </motion.div>
-
-              <div className="rounded-xl border border-white/10 bg-white/5 p-5">
-                <SourcePriorityPanel />
-              </div>
-            </section>
-
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* SECTION: Popup pub                                      */}
-            {/* ════════════════════════════════════════════════════════ */}
-            <section id="intermission" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/20">
-                  <Megaphone className="w-5 h-5 text-amber-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{t('settings.adPopup.title')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.adPopup.description')}</p>
-                </div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-gray-800/30 rounded-xl border border-gray-700/40"
-              >
-                <div className="mb-3">
-                  <h4 className="font-medium text-white mb-0.5 text-sm">{t('settings.adPopup.modeTitle')}</h4>
-                  <p className="text-xs text-gray-500 leading-relaxed">{t('settings.adPopup.modeDesc')}</p>
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  {([
-                    { id: 'normal',          labelKey: 'settings.adPopup.modes.normal.label',         descKey: 'settings.adPopup.modes.normal.desc' },
-                    { id: 'auto',            labelKey: 'settings.adPopup.modes.auto.label',           descKey: 'settings.adPopup.modes.auto.desc' },
-                    { id: 'click-anywhere',  labelKey: 'settings.adPopup.modes.clickAnywhere.label',  descKey: 'settings.adPopup.modes.clickAnywhere.desc' },
-                  ] as const).map((opt) => {
-                    const active = adPopupMode === opt.id;
-                    return (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => handleAdPopupModeChange(opt.id)}
-                        className={`flex-1 min-w-[140px] p-3 rounded-xl text-left transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/60 ${
-                          active
-                            ? 'bg-amber-600/10 border-amber-500/40 text-white'
-                            : 'bg-gray-700/20 border-gray-700/40 text-gray-400 hover:bg-gray-700/40 hover:text-white'
-                        }`}
-                      >
-                        <div className="text-xs font-semibold">{t(opt.labelKey)}</div>
-                        <div className="text-[10px] text-gray-500 mt-0.5">{t(opt.descKey)}</div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 }}
-                className="flex items-center justify-between p-4 mt-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 transition-colors group"
-              >
-                <div className="flex-1 mr-4">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
-                    <h4 className="font-medium text-white text-sm">{t('settings.adPopup.adultTitle')}</h4>
-                  </div>
-                  <p className="text-xs text-gray-500 leading-relaxed">{t('settings.adPopup.adultDesc')}</p>
-                </div>
-                {renderToggle(adultAds, handleAdultAdsToggle, 'red')}
-              </motion.div>
-            </section>
-
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* SECTION: Extractions                                    */}
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* M9 : data-settings-section="extractors" (en) alias of id=#extractions (fr)
-                for the "Aller à Extracteurs" scroll from SourcePriorityPanel. */}
-            <section id="extractions" data-settings-section="extractors" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border border-indigo-500/20">
-                  <Zap className="w-5 h-5 text-indigo-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{t('settings.extractions.title')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.extractions.description')}</p>
-                </div>
-              </div>
-
-              {!extensionPresent && (
-                <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200 flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
-                  <span>{t('settings.extractions.extensionMissing')}</span>
-                </div>
-              )}
-
-              {/* Méthode d'extraction (single select) */}
-              <div className="mb-6 rounded-xl border border-white/10 bg-white/5 p-5">
-                <div className="mb-3">
-                  <h3 className="font-semibold text-white">{t('settings.extractions.method.title')}</h3>
-                  <p className="text-xs text-gray-500 mt-1">{t('settings.extractions.method.description')}</p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="radiogroup">
-                  {EXTRACTION_METHOD_KEYS.map((key) => {
-                    const selected = extractionPrefs.method === key;
-                    const available =
-                      key === 'extension' ? !!(typeof window !== 'undefined' && window.hasMovixExtension) :
-                      key === 'userscript' ? !!(typeof window !== 'undefined' && window.hasMovixUserscript) :
-                      key === 'server' ? isUserVip() :
-                      true;
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        onClick={() => handleSetExtractionMethod(key)}
-                        className={`text-left rounded-lg border p-3 transition-colors ${
-                          selected
-                            ? 'border-indigo-500 bg-indigo-500/15 ring-2 ring-indigo-500/40'
-                            : 'border-white/10 bg-white/5 hover:bg-white/10'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className={`font-medium ${selected ? 'text-white' : 'text-gray-300'}`}>
-                            {t(`settings.extractions.method.${key}`)}
-                          </span>
-                          <span
-                            className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 ${
-                              available ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-400'
-                            }`}
-                          >
-                            {available ? t('settings.extractions.method.available') : t('settings.extractions.method.unavailable')}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {t(`settings.extractions.method.${key}Desc`)}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* m3u8 extractors card */}
-              <div className="mb-6 rounded-xl border border-white/10 bg-white/5 p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <button
-                    type="button"
-                    onClick={() => setM3u8SectionExpanded((v) => !v)}
-                    aria-expanded={m3u8SectionExpanded}
-                    className="group flex items-center gap-2 -ml-1 px-1 py-0.5 rounded-md hover:bg-white/5 transition-colors"
-                  >
-                    <motion.span
-                      animate={{ rotate: m3u8SectionExpanded ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="inline-flex"
-                    >
-                      <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                    </motion.span>
-                    <h3 className="font-semibold text-white">{t('settings.extractions.m3u8.title')}</h3>
-                    <span className="text-xs text-gray-500 font-normal ml-1">
-                      ({M3U8_EXTRACTOR_KEYS.filter((k) => extractionPrefs.m3u8[k]).length}/{M3U8_EXTRACTOR_KEYS.length})
-                    </span>
-                  </button>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-400">{t('settings.extractions.m3u8.master')}</span>
-                    {renderToggle(
-                      M3U8_EXTRACTOR_KEYS.some((k) => extractionPrefs.m3u8[k]),
-                      () => handleToggleAllM3u8(!M3U8_EXTRACTOR_KEYS.some((k) => extractionPrefs.m3u8[k])),
-                      'indigo'
-                    )}
-                  </div>
-                </div>
-                <AnimatePresence initial={false}>
-                  {m3u8SectionExpanded && (
-                    <motion.div
-                      key="m3u8-details"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
-                      className="overflow-hidden"
-                    >
-                      <div className="divide-y divide-white/5 border-t border-white/5 pt-1">
-                        {M3U8_EXTRACTOR_KEYS.map((key) => {
-                          const count = extractionSessionStats?.byType?.[key] ?? 0;
-                          const cacheCount = cacheStats?.[key] ?? 0;
-                          return (
-                            <div key={key} className="flex items-center justify-between py-3">
-                              <div>
-                                <div className="font-medium text-white">{t(`settings.extractions.m3u8.${key}`)}</div>
-                                {extensionPresent && (
-                                  <div className="text-xs text-gray-500 mt-0.5">
-                                    {t('settings.extractions.stats.sessionExtractionsOther', { count })}
-                                    {cacheCount > 0 && ` · ${t('settings.extractions.cache.entriesOther', { count: cacheCount })}`}
-                                  </div>
-                                )}
-                              </div>
-                              {renderToggle(
-                                extractionPrefs.m3u8[key],
-                                () => handleToggleM3u8Extractor(key, !extractionPrefs.m3u8[key]),
-                                'indigo'
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Live TV sources card */}
-              <div className="mb-6 rounded-xl border border-white/10 bg-white/5 p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <button
-                    type="button"
-                    onClick={() => setLivetvSectionExpanded((v) => !v)}
-                    aria-expanded={livetvSectionExpanded}
-                    className="group flex items-center gap-2 -ml-1 px-1 py-0.5 rounded-md hover:bg-white/5 transition-colors"
-                  >
-                    <motion.span
-                      animate={{ rotate: livetvSectionExpanded ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="inline-flex"
-                    >
-                      <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                    </motion.span>
-                    <h3 className="font-semibold text-white">{t('settings.extractions.livetv.title')}</h3>
-                    <span className="text-xs text-gray-500 font-normal ml-1">
-                      ({LIVETV_SOURCE_KEYS.filter((k) => extractionPrefs.livetv[k]).length}/{LIVETV_SOURCE_KEYS.length})
-                    </span>
-                  </button>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-400">{t('settings.extractions.livetv.master')}</span>
-                    {renderToggle(
-                      LIVETV_SOURCE_KEYS.some((k) => extractionPrefs.livetv[k]),
-                      () => handleToggleAllLiveTv(!LIVETV_SOURCE_KEYS.some((k) => extractionPrefs.livetv[k])),
-                      'indigo'
-                    )}
-                  </div>
-                </div>
-                <AnimatePresence initial={false}>
-                  {livetvSectionExpanded && (
-                    <motion.div
-                      key="livetv-details"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
-                      className="overflow-hidden"
-                    >
-                      <div className="divide-y divide-white/5 border-t border-white/5 pt-1">
-                        {LIVETV_SOURCE_KEYS.map((key) => (
-                          <div key={key} className="flex items-center justify-between py-3">
-                            <div className="font-medium text-white">{t(`settings.extractions.livetv.${key}`)}</div>
-                            {renderToggle(
-                              extractionPrefs.livetv[key],
-                              () => handleToggleLiveTvSource(key, !extractionPrefs.livetv[key]),
-                              'indigo'
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Cache card (extracted to module-scope <ExtensionCacheStatsBlock /> — owns 10s poll) */}
-              <ExtensionCacheStatsBlock extensionPresent={extensionPresent} />
-
-              <button
-                onClick={handleResetExtractions}
-                className="flex items-center gap-2 text-sm text-gray-400 hover:text-white"
-              >
-                <RefreshCw className="w-4 h-4" /> {t('settings.extractions.reset')}
-              </button>
-            </section>
-
-            {/* ════════════════════════════════════════════════════════ */}
-            {/* SECTION: Données                                        */}
-            {/* ════════════════════════════════════════════════════════ */}
-            {isAuthenticated && (
-            <section id="data" className="scroll-mt-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-orange-600/20 to-red-600/20 border border-orange-500/20">
-                  <Database className="w-5 h-5 text-orange-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{t('settings.data')}</h2>
-                  <p className="text-sm text-gray-500">{t('settings.dataDesc')}</p>
-                </div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="space-y-3"
-              >
-                <StorageMetricsBlock
-                  serverSyncStats={serverSyncStats}
-                  isLoadingServerSyncStats={isLoadingServerSyncStats}
-                  selectedProfileId={selectedProfileId}
-                  hasServerStorageContext={hasServerStorageContext}
-                  serverQuotaUsagePercent={serverQuotaUsagePercent}
-                />
-
-                {/* Mon identifiant */}
-                {isAuthenticated && canShowAccountId && (
-                  <button
-                    onClick={openIdPopup}
-                    className="w-full flex items-center gap-4 p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 hover:bg-gray-800/50 transition-colors text-left group"
-                  >
-                    <div className="p-2.5 rounded-xl bg-gray-700/30 group-hover:bg-gray-700/50 transition-colors">
-                      <Eye className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-white text-sm">{t('settings.myId')}</h4>
-                      <p className="text-xs text-gray-500">{t('settings.myIdDesc')}</p>
-                    </div>
-                    <Copy className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" />
-                  </button>
-                )}
-
-                {/* Exporter données */}
-                <button
-                  onClick={copyLocalStorage}
-                  className="w-full flex items-center gap-4 p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 hover:bg-gray-800/50 transition-colors text-left group"
-                >
-                  <div className="p-2.5 rounded-xl bg-gray-700/30 group-hover:bg-gray-700/50 transition-colors">
-                    <Download className="w-4 h-4 text-gray-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-white text-sm">{t('settings.exportData')}</h4>
-                    <p className="text-xs text-gray-500">{t('settings.exportDataDesc')}</p>
-                  </div>
-                </button>
-
-                {/* Importer données */}
-                <button
-                  onClick={openNonSyncablePopup}
-                  className="w-full flex items-center gap-4 p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 hover:bg-gray-800/50 transition-colors text-left group"
-                >
-                  <div className="p-2.5 rounded-xl bg-gray-700/30 group-hover:bg-gray-700/50 transition-colors">
-                    <Lock className="w-4 h-4 text-gray-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-white text-sm">{t('settings.nonSyncableKeysTitle')}</h4>
-                    <p className="text-xs text-gray-500">
-                      {t('settings.nonSyncableKeysDesc', {
-                        count: nonSyncableKeyCount,
-                        size: formatStorageBytes(nonSyncableBytes),
-                      })}
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setShowImportPopup(true)}
-                  className="w-full flex items-center gap-4 p-4 bg-gray-800/30 rounded-xl border border-gray-700/40 hover:border-gray-600/50 hover:bg-gray-800/50 transition-colors text-left group"
-                >
-                  <div className="p-2.5 rounded-xl bg-gray-700/30 group-hover:bg-gray-700/50 transition-colors">
-                    <Upload className="w-4 h-4 text-gray-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-white text-sm">{t('settings.importData')}</h4>
-                    <p className="text-xs text-gray-500">{t('settings.importDataDesc')}</p>
-                  </div>
-                </button>
-              </motion.div>
-            </section>
-            )}
           </div>
         </div>
       </div>
@@ -3530,7 +2534,7 @@ const SettingsPage: React.FC = () => {
                 </div>
 
                 {linkActionError && (
-                  <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+                  <div className="mb-4 px-4 py-3 rounded-xl bg-accent-500/10 border border-accent-500/20 text-sm text-accent-300">
                     {linkActionError}
                   </div>
                 )}
@@ -3548,7 +2552,7 @@ const SettingsPage: React.FC = () => {
                     className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       linkModal.action === 'link'
                         ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                        : 'bg-red-600 text-white hover:bg-red-500'
+                        : 'bg-accent-600 text-white hover:bg-accent-500'
                     } ${isSubmittingLinkAction ? 'opacity-60 cursor-not-allowed' : ''}`}
                     disabled={isSubmittingLinkAction}
                   >
@@ -3587,8 +2591,8 @@ const SettingsPage: React.FC = () => {
                 data-lenis-prevent
               >
                 <div className="flex items-start gap-4 mb-5">
-                  <div className="shrink-0 p-3 rounded-xl bg-gradient-to-br from-red-600/20 to-orange-600/20 border border-red-500/20">
-                    <AlertTriangle className="w-6 h-6 text-red-400" />
+                  <div className="shrink-0 p-3 rounded-xl bg-gradient-to-br from-accent-600/20 to-orange-600/20 border border-accent-500/20">
+                    <AlertTriangle className="w-6 h-6 text-accent-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-bold text-white mb-1">
@@ -3616,7 +2620,7 @@ const SettingsPage: React.FC = () => {
                   </button>
                   <button
                     onClick={handleConfirmResetExtractions}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-600 hover:bg-red-700 text-white transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-accent-600 hover:bg-accent-700 text-white transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" />
                     {t('common.confirm')}
@@ -3678,7 +2682,7 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <button className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors" onClick={handleCloseIdPopup}>
+                    <button className="px-4 py-2 rounded-lg bg-accent-600 hover:bg-accent-700 text-white transition-colors" onClick={handleCloseIdPopup}>
                       {t('common.understood')}
                     </button>
                   </div>
@@ -3721,9 +2725,9 @@ const SettingsPage: React.FC = () => {
                   data-lenis-prevent
                   style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
                 >
-                  <div className="bg-red-900/30 border border-red-500/50 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-red-300 font-medium mb-2">{t('settings.sensitiveDataWarning')}</p>
-                    <p className="text-sm text-red-200">{t('settings.sensitiveDataNote')}</p>
+                  <div className="bg-accent-900/30 border border-accent-500/50 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-accent-300 font-medium mb-2">{t('settings.sensitiveDataWarning')}</p>
+                    <p className="text-sm text-accent-200">{t('settings.sensitiveDataNote')}</p>
                   </div>
                   <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-4 mb-4">
                     <div className="flex items-center justify-between gap-3 mb-3">
@@ -3745,7 +2749,7 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <button className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors" onClick={handleCloseLocalStoragePopup}>
+                    <button className="px-4 py-2 rounded-lg bg-accent-600 hover:bg-accent-700 text-white transition-colors" onClick={handleCloseLocalStoragePopup}>
                       {t('common.close')}
                     </button>
                   </div>
@@ -3838,7 +2842,7 @@ const SettingsPage: React.FC = () => {
                   )}
 
                   <div className="mt-4 flex justify-end">
-                    <button className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors" onClick={handleCloseNonSyncablePopup}>
+                    <button className="px-4 py-2 rounded-lg bg-accent-600 hover:bg-accent-700 text-white transition-colors" onClick={handleCloseNonSyncablePopup}>
                       {t('common.close')}
                     </button>
                   </div>
@@ -3895,8 +2899,8 @@ const SettingsPage: React.FC = () => {
                     />
                   </div>
                   {importError && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-900/30 border border-red-500/50 rounded-lg p-4 mb-4">
-                      <p className="text-sm text-red-300">❌ {importError}</p>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-accent-900/30 border border-accent-500/50 rounded-lg p-4 mb-4">
+                      <p className="text-sm text-accent-300">❌ {importError}</p>
                     </motion.div>
                   )}
                   {importSuccess && (

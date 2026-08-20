@@ -105,7 +105,7 @@ const GoogleAuth: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-6">
-        <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl">
+        <div className="bg-accent-500/10 border border-accent-500/30 text-accent-300 px-4 py-3 rounded-xl">
           {error}
         </div>
       </div>

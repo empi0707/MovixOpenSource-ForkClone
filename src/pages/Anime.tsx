@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { BRANDING } from '@/config/branding';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import HeroSlider from '../components/HeroSlider';
@@ -7,7 +8,7 @@ import HeroSkeleton from '../components/skeletons/HeroSkeleton';
 import ContentRowSkeleton from '../components/skeletons/ContentRowSkeleton';
 import EmblaCarouselGenres from '../components/EmblaCarouselGenres';
 import LazySection from '../components/LazySection';
-import TelegramPromotion from '../components/TelegramPromotion';
+
 import { useWrappedTracker } from '../hooks/useWrappedTracker';
 import { getTmdbLanguage } from '../i18n';
 import { getNumericAge } from '../utils/certificationUtils';
@@ -84,11 +85,11 @@ const pageStyles = `
 }
 
 .section-title:hover {
-  background: linear-gradient(90deg, #ff3333, #ff9999);
+  background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
   -webkit-background-clip: text;
   background-clip: text;
   transform: translateY(-2px);
-  text-shadow: 0px 4px 8px rgba(255, 51, 51, 0.4);
+  text-shadow: 0px 4px 8px color-mix(in srgb, var(--accent-500) 40%, transparent);
 }
 
 .section-title::after {
@@ -98,7 +99,7 @@ const pageStyles = `
   bottom: 0;
   width: 40px;
   height: 3px;
-  background: linear-gradient(90deg, #f11 0%, #f66 100%);
+  background: linear-gradient(90deg, var(--accent-600) 0%, var(--accent-400) 100%);
   border-radius: 3px;
   animation: expandWidth 0.6s ease-out forwards 0.3s;
   transform-origin: left;
@@ -107,7 +108,7 @@ const pageStyles = `
 
 .section-title:hover::after {
   width: 100%;
-  background: linear-gradient(90deg, #ff3333, #ff9999);
+  background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
 }
 `;
 
@@ -488,13 +489,13 @@ const Anime: React.FC = () => {
   }, [genreImageCacheKey, genreImageCacheTsKey, tmdbLanguage]);
 
   useEffect(() => {
-    document.title = `${t('animePage.title')} - Movix`;
+    document.title = `${t('animePage.title')} - ${BRANDING.siteName}`;
   }, [i18n.language, t]);
 
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="bg-red-600/10 text-red-600 px-6 py-4 rounded-lg">
+        <div className="bg-accent-600/10 text-accent-600 px-6 py-4 rounded-lg">
           {error}
         </div>
       </div>
@@ -540,7 +541,7 @@ const Anime: React.FC = () => {
           <div className="px-4 md:px-8">
             <LazySection index={0} immediateLoadCount={IMMEDIATE_LOAD_COUNT}>
               <EmblaCarousel
-                title={<span><span className="text-red-600 mr-2">🔥</span><span>{t('animePage.trending')}</span></span>}
+                title={<span><span className="text-accent-600 mr-2">🔥</span><span>{t('animePage.trending')}</span></span>}
                 items={topContent.map((item) => ({
                   ...item,
                   media_type: 'tv',
@@ -573,7 +574,7 @@ const Anime: React.FC = () => {
           </div>
         ))}
 
-        <TelegramPromotion />
+
       </div>
     </div>
   );
