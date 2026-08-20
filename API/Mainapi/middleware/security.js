@@ -41,18 +41,6 @@ function domainRestriction(req, res, next) {
   const allowedDomains = [
     'localhost:3000',
     'wiflix.mov',
-    'movix.date',
-    'movix.chat',
-    'movix.cloud',
-    'movix.cash',
-    'movix.blog',
-    'movix.rodeo',
-    'movix.club',
-    'movix.site',
-    'movix11.pages.dev',
-    'nakios.site',
-    'cinezo.site',
-    'filmib.cc'
   ];
 
   const origin = req.get('origin');
