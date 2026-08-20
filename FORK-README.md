@@ -34,6 +34,15 @@ description meta tag. Then edit the two branding local copies as described below
 running `git pull` there — a clean fast-forward pull deletes the working-tree
 file too when it's dropped from the tree, it does not just "stop tracking" it.
 
+⚠️ **Never restore long content into these files by pasting a heredoc over an
+SSH terminal** — it has silently truncated `branding.ts` twice on a live
+deploy (once mid-tag, once mid-CSS-rule), with zero error either time
+(broken HTML/CSS fails silent, not loud). Commit the correct content to a
+throwaway path that ISN'T gitignored, `git push`, then on the server
+`git pull` and `cp` it into place — git transfer is binary-safe regardless
+of terminal/SSH client, unlike a long paste. Delete the throwaway file from
+git once confirmed working.
+
 ## 1. Accent Color
 
 **Single file to edit:** `src/config/accent.js` (create it first — see §0)
