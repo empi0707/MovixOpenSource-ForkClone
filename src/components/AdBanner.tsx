@@ -63,6 +63,20 @@ const AdBanner: React.FC = () => {
     //    :scope > filtre les enfants directs du body (pas de sélection récursive)
     const bannerEls = Array.from(doc.body.querySelectorAll(':scope > .banner_wrapper'));
 
+    // Garde-fou : si le HTML contient bien 'banner_wrapper' comme texte mais
+    // qu'aucun élément n'a été trouvé, le parsing a probablement échoué
+    // silencieusement (ex. balise <style> mal fermée — raw-text element, une
+    // fermeture corrompue avale tout le reste de la chaîne comme texte, sans
+    // exception ni requête réseau). Ce cas s'est déjà produit en prod avec un
+    // '<' manquant dans '</style>', indétectable sans ce log explicite.
+    if (bannerEls.length === 0 && html.includes('banner_wrapper')) {
+      console.error(
+        '[AdBanner] adBanner contient "banner_wrapper" mais aucun élément .banner_wrapper '
+        + "n'a été parsé — HTML probablement corrompu (balise mal fermée ?). Vérifier "
+        + 'src/config/branding.ts sur ce déploiement.',
+      );
+    }
+
     // Les divs doivent tous exister AVANT le script d'étape 3 (bouton close),
     // qui fait un querySelectorAll('.banner_wrapper') une seule fois : s'il
     // tourne avant qu'un div n'existe encore (le cas si on ne créait le div
