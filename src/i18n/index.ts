@@ -123,7 +123,13 @@ i18n
       },
     },
     detection: {
-      order: ['localStorage', 'navigator'],
+      // Volontairement PAS 'navigator' ici : sinon le plugin détecte et
+      // CACHE la langue du navigateur dans localStorage dès l'init, avant
+      // même que detectInitialLanguage() (ci-dessous) ait pu s'exécuter —
+      // celle-ci croit alors qu'une langue a déjà été choisie et court-
+      // circuite sa propre logique (browser lang -> IP geoloc -> fallback),
+      // rendant la géolocalisation IP totalement inatteignable.
+      order: ['localStorage'],
       lookupLocalStorage: 'user_language',
       caches: ['localStorage'],
     },

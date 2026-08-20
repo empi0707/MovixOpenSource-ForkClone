@@ -117,8 +117,8 @@ Detection priority: stored language → browser language → IP geolocation → 
 |---------|--------|
 | Explore menu (header) | ✅ Removed |
 | Login cluster / ProfileMenu (header) | ✅ Removed |
-| Settings icon (header) | ✅ Hidden |
-| Inline search bar (navbar) | ✅ Removed |
+| Settings icon (header) | ↩️ Restored — `/settings` |
+| Inline search bar (navbar) | ↩️ Restored — desktop only (`hidden md:flex`), mobile still uses the search icon overlay |
 | Search link in nav items | ✅ Removed |
 | "Join the community" section (homepage) | ✅ Removed |
 | Comments section (MovieDetails, TVDetails) | ✅ Removed |

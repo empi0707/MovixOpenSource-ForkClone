@@ -234,6 +234,22 @@ const Header: React.FC = () => {
                 ))}
               </nav>
 
+              {/* Desktop search bar */}
+              <form
+                onSubmit={handleSearchSubmit}
+                className="hidden md:flex w-48 lg:w-64 relative"
+              >
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={headerQuery}
+                  onChange={handleQueryChange}
+                  placeholder={t('header.searchPlaceholder')}
+                  className="w-full py-2 pl-9 pr-3 bg-white/10 text-white rounded-lg border border-white/15 focus:outline-none focus:border-accent-500/50 placeholder-gray-500 text-sm transition-colors"
+                />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              </form>
+
               {/* Spacer */}
               <div className="flex-1" />
 
@@ -250,6 +266,14 @@ const Header: React.FC = () => {
                   <Search size={20} />
                 </motion.button>
 
+                {/* Settings */}
+                <Link
+                  to="/settings"
+                  className="p-2 text-gray-400 hover:text-white transition-colors"
+                  aria-label={t('nav.settings')}
+                >
+                  <Settings size={20} />
+                </Link>
 
                 {/* Mobile/Tablet: Burger */}
                 <motion.button
