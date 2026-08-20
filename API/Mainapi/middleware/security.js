@@ -40,6 +40,7 @@ function domainRestriction(req, res, next) {
 
   const allowedDomains = [
     'localhost:3000',
+    'wiflix.mov',
     'movix.date',
     'movix.chat',
     'movix.cloud',
