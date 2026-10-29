@@ -1053,6 +1053,52 @@ class _CurlCffiUpstream:
         return False
 
 
+# ── Fsvid / Vidzy gate-key constants ──────────────────────────────────────────
+# Le CDN fsvid/vidzy exige un token `gk=` dans les URLs m3u8 depuis fin-oct 2026.
+# Sans lui, le CDN sert les 9-19 premiers segments puis répond 403.
+# Obtenu via une requête GET /gate.php (vidzy) ou /gk (fsvid) avec une
+# empreinte navigateur simulant Chrome sur Windows.
+
+FSVID_VIDZY_GATE_URLS: dict = {
+    'vidzy': 'https://vidzy.cc/gate.php',
+    'fsvid': 'https://fsvid.lol/gk',
+}
+FSVID_VIDZY_GATE_QUERY = urllib.parse.urlencode([
+    ('v', 'p1'), ('cw', '159.56'), ('cw2', '170.34'), ('wg', '1'), ('dpr', '1'),
+    ('sw', '1920'), ('hw', '8'), ('ft', 'TOP'), ('rf', ''),
+])
+FSVID_VIDZY_GATE_MAX_AGE  = 6 * 3600   # 6 h max TTL for cached key
+FSVID_VIDZY_GATE_RETRY_AFTER = 60      # back-off after failed gate call
+
+# Depuis le 2026-10-26 : le CDN sert un faux master statique à tout
+# Accept-Encoding autre que celui de Chrome (y compris `identity`).
+FSVID_VIDZY_MEDIA_ACCEPT_ENCODING = 'gzip, deflate, br, zstd'
+
+FSVID_VIDZY_SEC_CH_UA = '"Chromium";v="142", "Not=A?Brand";v="24", "Google Chrome";v="142"'
+FSVID_VIDZY_USER_AGENT = (
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+    '(KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'
+)
+FSVID_VIDZY_CLIENT_HINTS: dict = {
+    'Sec-Ch-Ua': FSVID_VIDZY_SEC_CH_UA,
+    'Sec-Ch-Ua-Mobile': '?0',
+    'Sec-Ch-Ua-Platform': '"Windows"',
+    'User-Agent': FSVID_VIDZY_USER_AGENT,
+}
+
+# Regex : valide le format d'un token gk (alphanum + _.-  16-512 chars)
+_FSVID_VIDZY_GATE_KEY = re.compile(r'[A-Za-z0-9_.-]{16,512}')
+# Regex : détecte une URL de gate inline dans le HTML embed (fetch('/gate.php?…'))
+_FSVID_VIDZY_INLINE_GATE = re.compile(
+    r'fetch\(\s*[\'"](https://[a-z0-9.-]+/gate\.php)\?',
+    re.IGNORECASE,
+)
+# Regex : détecte la présence d'un paramètre gk= déjà dans l'URL
+_FSVID_VIDZY_HAS_GATE_KEY = re.compile(r'[?&]gk=')
+
+_FSVID_VIDZY_ALLOWED_GATE_HOSTS = frozenset({'vidzy.cc', 'vidzy.org', 'fsvid.lol'})
+
+
 class ProxyServer:
     # Compiled regex patterns (class-level for sharing)
     RE_BANDWIDTH = re.compile(r'bandwidth\.com|edgeon-bandwidth\.com', re.IGNORECASE)
@@ -1092,6 +1138,9 @@ class ProxyServer:
         self.voe_cache = TTLCache(maxsize=1000, ttl=7200)
         self.fsvid_cache = TTLCache(maxsize=500, ttl=60)
         self.vidzy_cache = TTLCache(maxsize=1500, ttl=7200)   # Was saturating at 554/500
+        # Clé `gk` partagée entre fsvid et vidzy : (valeur|None, échéance monotonic)
+        self._fsvid_vidzy_gate_key_entry: Optional[tuple] = None
+        self._fsvid_vidzy_gate_lock = asyncio.Lock()
         self.vidmoly_cache = TTLCache(maxsize=500, ttl=600)
         self.sibnet_cache = TTLCache(maxsize=500, ttl=7200)
         self.uqload_cache = TTLCache(maxsize=2500, ttl=7200)  # Was saturating at 1003/500
@@ -2707,10 +2756,11 @@ class ProxyServer:
         if self.RE_FSVID.search(target_url):
             return {
                 'Accept': 'application/vnd.apple.mpegurl,*/*',
+                'Accept-Encoding': FSVID_VIDZY_MEDIA_ACCEPT_ENCODING,
                 'Host': target_host,
                 'Origin': 'https://fsvid.lol',
                 'Referer': 'https://fsvid.lol/',
-                'User-Agent': 'Mozilla/5.0 Chrome/139.0.0.0'
+                **FSVID_VIDZY_CLIENT_HINTS,
             }
         
         if self.RE_SIBNET.search(target_url):
@@ -2733,10 +2783,11 @@ class ProxyServer:
         if self.RE_VIDZY.search(target_url):
             return {
                 'Accept': 'application/vnd.apple.mpegurl,*/*',
+                'Accept-Encoding': FSVID_VIDZY_MEDIA_ACCEPT_ENCODING,
                 'Host': target_host,
                 'Origin': 'https://vidzy.org',
                 'Referer': 'https://vidzy.org/',
-                'User-Agent': 'Mozilla/5.0 Chrome/141.0.0.0'
+                **FSVID_VIDZY_CLIENT_HINTS,
             }
         
         if self.RE_BANDWIDTH.search(target_url):
@@ -3115,7 +3166,120 @@ class ProxyServer:
         except Exception as e:
             logger.error(f'VOE decryption error: {e}')
             return None
-    
+
+    # ── Gate-key helpers (Fsvid / Vidzy) ──────────────────────────────────────
+
+    def _fsvid_vidzy_gate_urls(self, provider: str, html: str = '') -> list:
+        """Ordered list of gate endpoints to try for a given provider.
+
+        Priority:
+        1. Inline gate URL found in the embed page (most specific, catches CDN
+           rotations before we update the constant list).
+        2. Default gate URL for `provider`.
+        3. Default gate URL for the *other* provider (cross-provider fallback —
+           both gates return the same shared key in practice).
+        """
+        urls: list = []
+        seen: set = set()
+
+        m = _FSVID_VIDZY_INLINE_GATE.search(html)
+        if m:
+            inline = m.group(1)
+            try:
+                host = urllib.parse.urlparse(inline).netloc.lower()
+                if host in _FSVID_VIDZY_ALLOWED_GATE_HOSTS and inline not in seen:
+                    urls.append(inline)
+                    seen.add(inline)
+            except Exception:
+                pass
+
+        for p in (provider, 'vidzy' if provider == 'fsvid' else 'fsvid'):
+            url = FSVID_VIDZY_GATE_URLS[p]
+            if url not in seen:
+                urls.append(url)
+                seen.add(url)
+
+        return urls
+
+    async def _fsvid_vidzy_gate_key(self, provider: str, html: str = '') -> Optional[str]:
+        """Return a valid gate key, fetching one if the cache is empty or stale."""
+        entry = self._fsvid_vidzy_gate_key_entry
+        if entry is not None:
+            value, deadline = entry
+            if time.monotonic() < deadline:
+                return value
+
+        async with self._fsvid_vidzy_gate_lock:
+            # Re-check inside the lock — another coroutine may have refreshed.
+            entry = self._fsvid_vidzy_gate_key_entry
+            if entry is not None:
+                value, deadline = entry
+                if time.monotonic() < deadline:
+                    return value
+
+            gate_urls = self._fsvid_vidzy_gate_urls(provider, html)
+            key: Optional[str] = None
+
+            for gate_url in gate_urls:
+                try:
+                    full_url = f"{gate_url}?{FSVID_VIDZY_GATE_QUERY}"
+                    async with self.sessions['normal'].request(
+                        'GET', full_url,
+                        headers={
+                            'Accept': 'application/json, text/plain, */*',
+                            'Origin': 'https://vidzy.org',
+                            'Referer': 'https://vidzy.org/',
+                            **FSVID_VIDZY_CLIENT_HINTS,
+                        },
+                        timeout=ClientTimeout(total=5),
+                    ) as resp:
+                        if resp.status != 200:
+                            continue
+                        try:
+                            data = await resp.json(content_type=None)
+                            raw_key = (
+                                data.get('gk') or data.get('key') or
+                                data.get('token') or data.get('k') or ''
+                            )
+                            if not raw_key:
+                                raise ValueError('no key field')
+                            # Extract duration from response if available
+                            ttl_seconds = (
+                                data.get('ttl') or
+                                max(0, (data.get('exp') or 0) - time.time()) or
+                                FSVID_VIDZY_GATE_MAX_AGE
+                            )
+                        except Exception:
+                            text = (await resp.text()).strip()
+                            m2 = _FSVID_VIDZY_GATE_KEY.search(text)
+                            raw_key = m2.group(0) if m2 else ''
+                            ttl_seconds = FSVID_VIDZY_GATE_MAX_AGE
+
+                        if _FSVID_VIDZY_GATE_KEY.fullmatch(str(raw_key)):
+                            key = str(raw_key)
+                            cache_ttl = min(int(ttl_seconds) // 2, FSVID_VIDZY_GATE_MAX_AGE)
+                            self._fsvid_vidzy_gate_key_entry = (key, time.monotonic() + max(cache_ttl, 60))
+                            break
+                except Exception as exc:
+                    logger.warning('[FSVID-VIDZY-GATE] gate %s failed: %s', gate_url, exc)
+
+            if key is None:
+                logger.warning('[FSVID-VIDZY-GATE] no key obtained for %s — retry in %ds',
+                               provider, FSVID_VIDZY_GATE_RETRY_AFTER)
+                self._fsvid_vidzy_gate_key_entry = (None, time.monotonic() + FSVID_VIDZY_GATE_RETRY_AFTER)
+
+            return key
+
+    async def _with_fsvid_vidzy_gate_key(self, url: str, html: str, provider: str) -> str:
+        """Return `url` with `gk=<token>` appended, unless it already has one."""
+        if _FSVID_VIDZY_HAS_GATE_KEY.search(url):
+            return url
+        key = await self._fsvid_vidzy_gate_key(provider, html)
+        if not key:
+            return url
+        sep = '&' if '?' in url else '?'
+        return f"{url}{sep}gk={urllib.parse.quote(key, safe='')}"
+
     async def fsvid_extract_handler(self, request: Request) -> Response:
         """FSVID M3U8 extraction"""
         if not await self._check_vip(request):
@@ -3137,27 +3301,31 @@ class ProxyServer:
             headers = {
                 'accept': 'text/html,*/*',
                 'referer': 'https://fsmirror46.lol/',
-                'user-agent': 'Mozilla/5.0 Chrome/140.0.0.0'
+                'user-agent': FSVID_VIDZY_USER_AGENT,
             }
-            
-            
+
             async with self.sessions['normal'].request('GET', url, headers=headers,
                                         timeout=ClientTimeout(total=8)) as response:
                 if response.status != 200:
                     return web.json_response({'error': 'Fetch failed'}, status=500)
-                
+
                 html = await response.text(encoding='utf-8')
 
                 m3u8_url = await self._resolve_fsvid_vidzy_m3u8(html, url, 'fsvid')
                 if not m3u8_url:
                     return web.json_response({'error': 'M3U8 not found'}, status=404)
-                
+
+                m3u8_url = await self._with_fsvid_vidzy_gate_key(m3u8_url, html, 'fsvid')
+
                 result = {
                     'm3u8Url': f"{PROXY_BASE}/fsvid-proxy?url={urllib.parse.quote(m3u8_url)}",
                     'source': 'fsvid'
                 }
-                
-                self.fsvid_cache.set(cache_key, result)
+
+                # Only cache when the key is present — avoids poisoning the cache
+                # with a keyless URL that would produce 403 after a few segments.
+                if _FSVID_VIDZY_HAS_GATE_KEY.search(m3u8_url):
+                    self.fsvid_cache.set(cache_key, result)
                 resp = web.json_response(result)
                 resp.headers['X-Cache'] = 'MISS'
                 return resp
@@ -3509,26 +3677,28 @@ class ProxyServer:
             headers = {
                 'accept': 'text/html,*/*',
                 'referer': 'https://vidzy.org/',
-                'user-agent': 'Mozilla/5.0 Chrome/140.0.0.0'
+                'user-agent': FSVID_VIDZY_USER_AGENT,
             }
-            
-            
+
             async with self.sessions['no_ssl'].request('GET', url, headers=headers,
                                         timeout=ClientTimeout(total=8)) as response:
                 if response.status != 200:
                     return web.json_response({'error': 'Fetch failed'}, status=500)
-                
+
                 html = await response.text()
                 m3u8_url = await self._resolve_fsvid_vidzy_m3u8(html, url, 'vidzy')
                 if not m3u8_url:
                     return web.json_response({'error': 'M3U8 not found'}, status=404)
-                
+
+                m3u8_url = await self._with_fsvid_vidzy_gate_key(m3u8_url, html, 'vidzy')
+
                 result = {
                     'm3u8Url': f"{PROXY_BASE}/vidzy-proxy?url={urllib.parse.quote(m3u8_url)}",
                     'source': 'vidzy'
                 }
-                
-                self.vidzy_cache.set(cache_key, result)
+
+                if _FSVID_VIDZY_HAS_GATE_KEY.search(m3u8_url):
+                    self.vidzy_cache.set(cache_key, result)
                 resp = web.json_response(result)
                 resp.headers['X-Cache'] = 'MISS'
                 return resp
@@ -4491,9 +4661,10 @@ class ProxyServer:
         """FSVID proxy"""
         return await self._service_proxy_via_random_socks(request, 'fsvid', {
             'Accept': 'application/vnd.apple.mpegurl,*/*',
+            'Accept-Encoding': FSVID_VIDZY_MEDIA_ACCEPT_ENCODING,
             'Origin': 'https://fsvid.lol',
             'Referer': 'https://fsvid.lol/',
-            'User-Agent': 'Mozilla/5.0 Chrome/139.0.0.0'
+            **FSVID_VIDZY_CLIENT_HINTS,
         })
 
     async def kisskh_proxy_handler(self, request: Request) -> Response:
@@ -4571,9 +4742,10 @@ class ProxyServer:
         """Vidzy proxy"""
         return await self._service_proxy_via_random_socks(request, 'vidzy', {
             'Accept': 'application/vnd.apple.mpegurl,*/*',
+            'Accept-Encoding': FSVID_VIDZY_MEDIA_ACCEPT_ENCODING,
             'Origin': 'https://vidzy.org',
             'Referer': 'https://vidzy.org/',
-            'User-Agent': 'Mozilla/5.0 Chrome/141.0.0.0'
+            **FSVID_VIDZY_CLIENT_HINTS,
         })
     
     async def vidmoly_proxy_handler(self, request: Request) -> Response:
