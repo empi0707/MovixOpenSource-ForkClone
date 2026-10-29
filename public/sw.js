@@ -91,7 +91,7 @@ function isLocalHost(hostname) {
 
 function parseConfig(text) {
   // Deux formats supportés :
-  // - JSON : {"mirrors":["movix.health",...]}  (dpaste.org, gist raw, etc.)
+  // - JSON : {"mirrors":["cinepulse.live",...]}  (dpaste.org, gist raw, etc.)
   // - HTML : page rendue rentry.co/<slug> — on extrait les hostnames des <a href>
   //   à l'intérieur du <article>. Rentry.co exige un access code pour /raw
   //   depuis un durcissement anti-abuse ; on parse le HTML rendu à la place.

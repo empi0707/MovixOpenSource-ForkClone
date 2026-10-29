@@ -26,7 +26,7 @@ function injectPublicConfig(): Plugin {
   let siteUrl: string | undefined
 
   const replacePlaceholders = (source: string): string => {
-    const mirrors = (process.env.VITE_DEFAULT_MIRRORS || 'movix.health')
+    const mirrors = (process.env.VITE_DEFAULT_MIRRORS || 'cinepulse.live')
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
