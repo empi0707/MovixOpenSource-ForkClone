@@ -429,6 +429,25 @@ const SourceQualityMeta = ({ qualityLabel, isActive = false }: { qualityLabel: s
   );
 };
 
+// Extrait le hostname d'un embed URL pour le label "🌟 domain · Movix player N".
+// Gère les URLs percent-encodées (ex: SeekStreaming qui wrappent une URL).
+const getEmbedDomainLabel = (url: string): string | null => {
+  const raw = (url || '').trim();
+  if (!raw) return null;
+  const candidates: string[] = [raw];
+  try {
+    const decoded = decodeURIComponent(raw);
+    if (decoded !== raw) candidates.push(decoded);
+  } catch { /* ignore */ }
+  for (const candidate of candidates) {
+    try {
+      const hostname = new URL(candidate).hostname.replace(/^www\./i, '');
+      if (hostname) return hostname;
+    } catch { /* try next */ }
+  }
+  return null;
+};
+
 // Helper function to detect if URL is MP4 (even in proxy URLs with encoded parameters)
 const isMP4Source = (url: string): boolean => {
   const normalizedUrl = normalizeUqloadEmbedUrl(url);
@@ -2730,6 +2749,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
       visibleCustomSources.forEach((source, index) => {
         const isSeek = isSeekStreamingEmbedUrl(source);
         if (isSeek) seekStreamingIndex += 1;
+        const domain = isSeek ? null : getEmbedDomainLabel(source);
         embedSources.push({
           type: 'custom',
           id: `custom_${index}`,
@@ -2739,7 +2759,9 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                 ? t('watch.seekStreamingPlayer', { n: seekStreamingIndex })
                 : t('watch.seekStreaming')
             )
-            : t('watch.movixPlayer', { n: index + 1 }),
+            : domain
+              ? t('watch.movixPlayerDomain', { n: index + 1, domain })
+              : t('watch.movixPlayer', { n: index + 1 }),
           url: source,
         });
       });

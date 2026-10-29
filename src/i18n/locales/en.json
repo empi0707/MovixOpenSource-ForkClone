@@ -1186,6 +1186,7 @@
     "bravoSource": "🎬 Bravo ({{count}})",
     "frembedPlayer": "🎬 Frembed player",
     "movixPlayer": "🌟 Movix player {{n}}",
+    "movixPlayerDomain": "🌟 {{domain}} · Movix player {{n}}",
     "seekStreamingPlayer": "🌟 SeekStreaming {{n}}",
     "omegaPlayers": "🎬 Omega players ({{count}})",
     "multiPlayers": "🎬 Multi players ({{count}})",
