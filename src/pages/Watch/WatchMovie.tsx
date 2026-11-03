@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { getFrembedBase } from '../../utils/frembedConfig';
+import { appendForkEmbedUrls, fetchForkMovieEmbeds } from '../../utils/forkEmbeds'; // FORK
 import { openInNewTab } from '../../utils/openInNewTab';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -249,6 +250,8 @@ const checkMovieAvailability = async (movieId: string) => {
   try {
     const customLinks: string[] = [];
     const mp4Links: { url: string; label?: string; language?: string; isVip?: boolean }[] = [];
+    // FORK: Fronav + lecteurs par id TMDB, en parallèle des liens communautaires.
+    const forkEmbedsPromise = fetchForkMovieEmbeds(movieId);
 
     // Fetch custom links from MySQL API
     try {
@@ -305,6 +308,8 @@ const checkMovieAvailability = async (movieId: string) => {
       const result = frembedResponse.data?.result;
       const isFrembedAvailable = frembedResponse.data?.status === 200
         && (result?.total ?? result?.totalItems ?? result?.items?.length ?? 0) > 0;
+      // FORK: Frembed déjà proposé par son propre lecteur quand il répond.
+      appendForkEmbedUrls(customLinks, await forkEmbedsPromise, isFrembedAvailable ? ['frembed'] : []);
 
       return {
         isAvailable: true,
@@ -314,6 +319,7 @@ const checkMovieAvailability = async (movieId: string) => {
       };
     } catch (frembedError) {
       console.error('Error checking Frembed availability:', frembedError);
+      appendForkEmbedUrls(customLinks, await forkEmbedsPromise); // FORK
       return {
         isAvailable: true,
         customLinks: customLinks || [],
@@ -1071,7 +1077,9 @@ const WatchMovie: React.FC = () => {
 
       // =========== TRAITEMENT DES RÉSULTATS DE FIREBASE/FREMBED ===========
       const customLinks = availabilityResult.customLinks || [];
-      const uqloadLink: string | undefined = customLinks.find((link: string) => link.toLowerCase().includes('uqload.'));
+      // FORK: le lecteur Fronav (sharecloudy) prend la place promue, avant un lien Uqload uploadé.
+      const uqloadLink: string | undefined = customLinks.find((link: string) => link.toLowerCase().includes('sharecloudy.'))
+        ?? customLinks.find((link: string) => link.toLowerCase().includes('uqload.'));
       const fetchedMp4Sources: { url: string; label?: string; language?: string; isVip?: boolean }[] = availabilityResult.mp4Links || [];
       const isFrembedAvailable = availabilityResult.frembedAvailable;
 

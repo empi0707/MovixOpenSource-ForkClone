@@ -158,20 +158,22 @@ To add a flag: add it to `FeatureFlags` and `DEFAULT_FEATURES` in `features.ts`,
 ## 7. Build & Deploy Workflow
 
 ```bash
-# 1. Change accent color
-#    → src/config/accent.js → ACCENT = 'blue'
-
-# 2. Change name / logo
-#    → src/config/branding.ts → siteName, logoUrl, favicon
-
-# 3. Change PWA name
-#    → manifest.json → name, short_name
-
-# 4. Build
-npm run build
-
-# dist/ is ready for Cloudflare Pages / MAMP / nginx
+# Per-clone config (gitignored): src/config/accent.js, src/config/branding.ts (incl. FEATURES)
+npm ci
+npm run build        # dist/ — name, icons and manifest.json are branded at build time
 ```
+
+### Moving a server from the old fork to this base
+
+1. **Back up** `index.html`, `src/config/branding.ts`, `src/config/accent.js`, `ecosystem.config.cjs`, both `.env` files, and the MySQL database (`mysqldump`). The schema is migrated automatically when Main API starts.
+2. **Pull**, then restore the gitignored configs. `index.html` is now tracked from upstream: do not restore the old copy.
+3. **Update `branding.ts`**: copy the new `FEATURES` block from `branding.example.ts`.
+4. **Shared secrets** — same values in `API/Mainapi/.env` and `API/proxiesembed/.env` (`openssl rand -hex 32`):
+   `MEDIA_SIGNING_SECRET`, `INTERNAL_API_KEY`, `MEDIA_SIGNATURE_TTL`. Without them proxiesembed refuses media and extraction.
+5. **Main API `.env`**: `ALLOWED_DOMAINS=<your domain>` (otherwise only movix.* origins pass), `PROXIESEMBED_INTERNAL_URL=http://127.0.0.1:25569`. Compare with `.env.example` for other new keys.
+6. **Main API dependencies**: `npm ci` currently fails because the GitHub tarball `streamed-pk-hls-stream-resolver` no longer exists (404). Until upstream fixes it, install from a temporary copy of `package.json` without that dependency (only the sports `streamed` source needs it).
+7. **MySQL version**: some upstream queries use `LIMIT ? OFFSET ?` in prepared statements, rejected by recent MySQL (seen on 26.x: comments API returns 500). Check the server version before migrating.
+8. **Restart** Main API and proxiesembed, then check: home page, a movie page, a watch page (FStream players listed), `/login-bip39`, `/admin`.
 
 ---
 
@@ -179,31 +181,34 @@ npm run build
 
 ```
 ecosystem.config.example.cjs ← tracked template — cp to ecosystem.config.cjs (gitignored) per clone
-ecosystem.config.cjs  ← PM2 apps, deploy paths (per-clone, gitignored)
-
-index.example.html    ← tracked template — cp to index.html (gitignored) per clone
-index.html            ← Vite entry point: title, meta, favicon, JSON-LD, analytics (per-clone, gitignored)
+vite.fork-branding.ts        ← brands index.html + manifest.json at build time (from branding.ts)
 
 src/config/
-├── accent.example.js  ← tracked template — cp to accent.js (gitignored) per clone
-├── accent.js          ← ACCENT color (single source of truth, per-clone, gitignored)
+├── accent.example.js   ← tracked template — cp to accent.js (gitignored) per clone
+├── accent.js           ← ACCENT color (per clone, gitignored)
 ├── branding.example.ts ← tracked template — cp to branding.ts (gitignored) per clone
-├── branding.ts        ← Name, logo, favicon, adBanner (per-clone, gitignored)
-└── runtime.ts         ← SITE_URL (from .env)
+├── branding.ts         ← name, logo, favicon, adBanner, FEATURES (per clone, gitignored)
+└── features.ts         ← feature flag rules (routes, links, settings sections)
 
 src/components/
-├── AdBanner.tsx       ← Dynamic ad injection
-├── BrandingSync.tsx   ← Sync branding → document head + i18n
-├── BrandingManager.tsx ← Admin UI for runtime override
-├── Header.tsx         ← Dynamic logo (text or image)
-└── Footer.tsx         ← Copyright {{siteName}}, legal links
+├── fork/FeatureGate.tsx ← 404 + link hiding for disabled features
+├── brand/SiteWordmark.tsx ← logo (image, text, or upstream SVG)
+├── AdBanner.tsx         ← ad injection (branding.ts → adBanner)
+├── BrandingSync.tsx     ← branding → document head + i18n ("Movix" → siteName)
+└── BrandingManager.tsx  ← admin UI for runtime override
 
-src/hooks/
-└── useBranding.ts     ← React hook (merges branding.ts + localStorage)
+src/hooks/useBranding.ts ← merges branding.ts + localStorage override
+src/i18n/index.ts        ← DEFAULT_LANGUAGE
 
-src/i18n/
-└── index.ts           ← DEFAULT_LANGUAGE
+API/Mainapi/utils/forkAllowedDomains.js ← ALLOWED_DOMAINS (domainRestriction + CORS)
+API/Mainapi/utils/forkScrapeProxy.js   ← SCRAPE_USE_PROXY / <SOURCE>_USE_PROXY
+API/Mainapi/routes/forkEmbeds.js       ← /api/fork-embeds (Fronav + TMDB-id players)
+API/Mainapi/utils/fronav.js            ← Fronav scraper
+API/Mainapi/utils/forkEmbedProviders.js ← TMDB-id players and availability checks
+src/utils/forkEmbeds.ts                ← adds them to « Lecteurs Embed » (WatchMovie / WatchTv)
 ```
+
+All other fork edits in upstream files are tagged `FORK` — `git grep -n "FORK"` lists them.
 
 ---
 
@@ -225,7 +230,12 @@ Optional variables in `API/Mainapi/.env`:
 | Variable | Default | Effect |
 |----------|---------|--------|
 | `ALLOWED_DOMAINS` | *(unset → upstream movix.\* list)* | Comma-separated domains allowed by `domainRestriction` and CORS, e.g. `wiflix.mov`. Replaces the upstream list; `localhost:3000` and subdomains stay allowed |
-| `FSTREAM_DIRECT_FALLBACK` | on | After the configured proxies, FStream APIs are called directly from the server IP. Without it, a server with no proxies never reaches `film_api` / `episodes`. Set `false` to disable |
+| `SCRAPE_USE_PROXY` | `false` | `false` = scrape sources directly from the server IP; `true` = go through the configured proxies. Applies to FStream and Wiflix |
+| `FSTREAM_USE_PROXY`, `WIFLIX_USE_PROXY` | *(unset → `SCRAPE_USE_PROXY`)* | Per-source override |
+| `FSTREAM_DIRECT_FALLBACK` | on | Proxy mode only: after the proxies, FStream APIs are tried once directly. Set `false` to disable |
+| `WIFLIX_BASE_URL` | `https://flemmix.forum` | Flemmix domain. The scraper handles both the old DLE engine and flemmix.forum (GET `/recherche` search, one page per season) |
+| `FRONAV_BASE_URL` | `https://fronav.com` | Fronav (movies only); the path token is read from the home page |
+| `FORK_EMBED_PROVIDERS` | *(all)* | Comma list among `vidzy,hd,pandora,viper,frembed,vostfr1`: TMDB-id embed players served by `/api/fork-embeds` and listed under « Lecteurs Embed » |
 
 Code: `utils/forkAllowedDomains.js`, `getShuffledAllProxies()` in `routes/fstream.js`, `withFStreamProxy()` in `utils/proxyManager.js` (all tagged `FORK`).
 

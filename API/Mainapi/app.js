@@ -478,6 +478,7 @@ app.use('/', searchRouter);
 app.use('/api', downloadRouter);
 app.use('/api/fstream', require('./routes/fstream'));
 app.use('/api/wiflix', require('./routes/wiflix'));
+app.use('/api/fork-embeds', require('./routes/forkEmbeds')); // FORK: Fronav + lecteurs par id TMDB
 app.use('/api/j1f', require('./routes/j1f'));
 app.use('/api/swiftflow', require('./routes/swiftflow'));
 app.use('/api', require('./routes/sync'));

@@ -3183,6 +3183,10 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
       });
     }
 
+    // FORK: lecteur Fronav (sharecloudy) en tête des « Lecteurs Embed ».
+    const fronavIndex = embedSources.findIndex((s) => s.type === 'custom' && /sharecloudy\./i.test(s.url ?? ''));
+    if (fronavIndex > 0) embedSources.unshift(...embedSources.splice(fronavIndex, 1));
+
     // Add Omega sources - Add only the main button
     if (omegaSources && omegaSources.length > 0) {
       embedSources.push({

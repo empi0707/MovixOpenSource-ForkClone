@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { getFrembedBase, initFrembedBase } from '../../utils/frembedConfig';
+import { appendForkEmbedUrls, fetchForkEpisodeEmbeds } from '../../utils/forkEmbeds'; // FORK
 import { useParams, useNavigate } from 'react-router-dom'; // Added useNavigate
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -276,6 +277,8 @@ const checkCustomTVLink = async (showId: string, seasonNumber: number, episodeNu
   const customLinks: string[] = [];
   const mp4Links: { url: string; label?: string; language?: string; isVip?: boolean }[] = [];
   let isAvailable = false;
+  // FORK: lecteurs par id TMDB, en parallèle des liens communautaires.
+  const forkEmbedsPromise = fetchForkEpisodeEmbeds(showId, seasonNumber, episodeNumber);
 
   try {
     // Méthode serveur : `resolve=1` + clé VIP, le serveur résout les m3u8 des
@@ -331,6 +334,10 @@ const checkCustomTVLink = async (showId: string, seasonNumber: number, episodeNu
   } catch (error) {
     console.error('Error fetching custom TV links from API:', error);
   }
+
+  // FORK: Frembed a déjà son propre lecteur pour les épisodes (checkFrembedAvailability).
+  appendForkEmbedUrls(customLinks, await forkEmbedsPromise, ['frembed']);
+  if (customLinks.length > 0) isAvailable = true;
 
   return { isAvailable, customLinks, mp4Links };
 };
