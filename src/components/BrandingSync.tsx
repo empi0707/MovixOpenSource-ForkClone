@@ -33,18 +33,31 @@ function replaceInObj(obj: unknown, from: string, to: string): unknown {
 /** Nom d'origine présent dans les traductions upstream. */
 const UPSTREAM_NAME = 'Movix';
 
-/** Patch toutes les ressources i18n chargées : "Movix" → siteName du clone. */
-function patchI18nResources(siteName: string) {
+const UPSTREAM_NAME_RE = new RegExp(`\\b(${UPSTREAM_NAME}|${UPSTREAM_NAME.toUpperCase()})\\b`);
+
+/** Patch les ressources i18n : "Movix" → siteName du clone (`langs` absent = toutes). */
+function patchI18nResources(siteName: string, langs?: string[]) {
   if (!siteName || siteName === UPSTREAM_NAME) return; // rien à faire
 
-  const langs = Object.keys(i18n.store?.data ?? {});
-  for (const lang of langs.length ? langs : ['fr', 'en']) {
+  const targets = langs ?? Object.keys(i18n.store?.data ?? {});
+  for (const lang of targets) {
     const bundle = i18n.getResourceBundle(lang, 'translation');
-    if (!bundle) continue;
+    // Déjà patché (ou rien à remplacer) : pas de addResourceBundle, donc pas
+    // d'événement 'added' — évite aussi de boucler avec l'écouteur ci-dessous.
+    if (!bundle || !UPSTREAM_NAME_RE.test(JSON.stringify(bundle))) continue;
     const patched = replaceInObj(bundle, UPSTREAM_NAME, siteName) as Record<string, unknown>;
     i18n.addResourceBundle(lang, 'translation', patched, true, true);
   }
 }
+
+// Patch AVANT le premier rendu. Dans un useEffect, le patch arrivait avant que
+// react-i18next n'abonne les composants (useSyncExternalStore s'abonne aussi
+// dans un effet) : Header/Footer gardaient « Movix » jusqu'au rendu suivant.
+const patchWithCurrentBranding = (langs?: string[]) => patchI18nResources(getResolvedBranding().siteName, langs);
+if (i18n.isInitialized) patchWithCurrentBranding();
+else i18n.on('initialized', () => patchWithCurrentBranding());
+// Bundles chargés plus tard (ex. 'en' via addResourceBundle → événement 'added').
+i18n.store?.on('added', (lng: string) => patchWithCurrentBranding([lng]));
 
 /** Patch les tags <head> : favicon, title, metas */
 function patchDocument(siteName: string, faviconUrl: string | null) {
@@ -83,15 +96,9 @@ const BrandingSync: React.FC = () => {
 
   useEffect(() => {
     patchDocument(branding.siteName, branding.faviconUrl);
+    // Changement de nom à chaud (override admin) : les composants sont déjà
+    // abonnés, l'événement 'added' les re-rend.
     patchI18nResources(branding.siteName);
-    // Les langues chargées plus tard (lazy) doivent aussi être patchées.
-    const onLoaded = () => patchI18nResources(branding.siteName);
-    i18n.on('loaded', onLoaded);
-    i18n.on('languageChanged', onLoaded);
-    return () => {
-      i18n.off('loaded', onLoaded);
-      i18n.off('languageChanged', onLoaded);
-    };
   }, [branding.siteName, branding.faviconUrl]);
 
   return null;

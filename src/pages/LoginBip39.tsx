@@ -12,6 +12,7 @@ import {
 import { getSessionCreationHeaders } from '../utils/sessionClientId';
 import { useTurnstileBypass } from '../hooks/useTurnstileBypass';
 import { TURNSTILE_SITE_KEY } from '../utils/turnstileKeys';
+import { isFeatureEnabled } from '../config/features'; // FORK: feature flags
 const API_URL = import.meta.env.VITE_MAIN_API;
 
 declare global {
@@ -295,7 +296,7 @@ const LoginBip39: React.FC<LoginBip39Props> = ({ mode = 'login' }) => {
               )}
             </motion.button>
 
-            {!isLinkMode && (
+            {!isLinkMode && isFeatureEnabled('publicAuth') && ( // FORK: feature flags
               <div className="space-y-3">
                 <p className="text-center text-xs text-gray-500">
                   {t('auth.dontHaveAccount', "Vous n'avez pas de compte ?")}
