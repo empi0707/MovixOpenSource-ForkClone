@@ -70,7 +70,7 @@ function injectPublicConfig(): Plugin {
   let devServiceWorker: Promise<string> | undefined
 
   const replacePlaceholders = (source: string): string => {
-    const mirrors = (process.env.VITE_DEFAULT_MIRRORS || 'movix.health')
+    const mirrors = (process.env.VITE_DEFAULT_MIRRORS || 'cinepulse.live') // FORK
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
