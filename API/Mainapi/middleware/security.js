@@ -4,6 +4,8 @@
  * and JSON parse error handler.
  */
 
+const { resolveAllowedDomains } = require('../utils/forkAllowedDomains'); // FORK
+
 // Security headers (minimal set -- replaces Helmet)
 function securityHeaders(req, res, next) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -41,7 +43,7 @@ function domainRestriction(req, res, next) {
     return next();
   }
 
-  const allowedDomains = [
+  const allowedDomains = resolveAllowedDomains([ // FORK: ALLOWED_DOMAINS remplace la liste
     'localhost:3000',
     'movix.blog',
     'movix.rodeo',
@@ -62,7 +64,7 @@ function domainRestriction(req, res, next) {
     'movix.show',
     'movix.fun',
     'movix.men'
-  ];
+  ]);
 
   const origin = req.get('origin');
   const referer = req.get('referer');

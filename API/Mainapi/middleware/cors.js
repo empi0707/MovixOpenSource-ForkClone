@@ -5,8 +5,9 @@
 
 const cors = require("cors");
 const { isOAuthCorsOriginAllowed } = require('../utils/oauthClients');
+const { resolveAllowedDomains } = require('../utils/forkAllowedDomains'); // FORK
 
-const STATIC_ALLOWED_DOMAINS = [
+const STATIC_ALLOWED_DOMAINS = resolveAllowedDomains([ // FORK: ALLOWED_DOMAINS remplace la liste
     'localhost:3000',
     'movix.blog',
     'movix.rodeo',
@@ -27,7 +28,7 @@ const STATIC_ALLOWED_DOMAINS = [
     'movix.show',
     'movix.fun',
     'movix.men'
-];
+]);
 
 function isAllowedStaticOrigin(origin) {
   try {

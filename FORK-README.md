@@ -218,4 +218,17 @@ Sections:
 
 ---
 
+## 10. Backend (Main API) Fork Settings
+
+Optional variables in `API/Mainapi/.env`:
+
+| Variable | Default | Effect |
+|----------|---------|--------|
+| `ALLOWED_DOMAINS` | *(unset → upstream movix.\* list)* | Comma-separated domains allowed by `domainRestriction` and CORS, e.g. `wiflix.mov`. Replaces the upstream list; `localhost:3000` and subdomains stay allowed |
+| `FSTREAM_DIRECT_FALLBACK` | on | After the configured proxies, FStream APIs are called directly from the server IP. Without it, a server with no proxies never reaches `film_api` / `episodes`. Set `false` to disable |
+
+Code: `utils/forkAllowedDomains.js`, `getShuffledAllProxies()` in `routes/fstream.js`, `withFStreamProxy()` in `utils/proxyManager.js` (all tagged `FORK`).
+
+---
+
 *Based on [MovixOpenSource](https://github.com/movixstream/MovixOpenSource) — License CC BY-NC 4.0*

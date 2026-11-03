@@ -795,6 +795,12 @@ function getShuffledAllProxies() {
     const j = Math.floor(Math.random() * (i + 1));
     [all[i], all[j]] = [all[j], all[i]];
   }
+  // FORK: appel direct (IP du serveur) en dernier recours. Sans aucun proxy
+  // configuré, les API FStream (film_api, episodes, static, saisons) n'étaient
+  // jamais appelées. Désactivable avec FSTREAM_DIRECT_FALLBACK=false.
+  if (!/^(0|false|no|off)$/i.test(String(process.env.FSTREAM_DIRECT_FALLBACK || '').trim())) {
+    all.push({ type: 'direct' });
+  }
   return all;
 }
 

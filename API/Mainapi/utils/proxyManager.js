@@ -2697,6 +2697,9 @@ function acquireFStreamProxy(entry) {
 }
 
 async function withFStreamProxy(entry, request) {
+  // FORK: entrée `direct` (voir getShuffledAllProxies dans routes/fstream.js) :
+  // requête sans agent proxy.
+  if (entry?.type === 'direct') return request({});
   const lease = acquireFStreamProxy(entry);
   let failed = false;
   try { return await request(lease); }
