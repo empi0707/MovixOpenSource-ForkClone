@@ -74,8 +74,8 @@ function injectPublicConfig(): Plugin {
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
-    const configUrl =
-      process.env.VITE_MIRRORS_CONFIG_URL || 'https://rentry.co/movix'
+    // FORK: vide = pas de liste distante (jamais celle d'upstream), seulement VITE_DEFAULT_MIRRORS.
+    const configUrl = process.env.VITE_MIRRORS_CONFIG_URL || ''
     return source
       .replace(/__MOVIX_DEFAULT_MIRRORS__/g, JSON.stringify(mirrors))
       .replace(/__MOVIX_CONFIG_URL__/g, JSON.stringify(configUrl))

@@ -124,3 +124,7 @@ ecosystem.config.cjs
 API/proxiesembed/.venv/
 API/proxiesembed/venv/
 API/miscs/venv/
+
+# FORK: per-brand input of scripts/fork-env.mjs and .env backups
+fork.env
+.env.bak-*

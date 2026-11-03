@@ -179,6 +179,8 @@ function parseConfig(text) {
 }
 
 async function loadMirrors() {
+  // FORK: sans URL de config, seulement les miroirs du build.
+  if (!CONFIG_URL) return Array.isArray(DEFAULT_MIRRORS) ? DEFAULT_MIRRORS.slice() : [];
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), CONFIG_TIMEOUT_MS);

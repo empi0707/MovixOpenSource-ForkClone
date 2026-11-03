@@ -24,6 +24,9 @@ cp ecosystem.config.example.cjs ecosystem.config.cjs
 Edit `ecosystem.config.cjs` to replace `/www/wwwroot/example.com` with the real
 deploy path (backend only).
 
+The three `.env` files (frontend, Main API, proxiesembed) are generated from one
+`fork.env` with `npm run fork:env` — see §11.
+
 `index.html` and `manifest.json` stay **upstream, tracked and unedited**: the
 Vite plugin `vite.fork-branding.ts` rewrites them at build time from
 `branding.ts` (name, favicon, PWA icons). Do not edit or untrack them.
@@ -166,14 +169,12 @@ npm run build        # dist/ — name, icons and manifest.json are branded at bu
 ### Moving a server from the old fork to this base
 
 1. **Back up** `index.html`, `src/config/branding.ts`, `src/config/accent.js`, `ecosystem.config.cjs`, both `.env` files, and the MySQL database (`mysqldump`). The schema is migrated automatically when Main API starts.
-2. **Pull**, then restore the gitignored configs. `index.html` is now tracked from upstream: do not restore the old copy.
+2. **Update the code**: `main` was rewritten on 2026-11-03 (the old one is kept as `backup/main-2026-11-03`), so `git pull` refuses. Run `git fetch origin && git reset --hard origin/main`, then restore the gitignored configs. `index.html` is now tracked from upstream: do not restore the old copy.
 3. **Update `branding.ts`**: copy the new `FEATURES` block from `branding.example.ts`.
-4. **Shared secrets** — same values in `API/Mainapi/.env` and `API/proxiesembed/.env` (`openssl rand -hex 32`):
-   `MEDIA_SIGNING_SECRET`, `INTERNAL_API_KEY`, `MEDIA_SIGNATURE_TTL`. Without them proxiesembed refuses media and extraction.
-5. **Main API `.env`**: `ALLOWED_DOMAINS=<your domain>` (otherwise only movix.* origins pass), `PROXIESEMBED_INTERNAL_URL=http://127.0.0.1:25569`. Compare with `.env.example` for other new keys.
-6. **Main API dependencies**: `npm ci` currently fails because the GitHub tarball `streamed-pk-hls-stream-resolver` no longer exists (404). Until upstream fixes it, install from a temporary copy of `package.json` without that dependency (only the sports `streamed` source needs it).
-7. **MySQL version**: some upstream queries use `LIMIT ? OFFSET ?` in prepared statements, rejected by recent MySQL (seen on 26.x: comments API returns 500). Check the server version before migrating.
-8. **Restart** Main API and proxiesembed, then check: home page, a movie page, a watch page (FStream players listed), `/login-bip39`, `/admin`.
+4. **`.env` files**: regenerate all three with `npm run fork:env` (§11). It keeps the secrets already in `API/Mainapi/.env` and adds what the new base needs: shared `MEDIA_SIGNING_SECRET` / `INTERNAL_API_KEY`, `ALLOWED_DOMAINS`, `PROXIESEMBED_INTERNAL_URL`. Copy any other value you still need (webhooks, proxies, partner keys) into `fork.env` with the `API_` / `PROXY_` / `FE_` prefix.
+5. **Main API dependencies**: `npm ci` currently fails because the GitHub tarball `streamed-pk-hls-stream-resolver` no longer exists (404). Until upstream fixes it, install from a temporary copy of `package.json` without that dependency (only the sports `streamed` source needs it).
+6. **MySQL version**: some upstream queries use `LIMIT ? OFFSET ?` in prepared statements, rejected by recent MySQL (seen on 26.x: comments API returns 500). Check the server version before migrating.
+7. **Restart** Main API and proxiesembed, then check: home page, a movie page, a watch page (FStream players listed), `/login-bip39`, `/admin`.
 
 ---
 
@@ -206,6 +207,7 @@ API/Mainapi/routes/forkEmbeds.js       ← /api/fork-embeds (Fronav + TMDB-id pl
 API/Mainapi/utils/fronav.js            ← Fronav scraper
 API/Mainapi/utils/forkEmbedProviders.js ← TMDB-id players and availability checks
 src/utils/forkEmbeds.ts                ← adds them to « Lecteurs Embed » (WatchMovie / WatchTv)
+fork.env.example + scripts/fork-env.mjs ← one input file → the three .env files (§11)
 ```
 
 All other fork edits in upstream files are tagged `FORK` — `git grep -n "FORK"` lists them.
@@ -238,6 +240,79 @@ Optional variables in `API/Mainapi/.env`:
 | `FORK_EMBED_PROVIDERS` | *(all)* | Comma list among `vidzy,hd,pandora,viper,frembed,vostfr1`: TMDB-id embed players served by `/api/fork-embeds` and listed under « Lecteurs Embed » |
 
 Code: `utils/forkAllowedDomains.js`, `getShuffledAllProxies()` in `routes/fstream.js`, `withFStreamProxy()` in `utils/proxyManager.js` (all tagged `FORK`).
+
+---
+
+## 11. Deploying a New Brand (`.env` + routing)
+
+One input file per brand, one command for the three `.env` files.
+
+```bash
+cp fork.env.example fork.env     # gitignored
+# fill SITE_DOMAIN, SITE_NAME, TMDB_API_KEY, DB_USER, DB_PASSWORD (+ optional keys)
+npm run fork:env                 # writes .env, API/Mainapi/.env, API/proxiesembed/.env
+npm run fork:env -- --dry-run    # preview, secrets masked, nothing written
+```
+
+What `scripts/fork-env.mjs` does:
+
+- Uses each tracked `.env.example` as template, so new upstream variables appear automatically. `YOUR_…` placeholders become empty.
+- Backs up existing files (`.env.bak-<timestamp>`, gitignored) and **keeps their secrets** (`JWT_SECRET`, `MEDIA_SIGNING_SECRET`, `INTERNAL_API_KEY`, `TURNSTILE_IP_SALT`). Missing ones are generated once and shared between Main API and proxiesembed. Changing `JWT_SECRET` logs everyone out.
+- Fills URLs, CORS (`ALLOWED_DOMAINS`), DB, Redis, ports, `NODE_ENV=production`, `SCRAPE_USE_PROXY=false`, and blanks upstream-only values.
+- Any other variable: add it to `fork.env` with the target prefix — `FE_VITE_ANALYTICS_PROVIDER=plausible`, `API_SWIFTFLOW_API_KEY=…`, `PROXY_DEBRID_ENABLED_PROVIDERS=`.
+- Files are written with mode `600`. `VITE_*` values are baked at build time: rebuild after a change.
+
+### `fork.env` keys
+
+| Key | Required | Effect |
+|-----|----------|--------|
+| `SITE_DOMAIN` | ✔ | Bare hostname, e.g. `papadustream-v2.org` |
+| `SITE_NAME` | | Payment store name; the visible name lives in `branding.ts` |
+| `API_URL`, `PROXY_URL` | | Empty = same domain, routed by path (below). Set them only for subdomains |
+| `EXTRA_DOMAINS` | | Mirror domains allowed by the API |
+| `DEFAULT_MIRRORS` | | Service-worker fallback hostnames. Empty = `SITE_DOMAIN` |
+| `MIRRORS_CONFIG_URL` | | Your own remote mirror list (rentry page or JSON `{"mirrors":[…]}`). Empty = no remote list. Never use `rentry.co/movix`: it lists upstream's mirrors |
+| `TMDB_API_KEY` | ✔ | Used by frontend and Main API |
+| `DB_USER`, `DB_PASSWORD` | ✔ | MySQL, shared by Main API and proxiesembed (`DB_HOST`, `DB_PORT`, `DB_NAME` default to `127.0.0.1`, `3306`, `movix`) |
+| `REDIS_*`, `NUM_WORKERS`, `MAINAPI_PORT`, `PROXIESEMBED_PORT` | | Defaults `127.0.0.1:6379`, `4`, `25565`, `25569` |
+| `TURNSTILE_*` | | Cloudflare Turnstile widgets created for `SITE_DOMAIN` |
+| `JWT_SECRET`, `MEDIA_SIGNING_SECRET`, `INTERNAL_API_KEY`, `TURNSTILE_IP_SALT` | | Leave empty; set only to copy them from another server |
+
+### Routing on one domain
+
+Frontend, Main API and proxiesembed share the brand domain. Main API answers under `/api/` and `/anime/search/` (`/anime` itself is a frontend page). proxiesembed cannot live under a sub-path: it emits root-relative links (`/proxy/…`, `/drm/b/…`, `/uqload-proxy?…`), so its own paths are routed at the root. Its `/api/extract-*` and `/api/debrid/*` routes are only called internally by Main API and stay private.
+
+| Path | Target |
+|------|--------|
+| `/api/`, `/anime/search/` | Main API `127.0.0.1:25565` |
+| `/proxy`, `/proxy/…`, `/drm/…`, `/<name>-proxy` | proxiesembed `127.0.0.1:25569` |
+| everything else | `dist/` (SPA fallback to `index.html`) |
+
+```nginx
+server {
+    server_name papadustream-v2.org;
+    root /www/wwwroot/papadustream-v2.org/dist;
+
+    location /api/          { proxy_pass http://127.0.0.1:25565; include proxy_params; }
+    location /anime/search/ { proxy_pass http://127.0.0.1:25565; include proxy_params; }
+    location ~ ^/(proxy(/|$)|drm/|[a-z]+-proxy$) {
+        proxy_pass http://127.0.0.1:25569; include proxy_params;
+        proxy_buffering off;
+    }
+    location / { try_files $uri /index.html; }
+}
+```
+
+`proxy_pass` has no URI part, so both services receive the original path.
+
+### Checklist for a new brand
+
+1. Server: MySQL, Redis, Node, Python 3 (`API/proxiesembed/.venv`), nginx with HTTPS.
+2. Clone, then `cp` the per-clone files (§0): `branding.ts` (name, logo, favicon, `FEATURES`), `accent.js`, `ecosystem.config.cjs`.
+3. `fork.env` → `npm run fork:env`.
+4. `npm ci && npm run build` at the root. Main API: `npm ci` (see §7 for the `streamed-pk` 404). proxiesembed: `pip install -r requirements.txt`.
+5. nginx as above, then start Main API and proxiesembed (`ecosystem.config.cjs`).
+6. Check: home page, a movie page, and a watch page — « Lecteurs Embed » starts with sharecloudy. In the browser Network tab, `/api/…` and `/proxy/…` must return API/proxy responses, not `index.html`. A 404 or CORS error on `/api/…` means `ALLOWED_DOMAINS` is wrong.
 
 ---
 
