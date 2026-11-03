@@ -51,7 +51,7 @@ let deps = {
   incrementFstreamRequestCounter: () => {}
 };
 
-const WIFLIX_BASE_URL = process.env.WIFLIX_BASE_URL || 'https://flemmix.rip';
+const WIFLIX_BASE_URL = process.env.WIFLIX_BASE_URL || 'https://flemmix.forum'; // FORK: flemmix.rip hors service
 
 const truncateForLog = (value, maxLength = 300) => {
   if (typeof value !== 'string') return value;

@@ -13,7 +13,7 @@ const timeout = () => Object.assign(new Error('timeout of 5000ms exceeded'), { c
 
 // Exécute les vrais makeWiflixRequest / makeWiflixSearchRequest sans aucun
 // relais Cloudflare défini : un appel à un relais lèverait une ReferenceError.
-function fixture({ candidates = [], transport = async () => ({ status: 200, data: page }) } = {}) {
+function fixture({ candidates = [], transport = async () => ({ status: 200, data: page }), proxy = true } = {}) {
   const filename = path.resolve(__dirname, '../proxyManager.js');
   const code = fs.readFileSync(filename, 'utf8');
   const slice = (from, to) => {
@@ -25,6 +25,7 @@ function fixture({ candidates = [], transport = async () => ({ status: 200, data
   const calls = [];
   const context = vm.createContext({
     console: silent,
+    ENABLE_WIFLIX_PROXY: proxy, // FORK: SCRAPE_USE_PROXY / WIFLIX_USE_PROXY
     flemmixCircuit: createSourceCircuitBreaker({ name: 'Flemmix', neutralCodes: ['WIFLIX_NO_EGRESS'], logger: silent }),
     WIFLIX_H_CHECK: '25',
     WIFLIX_PROXY_MAX_ATTEMPTS: 4,
@@ -82,4 +83,19 @@ test('un manque de proxy ne met pas Flemmix en pause', async () => {
 test('une page servie par un proxy est renvoyée telle quelle', async () => {
   const f = fixture({ candidates: ['http://198.51.100.1:8080'] });
   assert.equal((await f.page('https://flemmix.test/film.html')).data, page);
+});
+
+// FORK: mode direct (SCRAPE_USE_PROXY=false), sans aucun proxy candidat.
+test('sans proxy configuré, le mode direct appelle Flemmix depuis le serveur', async () => {
+  const f = fixture({ proxy: false });
+  const response = await f.page('https://flemmix.test/film.html');
+  assert.equal(response.data, page);
+  assert.deepEqual(f.calls, ['https://flemmix.test/film.html']);
+  await f.search('https://flemmix.test/', 'https://flemmix.test/', { data: 'story=x' });
+  assert.deepEqual(f.calls.slice(1), ['https://flemmix.test/']);
+});
+
+test('en mode direct, une page de protection reste un échec', async () => {
+  const f = fixture({ proxy: false, transport: async () => ({ status: 200, data: 'Bot shield active' + 'x'.repeat(200) }) });
+  await assert.rejects(f.page('https://flemmix.test/film.html'), /WIFLIX DIRECT/);
 });

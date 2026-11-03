@@ -120,9 +120,11 @@ const COFLIX_ORIGIN = (
 ).replace(/\/$/, "");
 const ENABLE_FRENCH_STREAM_PROXY = true; // Active/d\u00e9sactive le proxy pour French-Stream
 const ENABLE_LECTEURVIDEO_PROXY = true; // Active/d\u00e9sactive le proxy pour LecteurVideo
-const ENABLE_FSTREAM_PROXY = true; // Active/d\u00e9sactive le proxy pour FStream
+// FORK: piloté par FSTREAM_USE_PROXY / SCRAPE_USE_PROXY (défaut false = appel direct).
+const ENABLE_FSTREAM_PROXY = require('./forkScrapeProxy').isScrapeProxyEnabled('FSTREAM');
 const ENABLE_ANIME_PROXY = true; // Active/d\u00e9sactive le proxy pour AnimeSama (CycleTLS + SOCKS5)
-const ENABLE_WIFLIX_PROXY = true; // Active/d\u00e9sactive le proxy pour Wiflix
+// FORK: piloté par WIFLIX_USE_PROXY / SCRAPE_USE_PROXY (défaut false = appel direct).
+const ENABLE_WIFLIX_PROXY = require('./forkScrapeProxy').isScrapeProxyEnabled('WIFLIX');
 const WIFLIX_PROXY_BLOCK_WEBHOOK_ENABLED = !['0', 'false', 'no', 'off'].includes(
   String(process.env.WIFLIX_PROXY_BLOCK_WEBHOOK_ENABLED || 'true').trim().toLowerCase(),
 );
@@ -2492,6 +2494,23 @@ async function requestWiflixPage(targetUrl, options = {}) {
     ...mergedHeaders,
   };
 
+  // FORK: sans proxy (ENABLE_WIFLIX_PROXY = false), requête depuis l'IP du serveur.
+  if (!ENABLE_WIFLIX_PROXY) {
+    const response = await axios({
+      url: targetUrl,
+      method,
+      headers: defaultHeaders,
+      timeout,
+      decompress,
+      ...(requestData !== undefined ? { data: requestData } : {}),
+      ...otherOptions,
+    });
+    const body = typeof response.data === "string" ? response.data : "";
+    if (response.status === 200 && body.length > 100 && !isWiflixShieldBody(body)) return response;
+    throw Object.assign(new Error(`[WIFLIX DIRECT] reponse invalide status=${response.status} size=${body.length}`),
+      { wiflixStatus: response.status });
+  }
+
   // --- Phase 1: last Redis success first, then ProxyScrape, configured and free proxies ---
   const outcome = await runWiflixProxyAttempts({
     affinity: wiflixCandidateAffinity,
@@ -2626,6 +2645,11 @@ async function requestWiflixSearch(homeUrl, searchUrl, options = {}) {
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
     ...headers,
   };
+
+  // FORK: sans proxy, même poignée de main depuis l'IP du serveur.
+  if (!ENABLE_WIFLIX_PROXY) {
+    return wiflixHandshake(homeUrl, searchUrl, baseHeaders, pdata, {}, timeout, "direct");
+  }
 
   // --- Phase 1: last Redis success first, then ProxyScrape, configured and free proxies ---
   // GET d'accueil + POST de recherche : deux requêtes par proxy.

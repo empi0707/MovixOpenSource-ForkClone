@@ -96,7 +96,11 @@ async function sourceFixture(t, { initial = good, search, page = () => '<h1>Fich
         calls.search.push(query);
         return { data: search(query) };
       },
-      makeWiflixRequest: async url => { calls.page.push(url); return { data: page(url) }; },
+      makeWiflixRequest: async url => {
+        // FORK: ancien moteur — la recherche GET /recherche répond 404, repli sur le POST.
+        if (url.includes('/recherche?')) throw Object.assign(new Error('404'), { response: { status: 404 } });
+        calls.page.push(url); return { data: page(url) };
+      },
       refreshStep: (stage, _details, error) => steps.push(`${stage}${error ? ` ${error.code}` : ''}`),
       reportRefreshFailure: reason => reports.push(reason),
       withRefreshDiagnostics: (_details, _redis, work) => work(),

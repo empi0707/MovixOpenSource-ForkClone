@@ -38,7 +38,7 @@ const respondWithMovieSources = (req, res, payload, status = 200) =>
     movieMapKey: 'players',
     label: 'FSTREAM MOVIE',
   });
-const { PROXIES, DARKINO_PROXIES, withFStreamProxy } = require('../utils/proxyManager');
+const { PROXIES, DARKINO_PROXIES, withFStreamProxy, ENABLE_FSTREAM_PROXY } = require('../utils/proxyManager');
 
 // === FStream Configuration ===
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
@@ -781,6 +781,8 @@ function extractBaseUrlFromLink(url) {
 
 // Construit une liste melangee de proxies SOCKS5 + Darkino HTTP
 function getShuffledAllProxies() {
+  // FORK: proxy désactivé (FSTREAM_USE_PROXY / SCRAPE_USE_PROXY) : appel direct uniquement.
+  if (!ENABLE_FSTREAM_PROXY) return [{ type: 'direct' }];
   const all = [];
   // Ajouter les SOCKS5
   if (PROXIES && PROXIES.length > 0) {

@@ -34,8 +34,12 @@ function load(globals) {
   return context;
 }
 
+// FORK: ancien moteur DLE — la recherche GET /recherche répond 404, repli sur le POST.
+const notFound = async () => { throw Object.assign(new Error('404'), { response: { status: 404 } }); };
+
 async function search(title, html) {
   return load({
+    makeWiflixRequest: notFound,
     makeWiflixSearchRequest: async (_home, _url, options) => {
       assert.equal(new URLSearchParams(options.data).get('story'), title);
       return { data: html };
@@ -176,4 +180,37 @@ test('le coupe-circuit Flemmix reste une indisponibilité, sans journal à chaqu
     '[WIFLIX SEARCH] Echec: timeout of 15000ms exceeded',
     '[WIFLIX PLAYERS] Echec: timeout of 15000ms exceeded',
   ]);
+});
+
+// FORK: moteur flemmix.forum — GET /recherche?q= sans la saison, une fiche par
+// série, saison choisie par l'URL <fiche>-saison-N.html ; lecteurs dans onclick.
+test('flemmix.forum : recherche GET sans saison et URL de saison construite', async () => {
+  const queries = [];
+  const ctx = load({
+    makeWiflixRequest: async (url) => { queries.push(url); return { data: card('La maison du dragon', '/serie-en-streaming/70498-la-maison-du-dragon.html')
+      + card('Les Misérables', '/film-en-streaming/87285-les-miserables.html') }; },
+    makeWiflixSearchRequest: async () => { throw new Error('POST inattendu'); },
+  });
+  const result = await ctx.search('La maison du dragon saison 2');
+  assert.deepEqual(queries, [`${base}/recherche?q=La%20maison%20du%20dragon`]);
+  assert.equal(result.url, `${base}/serie-en-streaming/70498-la-maison-du-dragon-saison-2.html`);
+});
+
+test('flemmix.forum : lecteurs lus dans flemmixLoadSeriesVideo / flemmixLoadMovieVideo', async () => {
+  // Décodage des liens, défini avant la tranche chargée par load().
+  const linkSource = source.slice(source.indexOf('function decodeWiflixStream('), source.indexOf('// === Cache helpers'));
+  const withLinks = (ctx) => { ctx.Buffer = Buffer; vm.runInContext(linkSource, ctx, { filename }); return ctx; };
+  const link = (fn, url, name) => `<a href="javascript:void(0)" onclick="return ${fn}(&quot;${url.replace(/\//g, '\\/')}&quot;, this)"><span class="clichost">${name}</span></a>`;
+  const series = withLinks(load({ parseSourceIdentity: () => ({}), makeWiflixRequest: async () => ({ data: `<div class="ep1vf flemmix-episode-hosts">${link('flemmixLoadSeriesVideo', 'https://vidzy.cc/embed-abc.html', 'Vidzy')}</div>` }) }));
+  const tv = await series.extract(`${base}/serie.html`);
+  assert.equal(JSON.stringify(tv.players.map(p => [p.url, p.episode, p.type])), JSON.stringify([['https://vidzy.cc/embed-abc.html', 1, 'VF']]));
+  const movie = withLinks(load({ parseSourceIdentity: () => ({}), makeWiflixRequest: async () => ({ data: `<div class="tabs-sel linkstab">${link('flemmixLoadMovieVideo', 'https://luluvdo.com/e/xyz', 'LuLuTV')}</div>` }) }));
+  const film = await movie.extract(`${base}/film.html`);
+  assert.equal(JSON.stringify(film.players.map(p => p.url)), JSON.stringify(['https://luluvdo.com/e/xyz']));
+});
+
+test('flemmix.forum : une saison absente (404) est introuvable, pas une panne', async () => {
+  const ctx = load({ makeWiflixRequest: notFound });
+  const page = await ctx.extract(`${base}/serie-saison-9.html`);
+  assert.equal(page.notFound, true);
 });

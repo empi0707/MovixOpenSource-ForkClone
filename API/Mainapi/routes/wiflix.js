@@ -46,7 +46,7 @@ const { fetchCinestreamMovieData } = require("./cinestream");
 const TMDB_API_KEY = process.env.TMDB_API_KEY || "";
 const TMDB_API_URL = "https://api.themoviedb.org/3";
 // Source rotates domains (flemmix.fast -> flemmix.rip -> ...). Override via env, no code change.
-const WIFLIX_BASE_URL = process.env.WIFLIX_BASE_URL || "https://flemmix.rip";
+const WIFLIX_BASE_URL = process.env.WIFLIX_BASE_URL || "https://flemmix.forum"; // FORK: flemmix.rip hors service
 
 // Les lecteurs portent désormais leur URL dans `data-v` (base64 puis ROT13,
 // cf. decodeStream du site) ; l'ancien `onclick="loadVideo('…')"` reste lu.
@@ -67,8 +67,9 @@ function decodeWiflixStream(value) {
 function wiflixLinkUrl($link) {
   const fromData = decodeWiflixStream($link.attr("data-v"));
   if (fromData) return fromData;
-  const match = ($link.attr("onclick") || "").match(/loadVideo\('([^']+)'/);
-  return match ? match[1] : null;
+  // FORK: flemmix.forum — onclick="return flemmixLoad(Movie|Series)Video("https:\/\/…", this)".
+  const match = ($link.attr("onclick") || "").match(/[lL]oad\w*Video\(\s*["']([^"']+)["']/);
+  return match ? match[1].replace(/\\\//g, "/") : null;
 }
 
 // Le site saute lui-même ces hébergeurs au profit du lien suivant.
@@ -202,21 +203,35 @@ async function searchWiflixMovie(title, baseUrl = WIFLIX_BASE_URL) {
   const payload = `do=search&subaction=search&story=${encodeURIComponent(title)}`;
   try {
     let responseBody = null;
+    let seasonPerPage = false; // FORK: moteur flemmix.forum (une fiche par série)
 
     try {
-      // Cookie handshake: GET homepage to harvest the bot-shield session cookie,
-      // then POST the search with it + h_check=25 on the same proxy.
-      const res = await makeWiflixSearchRequest(baseUrl + "/", searchUrl, {
-        data: payload,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Referer": baseUrl + "/",
-          "Origin": baseUrl,
-        },
+      // FORK: moteur flemmix.forum — recherche GET /recherche?q= (le POST
+      // do=search y répond 404). Sans « saison N », que ce moteur ne comprend
+      // pas : la saison est choisie plus bas via l'URL <fiche>-saison-N.html.
+      const query = title.replace(/\s+saison\s+\d+\b/i, "").trim();
+      const res = await makeWiflixRequest(`${baseUrl}/recherche?q=${encodeURIComponent(query)}`, {
+        headers: { Referer: baseUrl + "/" },
         timeout: 15000,
+      }).then((response) => {
+        seasonPerPage = true;
+        return response;
+      }, (err) => {
+        if (err?.response?.status !== 404 && err?.wiflixStatus !== 404) throw err;
+        // Ancien moteur DLE. Cookie handshake: GET homepage to harvest the
+        // bot-shield session cookie, then POST the search with it + h_check=25.
+        return makeWiflixSearchRequest(baseUrl + "/", searchUrl, {
+          data: payload,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Referer": baseUrl + "/",
+            "Origin": baseUrl,
+          },
+          timeout: 15000,
+        });
       });
       responseBody = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
-      console.log(`[WIFLIX SEARCH] OK via proxy`);
+      console.log(`[WIFLIX SEARCH] OK`);
     } catch (err) {
       if (!isSourceCircuitOpen(err)) console.log(`[WIFLIX SEARCH] Echec: ${err.message}`);
       refreshStep('search_error', { query: title }, err);
@@ -244,7 +259,7 @@ async function searchWiflixMovie(title, baseUrl = WIFLIX_BASE_URL) {
       const $titleLink = $block.find("a.mov-t");
       if (!$titleLink.length) return;
 
-      const href = $titleLink.attr("href");
+      let href = $titleLink.attr("href"); // FORK: let (saison flemmix.forum)
       if (!href) return;
 
       const resultTitle = $titleLink.text().trim();
@@ -288,6 +303,12 @@ async function searchWiflixMovie(title, baseUrl = WIFLIX_BASE_URL) {
             }
           }
 
+          // FORK: flemmix.forum — une seule fiche par série, une page par saison
+          // (<fiche>-saison-N.html, 404 si la saison n'existe pas).
+          if (seasonPerPage && resultSeasonNum === null && /\/serie-[^?#]*\.html$/i.test(href)) {
+            href = href.replace(/\.html$/i, `-saison-${searchSeason}.html`);
+            resultSeasonNum = searchSeason;
+          }
           if (resultSeasonNum === null || searchSeason !== resultSeasonNum)
             return;
         }
@@ -370,9 +391,13 @@ async function extractWiflixPlayers(pageUrl) {
         },
       });
       rawHtml = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
-      console.log(`[WIFLIX PLAYERS] OK via proxy`);
+      console.log(`[WIFLIX PLAYERS] OK`);
     } catch (err) {
       if (!isSourceCircuitOpen(err)) console.log(`[WIFLIX PLAYERS] Echec: ${err.message}`);
+      // FORK: saison absente (<fiche>-saison-N.html en 404) : fiche introuvable, pas une panne.
+      if (err?.response?.status === 404 || err?.wiflixStatus === 404) {
+        return { players: [], releaseYear: null, notFound: true, debugHtml: null };
+      }
     }
 
     if (!rawHtml) {
@@ -522,6 +547,7 @@ async function loadWiflixMovieData(tmdbId, cachedData) {
           if (triedUrls.has(candidate.url) || triedUrls.size >= 8) continue;
           triedUrls.add(candidate.url);
           const extraction = await extractWiflixPlayers(candidate.url);
+          if (extraction.notFound) continue; // FORK: fiche en 404
           if (!extraction.identity) {
             unavailable = true;
             refreshStep('candidate_fetch_failed', { url: candidate.url });
@@ -624,6 +650,7 @@ async function loadWiflixTvData(tmdbId, season, cachedData) {
           if (triedUrls.has(candidate.url) || triedUrls.size >= 8) continue;
           triedUrls.add(candidate.url);
           const extraction = await extractWiflixPlayers(candidate.url);
+          if (extraction.notFound) continue; // FORK: saison absente sur la fiche
           if (!extraction.identity) {
             unavailable = true;
             refreshStep('candidate_fetch_failed', { url: candidate.url });
