@@ -145,14 +145,12 @@ Upstream features are **hidden, not deleted**: their files stay untouched so ups
 | `community` | Matrix/Telegram banners, announcement popup and links |
 | `suggestions` · `alerts` | `/suggestion`; `/alerts`, alert bell, alert notifications |
 | `appsPromo` | `/app`, `/app-tv`, `/extension`, `/frais` |
-| `upstreamLinks` | Links to movix.online, footer "Built with" section |
+| `upstreamLinks` | Upstream footer (source code, community, "Built with", author credits) and links to movix.online. Off = clone footer `src/components/fork/ForkFooter.tsx`: content notice, Terms / Privacy / About, copyright in the clone's name |
 
 How it works:
 - **Routes** of a disabled feature render the 404 page (`src/components/fork/FeatureGate.tsx`, wrapped around `<Routes>` in `App.tsx`).
 - **Links** to those routes (and the related external links) are hidden by a global stylesheet from `FeatureGate`, which also covers scattered links in upstream pages.
 - **Entry points** (header Explore menu, footer, profile menu, settings sidebar, popups, player button, detail-page comments) are filtered with `isFeatureEnabled` / `isLinkEnabled`, each edit tagged `// FORK: feature flags`.
-
-The GitHub source-code link and the footer credits are never hidden: the CC BY-NC 4.0 license requires attribution.
 
 To add a flag: add it to `FeatureFlags` and `DEFAULT_FEATURES` in `features.ts`, map its routes in `FEATURE_PATHS`, then add it to `branding.example.ts`.
 
@@ -201,6 +199,7 @@ src/components/
 src/hooks/useBranding.ts ← merges branding.ts + localStorage override
 src/i18n/index.ts        ← DEFAULT_LANGUAGE
 
+src/components/fork/ForkFooter.tsx     ← clone footer (when upstreamLinks is off)
 API/Mainapi/utils/forkAllowedDomains.js ← ALLOWED_DOMAINS (domainRestriction + CORS)
 API/Mainapi/utils/forkScrapeProxy.js   ← SCRAPE_USE_PROXY / <SOURCE>_USE_PROXY
 API/Mainapi/routes/forkEmbeds.js       ← /api/fork-embeds (Fronav + TMDB-id players)

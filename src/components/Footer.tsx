@@ -21,6 +21,7 @@ import webassemblyLogo from '@/assets/technology-logos/webassembly.svg';
 import { SiteWordmark } from './brand/SiteWordmark'; // FORK: branding
 import './Footer.css';
 import { isFeatureEnabled, isLinkEnabled } from '@/config/features'; // FORK: feature flags
+import ForkFooter from './fork/ForkFooter'; // FORK: pied de page des clones
 
 // Développé avec ❤️ par @mysticsaba, projet commencé à 14 ans.
 const createFooterMaskIcon = (logo: string) => ({ className, size = 20 }: LucideProps) => (
@@ -184,4 +185,7 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+// FORK: sans upstreamLinks, pied de page des clones (sans code source ni crédits d'upstream).
+const FooterFeature = () => (isFeatureEnabled('upstreamLinks') ? <Footer /> : <ForkFooter />);
+
+export default FooterFeature;
