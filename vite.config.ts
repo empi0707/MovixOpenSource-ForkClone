@@ -5,6 +5,7 @@ import { resolve } from 'path'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
+import { forkBranding } from './vite.fork-branding' // FORK: branding par clone
 
 const buildId = process.env.VITE_APP_BUILD_ID || process.env.CF_PAGES_COMMIT_SHA || process.env.COMMIT_REF || new Date().toISOString()
 process.env.VITE_APP_BUILD_ID = buildId
@@ -200,6 +201,7 @@ export default defineConfig(({ mode, command }) => {
     plugins: [
       react(),
       injectPublicConfig(),
+      forkBranding(), // FORK
       // Deux sorties issues du même code : modules natifs pour les navigateurs
       // modernes, SystemJS + polyfills pour les anciens, jusqu'à Chrome 53
       // (TV LG webOS 4). Le plugin conserve sa cible et sa détection modernes

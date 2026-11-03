@@ -121,5 +121,10 @@
   "overrides": {
     "framer-motion": "11.11.10",
     "es-toolkit": "1.39.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true,
+    "workerd": true
   }
 }

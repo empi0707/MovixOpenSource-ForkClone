@@ -38,4 +38,7 @@ const TelegramPromotion: React.FC = () => {
   );
 };
 
-export default TelegramPromotion;
+// FORK: feature flags — rendu seulement si « community » est activé.
+import { isFeatureEnabled } from '@/config/features';
+const TelegramPromotionFeature = (props: React.ComponentProps<typeof TelegramPromotion>) => (isFeatureEnabled('community') ? <TelegramPromotion {...props} /> : null);
+export default TelegramPromotionFeature;

@@ -6,6 +6,7 @@ import { SCRIPT_AD_MODE_ENABLED, loadAdScript } from '../utils/adScriptMode';
 import { readLocalStorage } from '../utils/browserStorage';
 import { readHalloweenTheme } from '../hooks/useHalloweenTheme';
 import { useLightMode } from './LightModeContext';
+import { isFeatureEnabled } from '../config/features'; // FORK: feature flags
 
 
 interface AdFreePopupContextType {
@@ -156,6 +157,12 @@ export const AdFreePopupProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const showPopupForPlayer = useCallback((playerType: string, additionalInfo?: any) => {
     // First check VIP status via server-verified utility
     const isVipUser = isUserVip() || is_vip;
+
+    // FORK: feature flags — popup pub désactivé : lecteur chargé directement, comme pour un VIP.
+    if (!isFeatureEnabled('adPopup')) {
+      setShouldLoadIframe(true);
+      return;
+    }
 
     if (isVipUser) {
       setIsVip(true); // Ensure state is in sync with localStorage

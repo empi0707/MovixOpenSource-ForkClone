@@ -19,6 +19,7 @@ import CustomSlider from '../components/CustomSlider';
 import { SearchGridCard, SearchListCard } from '../components/SearchCard';
 import ReactCountryFlag from 'react-country-flag';
 import { useAgeRestrictedContent } from '../hooks/useAgeRestrictedContent';
+import { BRANDING } from '@/config/branding'; // FORK: branding
 
 type ViewType = 'grid' | 'list';
 
@@ -590,7 +591,7 @@ const Search: React.FC = () => {
 
     // Set simple title
     React.useEffect(() => {
-        document.title = `${t('search.title')} - Movix`;
+        document.title = `${t('search.title')} - ${BRANDING.siteName}`;
     }, []);
 
     const filtersActive = showFilters || selectedGenres.length > 0 || director || actor || year || selectedKeywords.length > 0 || selectedLanguage || selectedCountry || selectedProviders.length > 0;

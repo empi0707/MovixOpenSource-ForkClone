@@ -18,8 +18,9 @@ import redisLogo from '@/assets/technology-logos/redis.svg';
 import socketLogo from '@/assets/technology-logos/socketdotio.svg';
 import rustLogo from '@/assets/technology-logos/rust.svg';
 import webassemblyLogo from '@/assets/technology-logos/webassembly.svg';
-import { MovixWordmark } from './brand/MovixWordmark';
+import { SiteWordmark } from './brand/SiteWordmark'; // FORK: branding
 import './Footer.css';
+import { isFeatureEnabled, isLinkEnabled } from '@/config/features'; // FORK: feature flags
 
 // Développé avec ❤️ par @mysticsaba, projet commencé à 14 ans.
 const createFooterMaskIcon = (logo: string) => ({ className, size = 20 }: LucideProps) => (
@@ -66,6 +67,11 @@ const linkGroups: { title: string; links: FooterLink[] }[] = [
   },
 ];
 
+// FORK: feature flags — liens des fonctionnalités désactivées retirés.
+const visibleLinkGroups = linkGroups
+  .map((group) => ({ ...group, links: group.links.filter((link) => isLinkEnabled(link.to ?? link.href ?? '')) }))
+  .filter((group) => group.links.length > 0);
+
 const technologies = [
   { name: 'React', href: 'https://react.dev/', logo: reactLogo },
   { name: 'TypeScript', href: 'https://www.typescriptlang.org/', logo: typescriptLogo },
@@ -92,11 +98,11 @@ const Footer = () => {
     <footer data-site-footer className="relative z-10 border-t border-gray-800 bg-black py-8 text-gray-300 sm:py-10">
       <div className="mx-auto max-w-6xl px-6 text-left sm:px-10 lg:px-12">
         <nav aria-label={t('footer.navigation')} className="grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-3 sm:gap-x-10">
-          {linkGroups.map((group, index) => (
+          {visibleLinkGroups.map((group, index) => ( /* FORK: feature flags */
             <div key={group.title} className={`min-w-0 ${index === 2 ? 'col-span-2 sm:col-span-1' : ''}`}>
               <h2 className="mb-2 text-base font-semibold text-white">
                 {/* La colonne Movix porte le logo long, à la hauteur d'une ligne de titre. */}
-                {group.title === 'footer.movix' ? <MovixWordmark className="block h-6 w-auto" /> : t(group.title)}
+                {group.title === 'footer.movix' ? <SiteWordmark className="block h-6 w-auto" /> : t(group.title)}
               </h2>
               <ul>
                 {group.links.map(({ label, icon: Icon, to, href }) => (
@@ -119,6 +125,7 @@ const Footer = () => {
           ))}
         </nav>
 
+        {isFeatureEnabled('upstreamLinks') && ( /* FORK: feature flags */
         <section aria-labelledby="footer-technologies" className="mt-7 border-t border-gray-800 pt-6">
           <h2 id="footer-technologies" className="text-sm font-semibold text-gray-300">{t('footer.builtWith')}</h2>
           <ul className="mt-2 flex flex-wrap gap-x-5">
@@ -141,6 +148,7 @@ const Footer = () => {
             ))}
           </ul>
         </section>
+        )}
 
         <section aria-labelledby="footer-content" className="mt-6 max-w-prose">
           <h2 id="footer-content" className="mb-2 text-sm font-semibold text-gray-300">{t('footer.contentTitle')}</h2>

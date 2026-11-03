@@ -68,6 +68,8 @@ import { getCoverImageWidth, getTmdbImageProps, getTmdbImageUrl } from '../utils
 import { readLocalStorage, writeLocalStorage } from '../utils/browserStorage';
 import { useTitleHistory } from '../hooks/useTitleHistory';
 import { mergeEpisode, seedProgress, serverEpisodeMap, seriesFullyMarked, seriesResume } from '../utils/titleHistoryMerge';
+import { BRANDING } from '@/config/branding'; // FORK: branding
+import { isFeatureEnabled } from '@/config/features'; // FORK: feature flags
 
 const MAIN_API = import.meta.env.VITE_MAIN_API;
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
@@ -2284,7 +2286,7 @@ const TVDetails: React.FC = () => {
   useEffect(() => {
     if (tvShow) {
       // Simple TV show title
-      document.title = `${tvShow.name} - Movix`;
+      document.title = `${tvShow.name} - ${BRANDING.siteName}`;
     } else {
       document.title = t('details.tvShowDefaultTitle');
     }
@@ -3148,12 +3150,12 @@ const TVDetails: React.FC = () => {
   const { last: lastBroadcastEpisode, next: nextBroadcastEpisode } = getEpisodeTimeline(timelineEpisodes, airingSchedule, airingNow);
   const lastBroadcastAiring = lastBroadcastEpisode ? resolveEpisodeAiring(lastBroadcastEpisode, airingSchedule, airingNow) : null;
   const nextBroadcastAiring = nextBroadcastEpisode ? resolveEpisodeAiring(nextBroadcastEpisode, airingSchedule, airingNow) : null;
-  const tvTitle = tvYear ? `${tvShow.name} (${tvYear}) - Movix` : `${tvShow.name} - Movix`;
+  const tvTitle = tvYear ? `${tvShow.name} (${tvYear}) - ${BRANDING.siteName}` : `${tvShow.name} - ${BRANDING.siteName}`;
   const tvCanonicalUrl = buildSiteUrl(`/tv/${encodedId || id}`);
   const tvSocialImage = tvShow.backdrop_path || tvShow.poster_path
     ? `https://image.tmdb.org/t/p/original${tvShow.backdrop_path || tvShow.poster_path}`
     : undefined;
-  const tvDescription = tvShow.overview?.trim() || `Découvrez ${tvShow.name} sur Movix.`;
+  const tvDescription = tvShow.overview?.trim() || `Découvrez ${tvShow.name} sur ${BRANDING.siteName}.`;
   const posterCssWidth = viewportWidth < 768
     ? viewportWidth - 32
     : viewportWidth < 1024
@@ -3576,6 +3578,7 @@ const TVDetails: React.FC = () => {
                 )}
 
                 {/* Bouton Commentaires (scroll vers la section) */}
+                {isFeatureEnabled('comments') && ( /* FORK: feature flags */
                 <motion.button
                   onClick={() => {
                     // Scroll vers les commentaires
@@ -3590,6 +3593,7 @@ const TVDetails: React.FC = () => {
                     {t('details.commentsTab')}
                   </div>
                 </motion.button>
+                )}
               </div>
               {isTabsScrollable && (
                 <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-black to-transparent pointer-events-none flex items-center justify-end pr-2">
@@ -5652,6 +5656,7 @@ const TVDetails: React.FC = () => {
           Le ref est ancré sur le wrapper (toujours rendu) pour que le bouton
           "Commentaires" puisse scroller même avant le chargement lazy. */}
       <div ref={commentsRef} id="comments-section">
+        {isFeatureEnabled('comments') && ( /* FORK: feature flags */
         <LazySection
           index={1}
           immediateLoadCount={0}
@@ -5667,6 +5672,7 @@ const TVDetails: React.FC = () => {
             <CommentsSection contentType="tv" contentId={id!} />
           </motion.div>
         </LazySection>
+        )}
       </div>
 
       {showSimilarModal && (

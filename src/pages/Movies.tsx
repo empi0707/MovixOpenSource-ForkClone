@@ -14,6 +14,7 @@ import { useWrappedTracker } from '../hooks/useWrappedTracker';
 import { getTmdbLanguage } from '../i18n';
 import { readSessionStorage, writeSessionStorage } from '../utils/browserStorage';
 import { getMinimumCarouselCategoryItems, makeExclusiveCategories } from '../utils/exclusiveCategories';
+import { BRANDING } from '@/config/branding'; // FORK: branding
 
 // Nombre de sections à charger immédiatement
 const IMMEDIATE_LOAD_COUNT = 2;
@@ -856,7 +857,7 @@ const Movies: React.FC = () => {
 
   useEffect(() => {
     // Simple title for Movies page
-    document.title = `${t('movies.title')} - Movix`;
+    document.title = `${t('movies.title')} - ${BRANDING.siteName}`;
   }, []);
 
   React.useEffect(() => {

@@ -96,4 +96,7 @@ const AlertButton: React.FC<AlertButtonProps> = ({
   );
 };
 
-export default AlertButton;
+// FORK: feature flags — rendu seulement si « alerts » est activé.
+import { isFeatureEnabled } from '@/config/features';
+const AlertButtonFeature = (props: React.ComponentProps<typeof AlertButton>) => (isFeatureEnabled('alerts') ? <AlertButton {...props} /> : null);
+export default AlertButtonFeature;

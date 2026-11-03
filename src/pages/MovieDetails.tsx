@@ -38,6 +38,8 @@ import { readLocalStorage, writeLocalStorage } from '../utils/browserStorage';
 import { useTitleHistory } from '../hooks/useTitleHistory';
 import { localProgressFinished, movieResume, movieWatchedState, seedProgress } from '../utils/titleHistoryMerge';
 import { EstimateInfoDialog } from '../components/profile/EstimateInfo';
+import { BRANDING } from '@/config/branding'; // FORK: branding
+import { isFeatureEnabled } from '@/config/features'; // FORK: feature flags
 
 const MAIN_API = import.meta.env.VITE_MAIN_API;
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
@@ -1701,9 +1703,9 @@ const MovieDetails = (): JSX.Element => {
       const genres = movie.genres?.map(g => g.name).join(', ') || '';
 
       // Simple movie title
-      document.title = `${movie.title} - Movix`;
+      document.title = `${movie.title} - ${BRANDING.siteName}`;
     } else {
-      document.title = 'Film - Movix';
+      document.title = `Film - ${BRANDING.siteName}`;
     }
   }, [movie, id]);
 
@@ -1881,12 +1883,12 @@ const MovieDetails = (): JSX.Element => {
     : null;
   const movieIsReleased = movieReleases.referenceDate !== null
     && !isMovieReleaseDatePending(movieReleases.referenceDate, releaseNow);
-  const movieTitle = movieYear ? `${movie.title} (${movieYear}) - Movix` : `${movie.title} - Movix`;
+  const movieTitle = movieYear ? `${movie.title} (${movieYear}) - ${BRANDING.siteName}` : `${movie.title} - ${BRANDING.siteName}`;
   const movieCanonicalUrl = buildSiteUrl(`/movie/${encodedId || id}`);
   const movieSocialImage = movie.backdrop_path || movie.poster_path
     ? `https://image.tmdb.org/t/p/original${movie.backdrop_path || movie.poster_path}`
     : undefined;
-  const movieDescription = movie.overview?.trim() || `Découvrez ${movie.title} sur Movix.`;
+  const movieDescription = movie.overview?.trim() || `Découvrez ${movie.title} sur ${BRANDING.siteName}.`;
   const posterCssWidth = viewportWidth < 768
     ? viewportWidth - 32
     : viewportWidth < 1024
@@ -2343,6 +2345,7 @@ const MovieDetails = (): JSX.Element => {
                 )}
 
                 {/* Bouton Commentaires (scroll vers la section) */}
+                {isFeatureEnabled('comments') && ( /* FORK: feature flags */
                 <motion.button
                   onClick={() => {
                     // Scroll vers les commentaires
@@ -2357,6 +2360,7 @@ const MovieDetails = (): JSX.Element => {
                     {t('details.commentsTab')}
                   </div>
                 </motion.button>
+                )}
               </div>
 
               {/* Indicateur de défilement à droite */}
@@ -3696,6 +3700,7 @@ const MovieDetails = (): JSX.Element => {
             Ref ancré sur le wrapper (toujours rendu) pour que le bouton
             "Commentaires" puisse scroller avant le chargement lazy. */}
         <div ref={commentsRef} id="comments-section">
+          {isFeatureEnabled('comments') && ( /* FORK: feature flags */
           <LazySection
             index={1}
             immediateLoadCount={0}
@@ -3711,6 +3716,7 @@ const MovieDetails = (): JSX.Element => {
               <CommentsSection contentType="movie" contentId={id!} />
             </motion.div>
           </LazySection>
+          )}
         </div>
 
         {/* Modal Rapport */}

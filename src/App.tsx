@@ -3,6 +3,10 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigationType,
 import { Toaster } from './components/ui/sonner';
 import { TooltipProvider } from './components/ui/tooltip';
 import Header from './components/Header';
+import BrandingSync from './components/BrandingSync'; // FORK: branding
+import AdBanner from './components/AdBanner'; // FORK: bannière pub (branding.ts → adBanner)
+import { FeatureGate } from './components/fork/FeatureGate'; // FORK: feature flags
+import { isFeatureEnabled } from './config/features'; // FORK: feature flags
 import Home from './pages/Home';
 import DnsBlockBanner from './components/DnsBlockBanner';
 import { AdFreePopupProvider } from './context/AdFreePopupContext';
@@ -1714,7 +1718,8 @@ const ProfileGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [isLoading, profiles.length, isAuthenticated, loadingTimedOut]);
 
   // La démonstration Wrapped utilise exclusivement des fixtures, sans profil.
-  if (!isAuthenticated || isVipUser || isVipAuth || isWatchRoute || isBip39LinkRoute || isOauthAuthorizeRoute || isWrappedTestRoute(location.pathname, location.search)) {
+  // FORK: comptes publics désactivés → pas de sélection de profil forcée (admin BIP39 inclus).
+  if (!isFeatureEnabled('publicAuth') || !isAuthenticated || isVipUser || isVipAuth || isWatchRoute || isBip39LinkRoute || isOauthAuthorizeRoute || isWrappedTestRoute(location.pathname, location.search)) {
     if (isWatchRoute || isBip39LinkRoute || isOauthAuthorizeRoute) {
       debugAppLog('ProfileGate: Skipping profile gate for route:', location.pathname);
     }
@@ -1905,9 +1910,10 @@ const AppWithIntro: React.FC = () => {
       <HalloweenAtmosphere suspended={!shouldShowHeader} />
       <PersistenceManager />
       <div className={shouldShowHeader && !isHeroHeaderPage ? 'pt-20' : ''}>
-        <AlertNotificationManager />
-        <DefaultProfileNudge />
+        {isFeatureEnabled('alerts') && <AlertNotificationManager />}{/* FORK: feature flags */}
+        {isFeatureEnabled('publicAuth') && <DefaultProfileNudge />}{/* FORK: feature flags */}
         <ProfileGate>
+          <FeatureGate fallback={<NotFound />}>{/* FORK: routes des fonctionnalités désactivées → 404 */}
           <Routes>
             {/* Eager — landing page, kept in main bundle */}
             <Route path="/" element={<Home />} />
@@ -1932,6 +1938,7 @@ const AppWithIntro: React.FC = () => {
             {/* 404 — eager (frequently entered cold) */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </FeatureGate>
         </ProfileGate>
         {!isWatchRoute && <Footer />}
       </div>
@@ -2043,6 +2050,8 @@ function App() {
                   <TurnstileProvider>
                     <IntroProvider>
                       <IOSHomeScreenHandler />
+                      <BrandingSync />
+                      <AdBanner />
                       <AppWithIntro />
                       <TopProgressBar />
                       <Toaster position="bottom-right" richColors />

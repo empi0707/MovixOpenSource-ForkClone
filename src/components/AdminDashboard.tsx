@@ -9,6 +9,7 @@ import {
   Link2,
   ListOrdered,
   MessageSquare,
+  Palette,
   Plug,
   ShieldCheck,
   Sparkles,
@@ -30,6 +31,7 @@ import StreamingLinksManager from './StreamingLinksManager';
 import VipInvoicesManager from './VipInvoicesManager';
 import VipKeysManager from './VipKeysManager';
 import AnimatedBorderCard from './ui/animated-border-card';
+import BrandingManager from './BrandingManager'; // FORK: branding
 import ShinyText from './ui/shiny-text';
 
 type AdminSection =
@@ -44,7 +46,8 @@ type AdminSection =
   | 'shared-lists'
   | 'reports'
   | 'help-feedback'
-  | 'team';
+  | 'team'
+  | 'branding'; // FORK
 
 interface AdminDashboardProps {
   role: 'admin' | 'uploader';
@@ -65,6 +68,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ role }) => {
 
   const allSections = useMemo<DashboardSection[]>(
     () => [
+      // FORK: personnalisation du clone (nom, logo, favicon)
+      {
+        id: 'branding',
+        title: 'Branding',
+        description: 'Nom du site, logo, favicon — personnalisez ce clone',
+        icon: Palette,
+        accent: 'text-orange-300',
+        highlight: '253 186 116'
+      },
       {
         id: 'team',
         title: t('admin.team.cardTitle', 'Admins & Uploaders'),
@@ -259,6 +271,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ role }) => {
           backgroundColor="10 10 10"
           className="p-6 md:p-7"
         >
+          {activeSection === 'branding' && role === 'admin' && (
+            <div>
+              <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-white">
+                <Palette className="h-6 w-6 text-orange-300" />
+                Branding
+              </h2>
+              <BrandingManager />
+            </div>
+          )}
+
           {activeSection === 'team' && role === 'admin' && (
             <div>
               <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-white">

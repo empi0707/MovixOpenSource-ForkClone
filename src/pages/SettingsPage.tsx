@@ -100,6 +100,7 @@ import {
 import { getOverlayPortalRoot } from '@/utils/overlayPortal';
 import { useMovieReleaseWarnings } from '@/hooks/useMovieReleaseWarnings';
 import { setMovieReleaseWarningsEnabled } from '@/utils/movieReleasePreferences';
+import { HIDDEN_SETTINGS_SECTIONS, isSettingsSectionVisible } from '@/config/features'; // FORK: feature flags
 
 const API_URL = import.meta.env.VITE_MAIN_API;
 
@@ -678,8 +679,9 @@ const SettingsPage: React.FC = () => {
   const extensionPresent = isExtensionAvailable();
 
   const visibleSections = React.useMemo(() => {
-    if (isAuthenticated) return SECTIONS;
-    return SECTIONS.filter(s => !['sessions', 'accounts', 'privacy', 'data'].includes(s.id));
+    // FORK: feature flags — sections des fonctionnalités désactivées retirées du menu.
+    if (isAuthenticated) return SECTIONS.filter(isSettingsSectionVisible);
+    return SECTIONS.filter(s => !['sessions', 'accounts', 'privacy', 'data'].includes(s.id)).filter(isSettingsSectionVisible);
   }, [isAuthenticated]);
 
   // ─── Check auth ──────────────────────────────────────────────────────────
@@ -1653,6 +1655,10 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen overflow-clip bg-black text-white">
+      {/* FORK: feature flags — contenu des sections masquées */}
+      {HIDDEN_SETTINGS_SECTIONS.length > 0 && (
+        <style>{`${HIDDEN_SETTINGS_SECTIONS.map((id) => `section#${id}`).join(', ')} { display: none !important; }`}</style>
+      )}
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center gap-4 border-b border-gray-800/60 bg-black p-4">
         <button

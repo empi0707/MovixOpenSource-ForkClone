@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* FORK: variables --accent-* utilisées en style inline par les composants du
+   fork. Elles suivent --movix-red-* (accent du clone + thème Halloween). */
+:root {
+  --accent-300: rgb(var(--movix-red-300));
+  --accent-400: rgb(var(--movix-red-400));
+  --accent-500: rgb(var(--movix-red-500));
+  --accent-600: rgb(var(--movix-red-600));
+  --accent-700: rgb(var(--movix-red-700));
+}
+
 @layer utilities {
   /* Les anciens WebKit ignorent `dvh`. Ces classes gardent `vh` comme valeur
      de repli, tandis que les variantes responsive Tailwind restent libres de

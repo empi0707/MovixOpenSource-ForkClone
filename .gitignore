@@ -116,3 +116,11 @@ app-tv/dist/
 keystore.properties
 signing.properties
 release-signing.properties
+
+# FORK: configuration par clone — créer depuis les *.example.* (FORK-README §0)
+src/config/branding.ts
+src/config/accent.js
+ecosystem.config.cjs
+API/proxiesembed/.venv/
+API/proxiesembed/venv/
+API/miscs/venv/

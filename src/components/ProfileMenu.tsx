@@ -22,6 +22,7 @@ import HoldButton from './ui/hold-button';
 import { LiquidDropdown, LiquidSheet } from './header/liquidMenu';
 import { useSheetScrollLock } from './header/useSheetScrollLock';
 import { HeaderPanelsContext } from './header/headerPanels';
+import { isFeatureEnabled, isPathEnabled } from '@/config/features'; // FORK: feature flags
 
 /* ─── Menu profil et menu de connexion ───────────────────────────────────────
    Même liquide que le menu Explorer : sur ordinateur, la pastille du profil
@@ -321,19 +322,19 @@ const ProfileMenu: React.FC = () => {
     </p>
   );
 
-  const becomeVipButton = (
+  const becomeVipButton = isFeatureEnabled('vip') ? ( // FORK: feature flags
     <LiquidButton tone="gold" onClick={handleOpenVipModal}>
       <Crown className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
       <span>{t('vip.becomeVip')}</span>
     </LiquidButton>
-  );
+  ) : null;
 
   const navLinks = [
     { to: '/profile', label: t('profile.title'), Icon: User },
     { to: '/profile?tab=watchlist', label: t('profile.watchlist'), Icon: List },
     { to: '/profile?tab=favorites', label: t('common.favorites'), Icon: Star },
     { to: '/profile?tab=watched', label: t('profile.watched'), Icon: Check },
-  ];
+  ].filter(({ to }) => isPathEnabled(to)); // FORK: feature flags
 
   const renderConnected = (variant: MenuVariant) => (
     <div className={variant === 'panel' ? 'p-2' : undefined}>
@@ -353,7 +354,7 @@ const ProfileMenu: React.FC = () => {
       </div>
 
       <MenuList variant={variant}>
-        {currentProfile && (
+        {currentProfile && isFeatureEnabled('publicAuth') && ( // FORK: feature flags
           <MenuItem variant={variant} value="switch-profile">
             <button type="button" onClick={handleSwitchProfile} className={rowClass(variant)}>
               <ArrowLeftRight className={ICON_CLASS} aria-hidden="true" />
@@ -387,7 +388,7 @@ const ProfileMenu: React.FC = () => {
         )}
       </MenuList>
 
-      {!isVip && (
+      {!isVip && becomeVipButton && ( // FORK: feature flags
         <div data-sheet-item className="px-1 pt-2">
           {becomeVipButton}
         </div>
@@ -422,6 +423,9 @@ const ProfileMenu: React.FC = () => {
 
   const renderSignIn = (variant: MenuVariant) => (
     <div className={variant === 'panel' ? 'p-3' : 'px-1'}>
+      {/* FORK: feature flags — sans comptes publics, pas de boutons de connexion
+          (l'admin passe directement par /login-bip39). */}
+      {isFeatureEnabled('publicAuth') && (<>
       <p data-sheet-item className="px-1 pb-3 pt-1 text-[13px] leading-relaxed text-white/50">
         {t('auth.loginPrompt')}
       </p>
@@ -440,6 +444,7 @@ const ProfileMenu: React.FC = () => {
         </LiquidButton>
       </div>
       <div data-sheet-item aria-hidden="true" className="mx-2 mb-1.5 mt-3 h-px bg-white/[0.07]" />
+      </>)}
       <MenuList variant={variant}>
         <MenuItem variant={variant} value="/settings">
           <Link to="/settings" onClick={close} className={rowClass(variant)}>
@@ -448,9 +453,11 @@ const ProfileMenu: React.FC = () => {
           </Link>
         </MenuItem>
       </MenuList>
+      {(isVip || becomeVipButton) && ( // FORK: feature flags
       <div data-sheet-item className="pt-2">
         {isVip ? vipLine('justify-center py-2') : becomeVipButton}
       </div>
+      )}
     </div>
   );
 

@@ -1,3 +1,6 @@
+import tailwindColors from "tailwindcss/colors";
+import { ACCENT } from "./src/config/accent.js";
+
 // Couleurs thémables : Tailwind les lit dans des variables CSS, posées sur
 // :root avec les valeurs Tailwind d'origine (plugin en bas de fichier). Sans
 // thème, le rendu ne change donc pas. Le thème Halloween
@@ -22,6 +25,21 @@ const THEMABLE_COLORS = {
   "red-900": "127 29 29",
   "red-950": "69 10 10",
 };
+// FORK: couleur d'accent par clone (src/config/accent.js). Remplace l'échelle
+// `red-*` par la palette Tailwind choisie : tous les `red-*` / `accent-*` du
+// site suivent, sans toucher aux composants. 'red' = rendu upstream inchangé.
+const hexToRgbTriplet = (hex) => {
+  const h = hex.replace("#", "");
+  const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
+  return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
+};
+const accentPalette = tailwindColors[ACCENT];
+if (ACCENT !== "red" && accentPalette) {
+  for (const step of Object.keys(accentPalette)) {
+    if (`red-${step}` in THEMABLE_COLORS) THEMABLE_COLORS[`red-${step}`] = hexToRgbTriplet(accentPalette[step]);
+  }
+}
+
 const themable = (name) => `rgb(var(--movix-${name}) / <alpha-value>)`;
 const shades = (family, steps) => Object.fromEntries(steps.map((step) => [step, themable(`${family}-${step}`)]));
 
@@ -34,6 +52,8 @@ export default {
         black: themable("black"),
         gray: shades("gray", [700, 800, 900, 950]),
         red: shades("red", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]),
+        // FORK: alias utilisé par les composants propres au fork (AdBanner, BrandingManager…).
+        accent: shades("red", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]),
       },
       animation: {
         fadeIn: "fadeIn 0.5s ease-in-out",

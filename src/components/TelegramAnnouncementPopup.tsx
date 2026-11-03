@@ -130,4 +130,7 @@ const TelegramAnnouncementPopup: React.FC<TelegramAnnouncementPopupProps> = ({ s
   );
 };
 
-export default TelegramAnnouncementPopup;
+// FORK: feature flags — rendu seulement si « community » est activé.
+import { isFeatureEnabled } from '@/config/features';
+const TelegramAnnouncementPopupFeature = (props: React.ComponentProps<typeof TelegramAnnouncementPopup>) => (isFeatureEnabled('community') ? <TelegramAnnouncementPopup {...props} /> : null);
+export default TelegramAnnouncementPopupFeature;

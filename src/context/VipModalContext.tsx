@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import VipModal from '../components/VipModal';
+import { isFeatureEnabled } from '../config/features'; // FORK: feature flags
 
 interface VipModalContextType {
   isVipModalOpen: boolean;
@@ -21,6 +22,7 @@ export const VipModalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isVipModalOpen, setIsVipModalOpen] = useState(false);
 
   const openVipModal = useCallback(() => {
+    if (!isFeatureEnabled('vip')) return; // FORK: feature flags — VIP masqué
     setIsVipModalOpen(true);
   }, []);
 

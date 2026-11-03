@@ -199,6 +199,7 @@ import { readLocalStorage, removeLocalStorage, writeLocalStorage } from '../util
 import { getTvmazeSeasonsOverride } from '../services/tvmazeEpisodeList';
 import { useHalloweenTheme } from '../hooks/useHalloweenTheme';
 import { HalloweenProgressPumpkin } from './halloween/HalloweenIcons';
+import { isFeatureEnabled } from '@/config/features'; // FORK: feature flags
 
 const EMPTY_KISSKH_SOURCES: KisskhSource[] = [];
 const EMPTY_KISSKH_SUBTITLES: KisskhSubtitleTrack[] = [];
@@ -12469,6 +12470,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                   </button>
                 </div>
               )}
+              {isFeatureEnabled('watchParty') && ( /* FORK: feature flags */
               <div className="relative flex items-center h-[24px]">
                 <button
                   onClick={toggleWatchParty}
@@ -12491,6 +12493,7 @@ const HLSPlayer = forwardRef<HLSPlayerRef, HLSPlayerProps>(({
                   </motion.div>
                 </button>
               </div>
+              )}
               <div className="relative flex items-center h-[24px]">
                 <button
                   onClick={togglePip}

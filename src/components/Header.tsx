@@ -4,7 +4,7 @@ import Snowfall from 'react-snowfall';
 import { useLightMode } from '@/context/LightModeContext';
 import { isHalloweenSeason, setHalloweenTheme, useHalloweenTheme } from '@/hooks/useHalloweenTheme';
 import { HalloweenBatIcon, HalloweenLantern, HalloweenPumpkinIcon, HalloweenThemeToggleIcon } from './halloween/HalloweenIcons';
-import { MovixWordmark } from './brand/MovixWordmark';
+import { SiteWordmark } from './brand/SiteWordmark'; // FORK: branding
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PrefetchLink as Link } from '@/routing/PrefetchLink';
 import { Film, Search, X, Star, Tv2, Users, Clapperboard, Bell, Tv, Lightbulb, Network, List, Radio, Unlock, ChevronDown, ExternalLink, LayoutGrid, Settings, Dices, Sparkles, HelpCircle, Github, CalendarDays, Puzzle, Smartphone, MonitorPlay } from 'lucide-react';
@@ -29,6 +29,7 @@ import { useAgeRestrictedContent } from '../hooks/useAgeRestrictedContent';
 import { readLocalStorage, readSessionStorage } from '../utils/browserStorage';
 import { IX_MATRIX_URL } from '@/config/community';
 import { MatrixIcon } from './brand/MatrixIcon';
+import { isLinkEnabled } from '@/config/features'; // FORK: feature flags
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -176,7 +177,9 @@ const Header: React.FC = () => {
         { name: t('footer.ourUrls'), path: 'https://movix.online', icon: <ExternalLink size={18} />, desc: t('nav.officialLinksDesc'), external: true },
       ]
     },
-  ].filter(g => g.items.length > 0), [t, isVip]);
+  ]
+    .map(g => ({ ...g, items: g.items.filter(item => isLinkEnabled(item.path)) })) // FORK: feature flags
+    .filter(g => g.items.length > 0), [t, isVip]);
 
   // Auth
   useEffect(() => {
@@ -450,7 +453,7 @@ const Header: React.FC = () => {
                 {/* Logo long [Movix] : rouge fixe hors palette, lettres claires. Le thème
                     Halloween lui ajoute une lueur et une chauve-souris. */}
                 <span data-movix-logo className="inline-flex text-[#f4f4f0]">
-                  <MovixWordmark className="h-[30px] w-auto md:h-9" />
+                  <SiteWordmark className="h-[30px] w-auto md:h-9" />
                 </span>
               </Link>
 

@@ -11,6 +11,7 @@ import { useWrappedTracker } from '../hooks/useWrappedTracker';
 import { getTmdbLanguage } from '../i18n';
 import { getNumericAge } from '../utils/certificationUtils';
 import { resolveTmdbKeywordId } from '../utils/tmdbKeywords';
+import { BRANDING } from '@/config/branding'; // FORK: branding
 
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 const IMMEDIATE_LOAD_COUNT = 2;
@@ -487,7 +488,7 @@ const Anime: React.FC = () => {
   }, [genreImageCacheKey, genreImageCacheTsKey, tmdbLanguage]);
 
   useEffect(() => {
-    document.title = `${t('animePage.title')} - Movix`;
+    document.title = `${t('animePage.title')} - ${BRANDING.siteName}`;
   }, [i18n.language, t]);
 
   if (error) {

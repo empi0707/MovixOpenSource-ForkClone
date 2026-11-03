@@ -14,6 +14,7 @@ import { useWrappedTracker } from '../hooks/useWrappedTracker';
 import { getTmdbLanguage } from '../i18n';
 import { readSessionStorage, writeSessionStorage } from '../utils/browserStorage';
 import { getMinimumCarouselCategoryItems, makeExclusiveCategories } from '../utils/exclusiveCategories';
+import { BRANDING } from '@/config/branding'; // FORK: branding
 
 // Nombre de sections à charger immédiatement
 const IMMEDIATE_LOAD_COUNT = 2;
@@ -722,7 +723,7 @@ const TVShows: React.FC = () => {
 
   useEffect(() => {
     // Simple title for TV Shows page
-    document.title = `${t('tvShows.title')} - Movix`;
+    document.title = `${t('tvShows.title')} - ${BRANDING.siteName}`;
   }, []);
 
 

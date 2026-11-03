@@ -23,6 +23,7 @@ import ConfirmDialog from '../components/ui/confirm-dialog';
 import ContentRowSkeleton from '../components/skeletons/ContentRowSkeleton';
 import { readLocalStorage } from '../utils/browserStorage';
 import { isHalloweenSeason } from '../hooks/useHalloweenTheme';
+import { BRANDING } from '@/config/branding'; // FORK: branding
 
 // Rangée « Spécial Halloween » : téléchargée seulement quand elle s'affiche
 // (en octobre, ou thème actif). Un échec réseau laisse simplement l'accueil
@@ -1124,20 +1125,20 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     // Simple title for homepage
-    document.title = `${t('nav.home')} - Movix`;
+    document.title = `${t('nav.home')} - ${BRANDING.siteName}`;
 
     // Add or update structured data for a WebSite
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "Movix",
+      "name": BRANDING.siteName,
       "url": SITE_URL,
       "potentialAction": {
         "@type": "SearchAction",
         "target": `${SITE_URL}/search?q={search_term_string}`,
         "query-input": "required name=search_term_string"
       },
-      "description": "Movix - Plateforme de streaming gratuite proposant des films et séries en français. Regardez en ligne sans inscription."
+      "description": `${BRANDING.siteName} - Plateforme de streaming gratuite proposant des films et séries en français. Regardez en ligne sans inscription.`
     };
 
     // Add structured data to head

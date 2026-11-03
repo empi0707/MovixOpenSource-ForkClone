@@ -14,6 +14,7 @@ import { useMediaColorSettings } from '@/hooks/useMediaColorSettings';
 import { useImageQuality } from '@/hooks/useImageQuality';
 import { useImageSlot } from '@/hooks/useImageSlot';
 import { getTmdbImageProps } from '@/utils/tmdbImages';
+import { BRANDING } from '@/config/branding'; // FORK: branding
 
 interface SearchResult {
     id: number;
@@ -28,7 +29,7 @@ interface SearchResult {
     overview?: string;
 }
 
-const POSTER_FALLBACK = `data:image/svg+xml,${encodeURIComponent('<svg width="500" height="750" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#111"/><text x="50%" y="50%" fill="#444" font-size="36" font-family="sans-serif" text-anchor="middle" dy=".3em">MOVIX</text></svg>')}`;
+const POSTER_FALLBACK = `data:image/svg+xml,${encodeURIComponent(`<svg width="500" height="750" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#111"/><text x="50%" y="50%" fill="#444" font-size="36" font-family="sans-serif" text-anchor="middle" dy=".3em">${BRANDING.siteName.toUpperCase()}</text></svg>`)}`;
 
 // Module-level watchlist id cache, keyed by media_type. Previously each
 // SearchGridCard / SearchListCard ran `JSON.parse(localStorage[...])` inside

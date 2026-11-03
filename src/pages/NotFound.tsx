@@ -8,6 +8,7 @@ import { useHalloweenTheme } from '@/hooks/useHalloweenTheme';
 import { SquareBackground } from '../components/ui/square-background';
 import ShinyText from '../components/ui/shiny-text';
 import { Button } from '../components/ui/button';
+import { BRANDING } from '@/config/branding'; // FORK: branding
 
 const VARIANT_ICONS = [Clapperboard, Drama, RotateCcw, EyeOff, Ticket];
 
@@ -35,7 +36,7 @@ const NotFound = () => {
   const Icon = VARIANT_ICONS[variant - 1];
 
   useEffect(() => {
-    document.title = '404 - Movix';
+    document.title = `404 - ${BRANDING.siteName}`;
   }, []);
 
   return (
